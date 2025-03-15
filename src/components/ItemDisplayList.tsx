@@ -1,9 +1,10 @@
 "use client";
 import { checkReturned, isLostObject, Object } from "@/lib/types";
-import React from "react";
+import React, { memo } from "react";
 import { foundObjects, lostObjects } from "@/lib/fakeData";
 
-function ItemDisplayList() {
+// memoize component which filters data (we do down the line) https://react.dev/reference/react/useMemo
+const ItemDisplayList = memo(function ItemDisplayList() {
   const items: Object[] = (foundObjects as Object[]).concat(
     lostObjects as Object[]
   );
@@ -25,7 +26,7 @@ function ItemDisplayList() {
       ))}
     </div>
   );
-}
+});
 
 export default ItemDisplayList;
 
