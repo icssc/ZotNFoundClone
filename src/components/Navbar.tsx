@@ -14,7 +14,7 @@ import Image from "next/image";
 
 export default function Navbar() {
   return (
-    <nav className="bg-black text-white w-full py-4 px-4 md:px-6">
+    <nav className="bg-black fixed text-white w-full py-4 px-4 md:px-6">
       <div className="flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center space-x-2">
