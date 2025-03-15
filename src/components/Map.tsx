@@ -41,10 +41,11 @@ function Map() {
         className="map-container"
         center={centerPosition as [number, number]}
         zoom={17}
-        minZoom={15}
+        maxZoom={18}
+        minZoom={16}
+        maxBounds={mapBounds}
         zoomControl={false}
         attributionControl={false}
-        maxBounds={mapBounds}
         maxBoundsViscosity={1.0}
         style={{ height: "75vh" }}
       >

@@ -32,7 +32,7 @@ export default function RootLayout({
         {/* rest of your scripts go under */}
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-900`}
       >
         {children}
       </body>

@@ -10,12 +10,12 @@ const LazyMap = dynamic(() => import("@/components/Map"), {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen">
       <Navbar />
       <main className="container mx-auto p-4 md:p-6">
-        <div className="mt-12 text-center">
+        <div className="mt-12 text-center text-white p-10">
           <h1 className="text-3xl font-bold mb-4">Welcome to ZotNFound</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="max-w-2xl mx-auto">
             The premier lost and found platform. Find what you&apos;ve lost or
             help others recover their belongings.
           </p>

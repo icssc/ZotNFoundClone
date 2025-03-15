@@ -8,10 +8,11 @@ const allowedBounds = [
 ];
 
 const mapBoundsCoordinates: LatLngExpression[] = [
-  [33.65580858123096, -117.82236486775658],
-  [33.63290776411016, -117.85403639000239],
+  [33.648056, -117.846104],
+  [33.648056, -117.838671],
+  [33.642902, -117.838657],
 ];
-const centerPosition = [33.6461, -117.8427];
+const centerPosition = [33.64363144392915, -117.84895805659363];
 
 const mapBounds = latLngBounds(mapBoundsCoordinates);
 
