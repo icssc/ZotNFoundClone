@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { MapContainer, Rectangle, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { centerPosition, mapBounds } from "@/lib/constants";
@@ -18,14 +18,16 @@ function SetBoundsRectangles() {
     [bounds, map]
   );
 
+  useEffect(() => {
+    map.fitBounds(bounds);
+  }, [bounds, map]);
+
   return (
-    <>
-      <Rectangle
-        bounds={bounds}
-        eventHandlers={outerHandlers}
-        pathOptions={transparentColor}
-      />
-    </>
+    <Rectangle
+      bounds={bounds}
+      eventHandlers={outerHandlers}
+      pathOptions={transparentColor}
+    />
   );
 }
 
@@ -36,23 +38,21 @@ function Map() {
   }
 
   return (
-    <div>
-      <MapContainer
-        className="map-container"
-        center={centerPosition as [number, number]}
-        zoom={17}
-        maxZoom={18}
-        minZoom={16}
-        maxBounds={mapBounds}
-        zoomControl={false}
-        attributionControl={false}
-        maxBoundsViscosity={1.0}
-        style={{ height: "75vh" }}
-      >
-        <TileLayer url={accessToken} />
-        <SetBoundsRectangles />
-      </MapContainer>
-    </div>
+    <MapContainer
+      className="rounded-[30px] z-0"
+      center={centerPosition as [number, number]}
+      zoom={17}
+      maxZoom={18}
+      minZoom={16}
+      maxBounds={mapBounds}
+      zoomControl={false}
+      attributionControl={false}
+      maxBoundsViscosity={1.0}
+      style={{ height: "70dvh" }}
+    >
+      <TileLayer url={accessToken} />
+      <SetBoundsRectangles />
+    </MapContainer>
   );
 }
 

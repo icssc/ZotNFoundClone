@@ -43,4 +43,12 @@ function isFoundObject(object: Object): object is FoundObject {
   return object.type === "found";
 }
 
-export { isLostObject, isFoundObject };
+function checkReturned(item: Object) {
+  if (isLostObject(item)) {
+    return item.isFound;
+  } else {
+    return item.isReturned;
+  }
+}
+
+export { isLostObject, isFoundObject, checkReturned };
