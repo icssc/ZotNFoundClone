@@ -39,7 +39,7 @@ function Map() {
 
   return (
     <MapContainer
-      className="rounded-[30px] z-0"
+      className="rounded-[30px] z-0 h-full"
       center={centerPosition as [number, number]}
       zoom={17}
       maxZoom={18}
@@ -48,7 +48,6 @@ function Map() {
       zoomControl={false}
       attributionControl={false}
       maxBoundsViscosity={1.0}
-      style={{ height: "70dvh" }}
     >
       <TileLayer url={accessToken} />
       <SetBoundsRectangles />

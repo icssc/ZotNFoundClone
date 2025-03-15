@@ -10,13 +10,12 @@ const LazyMap = dynamic(() => import("@/components/Map"), {
 
 export default function Home() {
   return (
-    <div className="min-h-[85vh] w-full flex justify-center items-center p-4">
+    <div className="md:h-[85vh] w-full flex justify-center items-center p-4">
       <main className="w-full h-full flex flex-row">
-        <div className="flex flex-row h-full w-full">
+        <div className="flex flex-row gap-10 h-full w-full">
           <div className="w-8/10 h-full">
             <LazyMap />
           </div>
-          {/* Item List */}
           <div className="w-2/10 bg-gray-100 rounded-lg h-full overflow-y-scroll">
             <ItemDisplayList />
           </div>

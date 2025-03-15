@@ -7,9 +7,20 @@ function ItemDisplayList() {
   const items: Object[] = (foundObjects as Object[]).concat(
     lostObjects as Object[]
   );
+
+  // * Causes key error with duplicate keys
+  const moreitems: Object[] = [
+    ...items,
+    ...items,
+    ...items,
+    ...items,
+    ...items,
+    ...items,
+  ];
+
   return (
-    <div className="flex flex-col p-4 space-y-4">
-      {items.map((item) => (
+    <div className="flex h-full overflow-y-scroll flex-col p-4 space-y-4">
+      {moreitems.map((item: Object) => (
         <Item key={item.itemId} {...item} />
       ))}
     </div>

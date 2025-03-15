@@ -64,6 +64,19 @@ const foundObjects: FoundObject[] = [
     personID: "1",
     personEmail: "sd",
   },
+  {
+    type: "found",
+    itemId: "6",
+    personName: "Priyansh",
+    itemName: "Phone",
+    itemDescription: "A phone",
+    location: [51.505, -0.09],
+    date: "2022-01-01",
+    isReturned: false,
+    personID: "1",
+    personEmail: "",
+  },
 ];
+
 
 export { lostObjects, foundObjects };
