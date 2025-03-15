@@ -1,7 +1,12 @@
 import { PointTuple } from "leaflet";
 
+enum ObjectType {
+  Lost = "lost",
+  Found = "found",
+}
+
 export interface LostObject {
-  type: "lost";
+  type: ObjectType.Lost;
   itemId: string;
   itemName: string;
   itemDescription: string;
@@ -21,7 +26,7 @@ export type User = {
 };
 
 export interface FoundObject {
-  type: "found";
+  type: ObjectType.Found;
   itemId: string;
   itemName: string;
   itemDescription: string;
