@@ -50,7 +50,7 @@ const Item = function Item(prop: Object) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className="flex flex-col p-4 border-b border-gray-200 cursor-pointer hover:bg-gray-50 rounded-md transition-colors">
+        <div className="flex flex-col p-4 border-b border-gray-200 cursor-pointer bg-gray-300 hover:bg-gray-50 duration-200 rounded-md transition-colors">
           <div className="flex flex-row justify-between">
             <div className="flex flex-row items-center space-x-2">
               <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
