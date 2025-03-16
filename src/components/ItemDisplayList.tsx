@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, User } from "lucide-react";
-
+// TODO: Change the modal so we dont have multiple clones, but instead one wrapping around the List, anad setOpen, and onOpen, capture the index being clicked and the dialog
+// TODO: Move up the items to global state with useContext, to 1. make re-renders easier to deal with, 2. make it easier to filter the items
 // memoize component which filters data (we do down the line) https://react.dev/reference/react/useMemo
 const ItemDisplayList = memo(function ItemDisplayList() {
   const items: Object[] = (foundObjects as Object[]).concat(
@@ -141,5 +142,3 @@ function ItemDetailDialog({ item }: { item: Object }) {
     </DialogContent>
   );
 }
-
-// TODO: Change the modal so we dont have multiple clones, but instead one wrapping around the List, anad setOpen, and onOpen, capture the index being clicked and the dialog

@@ -16,14 +16,13 @@ export default function Home() {
           <div className="w-8/10 h-full">
             <LazyMap />
           </div>
-          <div className="w-2/10 bg-gray-100 rounded-lg h-full overflow-y-scroll">
+          <div className="w-2/10 bg-gray-100 rounded-lg h-full">
             <ItemDisplayList />
           </div>
         </div>
       </main>
       <div className="text-white text-center container h-full">
         Filter: The page into what it is
-
       </div>
     </div>
   );
