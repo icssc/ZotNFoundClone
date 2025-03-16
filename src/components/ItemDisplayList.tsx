@@ -80,11 +80,7 @@ const Item = function Item(prop: Object) {
   );
 };
 
-function ItemDetailDialog({
-  item,
-}: {
-  item: Object;
-}) {
+function ItemDetailDialog({ item }: { item: Object }) {
   const islostObject = isLostObject(item);
   const isreturnedObject = checkReturned(item);
 
@@ -144,4 +140,6 @@ function ItemDetailDialog({
       </div>
     </DialogContent>
   );
-};
+}
+
+// TODO: Change the modal so we dont have multiple clones, but instead one wrapping around the List, anad setOpen, and onOpen, capture the index being clicked and the dialog
