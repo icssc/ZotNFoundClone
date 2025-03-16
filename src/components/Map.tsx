@@ -41,7 +41,7 @@ function Map() {
 
   return (
     <MapContainer
-      className="rounded-[30px] z-0 h-full"
+      className="rounded-4xl z-0 h-full"
       center={centerPosition as [number, number]}
       zoom={17}
       maxZoom={18}

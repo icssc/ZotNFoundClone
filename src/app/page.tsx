@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 // https://nextjs.org/docs/pages/building-your-application/optimizing/lazy-loading
 const LazyMap = dynamic(() => import("@/components/Map"), {
   ssr: false,
-  loading: () => <Skeleton className="h-full" />,
+  loading: () => <Skeleton className="h-full rounded-4xl" />,
 });
 
 export default function Home() {
