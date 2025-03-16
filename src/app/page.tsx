@@ -10,8 +10,8 @@ const LazyMap = dynamic(() => import("@/components/Map"), {
 
 export default function Home() {
   return (
-    <div className="md:h-[85vh] w-full flex justify-center items-center p-4">
-      <main className="w-full h-full flex flex-row">
+    <div className="md:h-[85vh] w-full flex flex-col justify-center items-center p-4">
+      <main className="w-full p-12 h-full flex flex-row">
         <div className="flex flex-row gap-10 h-full w-full">
           <div className="w-8/10 h-full">
             <LazyMap />
@@ -21,6 +21,10 @@ export default function Home() {
           </div>
         </div>
       </main>
+      <div className="text-white text-center container h-full">
+        Filter: The page into what it is
+
+      </div>
     </div>
   );
 }

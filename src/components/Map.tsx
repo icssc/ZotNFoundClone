@@ -19,7 +19,9 @@ function SetBoundsRectangles() {
   );
 
   useEffect(() => {
-    map.fitBounds(bounds);
+    if (map) {
+      map.fitBounds(bounds);
+    }
   }, [bounds, map]);
 
   return (
