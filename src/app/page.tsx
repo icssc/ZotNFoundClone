@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 
 // https://stackoverflow.com/questions/77978480/nextjs-with-react-leaflet-ssr-webpack-window-not-defined-icon-not-found
 // https://nextjs.org/docs/pages/building-your-application/optimizing/lazy-loading
-const LazyMap = dynamic(() => import("@/components/Map"), {
+const LazyMap = dynamic(() => import("@/components/Map/Map"), {
   ssr: false,
   loading: () => <Skeleton className="h-full rounded-4xl" />,
 });

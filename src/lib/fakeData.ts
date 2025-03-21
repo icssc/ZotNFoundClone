@@ -1,5 +1,6 @@
 import type { LostObject, FoundObject } from "./types";
 
+// Using coordinates around the UCI campus area
 const lostObjects: LostObject[] = [
   {
     type: "lost",
@@ -7,7 +8,7 @@ const lostObjects: LostObject[] = [
     itemId: "1",
     itemName: "Keys",
     itemDescription: "A set of keys",
-    location: [51.505, -0.09],
+    location: [33.647238, -117.842651],
     date: "2022-01-01",
     isFound: false,
     personID: "1",
@@ -19,7 +20,19 @@ const lostObjects: LostObject[] = [
     personName: "Priyansh",
     itemName: "Wallet",
     itemDescription: "A wallet",
-    location: [51.505, -0.09],
+    location: [33.643987, -117.839733],
+    date: "2022-01-01",
+    isFound: false,
+    personID: "1",
+    personEmail: "priyanshpokemon@gmail.com",
+  },
+  {
+    type: "lost",
+    itemId: "2",
+    personName: "Priyansh",
+    itemName: "Wallet",
+    itemDescription: "A wallet",
+    location: [33.643987, -117.839733],
     date: "2022-01-01",
     isFound: false,
     personID: "1",
@@ -31,7 +44,7 @@ const lostObjects: LostObject[] = [
     personName: "Priyansh",
     itemName: "Phone",
     itemDescription: "A phone",
-    location: [51.505, -0.09],
+    location: [33.645216, -117.844497],
     date: "2022-01-01",
     isFound: false,
     personID: "1",
@@ -46,7 +59,7 @@ const foundObjects: FoundObject[] = [
     personName: "Priyansh",
     itemName: "Keys",
     itemDescription: "A set of keys",
-    location: [51.505, -0.09],
+    location: [33.641442, -117.841392],
     date: "2022-01-01",
     isReturned: true,
     personID: "1",
@@ -58,7 +71,7 @@ const foundObjects: FoundObject[] = [
     personName: "Priyansh",
     itemName: "Wallet",
     itemDescription: "A wallet",
-    location: [51.505, -0.09],
+    location: [33.646112, -117.837108],
     date: "2022-01-01",
     isReturned: false,
     personID: "1",
@@ -70,13 +83,12 @@ const foundObjects: FoundObject[] = [
     personName: "Priyansh",
     itemName: "Phone",
     itemDescription: "A phone",
-    location: [51.505, -0.09],
+    location: [33.639751, -117.839905],
     date: "2022-01-01",
     isReturned: false,
     personID: "1",
     personEmail: "",
   },
 ];
-
 
 export { lostObjects, foundObjects };

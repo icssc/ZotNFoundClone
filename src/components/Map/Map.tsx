@@ -3,12 +3,13 @@ import React, { useEffect, useMemo } from "react";
 import { MapContainer, Rectangle, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { centerPosition, mapBounds } from "@/lib/constants";
-
+import { lostObjects, foundObjects } from "@/lib/fakeData";
+import { mapObjectsToDisplayObjects, Object } from "@/lib/types";
+import ObjectMarkers from "./Markers";
 function SetBoundsRectangles() {
   const map = useMap();
   const bounds = mapBounds;
   const transparentColor = { color: "#000", opacity: 0, fillOpacity: 0 };
-
   const outerHandlers = useMemo(
     () => ({
       click() {
@@ -38,7 +39,8 @@ function Map() {
   if (!accessToken) {
     throw new Error("Mapbox access token is required");
   }
-
+  const objects: Object[] = (lostObjects as Object[]).concat(foundObjects);
+  const objectLocations = mapObjectsToDisplayObjects(objects);
   return (
     <MapContainer
       className="rounded-4xl z-0 h-full"
@@ -53,6 +55,7 @@ function Map() {
     >
       <TileLayer url={accessToken} />
       <SetBoundsRectangles />
+      <ObjectMarkers objectLocations={objectLocations} />
     </MapContainer>
   );
 }

@@ -13,7 +13,6 @@ export interface LostObject {
   personName: string;
 }
 
-
 export type User = {
   id: string;
   email: string;
@@ -50,6 +49,26 @@ function checkReturned(item: Object) {
   } else {
     return item.isReturned;
   }
+}
+
+export interface DisplayObjects {
+  object_id: string;
+  type: string;
+  location: PointTuple;
+}
+
+export function mapObjectToDisplayObject(item: Object): DisplayObjects {
+  return {
+    object_id: item.itemId,
+    type: item.type,
+    location: item.location,
+  };
+}
+
+export function mapObjectsToDisplayObjects(
+  objects: Object[]
+): DisplayObjects[] {
+  return objects.map(mapObjectToDisplayObject);
 }
 
 export { isLostObject, isFoundObject, checkReturned };
