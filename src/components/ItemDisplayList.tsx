@@ -8,19 +8,17 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, User } from "lucide-react";
-// TODO: Change the modal so we dont have multiple clones, but instead one wrapping around the List, anad setOpen, and onOpen, capture the index being clicked and the dialog
 // TODO: Move up the items to global state with useContext, to 1. make re-renders easier to deal with, 2. make it easier to filter the items
-// memoize component which filters data (we do down the line) https://react.dev/reference/react/useMemo
+// ? https://tanstack.com/query/latest/docs/framework/react/guides/infinite-queries
+
 const ItemDisplayList = memo(function ItemDisplayList() {
   const items: Object[] = (foundObjects as Object[]).concat(
     lostObjects as Object[]
   );
 
-  // * Causes key error with duplicate keys
   const moreitems: Object[] = [
     ...items,
     ...items,
@@ -30,56 +28,67 @@ const ItemDisplayList = memo(function ItemDisplayList() {
     ...items,
   ];
 
+  const [open, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Object | null>(null);
+
+  const handleItemClick = (item: Object) => {
+    setSelectedItem(item);
+    setOpen(true);
+  };
+
   return (
-    <div className="flex h-full overflow-y-scroll flex-col p-4 space-y-4">
-      {moreitems.map((item: Object, index) => (
-        <Item key={`${item.itemId}-${index}`} {...item} />
-      ))}
-    </div>
+    <>
+      <div className="flex h-full overflow-y-scroll flex-col p-4 space-y-4">
+        {moreitems.map((item: Object, index) => (
+          <Item
+            key={`${item.itemId}-${index}`}
+            item={item}
+            onClick={() => handleItemClick(item)}
+          />
+        ))}
+      </div>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        {selectedItem && <ItemDetailDialog item={selectedItem} />}
+      </Dialog>
+    </>
   );
 });
 
 export default ItemDisplayList;
 
-// * Potentially prevent re-render of each card on click (triggering useState, by https://react.dev/reference/react/useState#storing-information-from-previous-renders)
-// Making the card inside the dialog its own component
-const Item = function Item(prop: Object) {
-  const [open, setOpen] = useState(false);
-  const islostObject = isLostObject(prop);
-  const isreturnedObject = checkReturned(prop);
+function Item({ item, onClick }: { item: Object; onClick: () => void }) {
+  const islostObject = isLostObject(item);
+  const isreturnedObject = checkReturned(item);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <div className="flex flex-col p-4 border-b border-gray-200 cursor-pointer bg-gray-300 hover:bg-gray-50 duration-200 rounded-md transition-colors">
-          <div className="flex flex-row justify-between">
-            <div className="flex flex-row items-center space-x-2">
-              <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
-              <div>
-                <p className="font-semibold">{prop.itemName}</p>
-                <p className="text-sm text-gray-500">
-                  {islostObject ? "Lost" : "Found"} by {prop.personName}
-                </p>
-                <p>{isreturnedObject ? "Returned" : "Not Returned"}</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">{prop.date}</p>
-            </div>
-          </div>
+    <div
+      onClick={onClick}
+      className="flex flex-col p-4 border-b border-gray-200 cursor-pointer bg-gray-300 hover:bg-gray-50 duration-200 rounded-md transition-colors"
+    >
+      <div className="flex flex-row justify-between">
+        <div className="flex flex-row items-center space-x-2">
+          <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
           <div>
-            <p className="text-sm text-gray-500 line-clamp-2">
-              {prop.itemDescription}
+            <p className="font-semibold">{item.itemName}</p>
+            <p className="text-sm text-gray-500">
+              {islostObject ? "Lost" : "Found"} by {item.personName}
             </p>
+            <p>{isreturnedObject ? "Returned" : "Not Returned"}</p>
           </div>
         </div>
-      </DialogTrigger>
-
-      {/* Only render dialog content when dialog is open */}
-      {open && <ItemDetailDialog item={prop} />}
-    </Dialog>
+        <div>
+          <p className="text-sm text-gray-500">{item.date}</p>
+        </div>
+      </div>
+      <div>
+        <p className="text-sm text-gray-500 line-clamp-2">
+          {item.itemDescription}
+        </p>
+      </div>
+    </div>
   );
-};
+}
 
 function ItemDetailDialog({ item }: { item: Object }) {
   const islostObject = isLostObject(item);

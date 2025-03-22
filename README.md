@@ -17,4 +17,9 @@
 - [x] Adding markers and clustering
 - [ ] Making it so that it prompts user that chrome will have the best experience
 - [ ] Making it so that it prompts user that they can add it to their home screen
-- [ ] Changing the dialog to a shared dialog with data passed in changing the content
+- [ ] Using ppr correctly, and potentially an edge network or something considering everyone is near UCI making the loading faster
+- [x] Changing the dialog to a shared dialog with data passed in changing the content
+
+## Potential Future Overkill Features & Optimizations
+
+- [ ] Maybe in the future adding convex for an even better sync layer along with tanstack query (already using tanstack/react-query)
