@@ -6,6 +6,7 @@ import { centerPosition, mapBounds } from "@/lib/constants";
 import { lostObjects, foundObjects } from "@/lib/fakeData";
 import { mapObjectsToDisplayObjects, Object } from "@/lib/types";
 import ObjectMarkers from "./Markers";
+
 function SetBoundsRectangles() {
   const map = useMap();
   const bounds = mapBounds;
