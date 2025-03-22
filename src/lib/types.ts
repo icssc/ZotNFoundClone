@@ -7,7 +7,6 @@ export interface LostObject {
   itemDescription: string;
   location: PointTuple;
   date: string;
-  isFound: boolean;
   personID: string;
   personEmail: string;
   personName: string;
@@ -20,6 +19,18 @@ export type User = {
   picture: string;
 };
 
+export interface ReturnedObject {
+  type: "returned";
+  itemId: string;
+  itemName: string;
+  itemDescription: string;
+  location: PointTuple;
+  date: string;
+  personID: string;
+  personEmail: string;
+  personName: string;
+}
+
 export interface FoundObject {
   type: "found";
   itemId: string;
@@ -27,7 +38,6 @@ export interface FoundObject {
   itemDescription: string;
   location: PointTuple;
   date: string;
-  isReturned: boolean;
   personID: string;
   personEmail: string;
   personName: string;
@@ -41,14 +51,6 @@ function isLostObject(object: Object): object is LostObject {
 
 function isFoundObject(object: Object): object is FoundObject {
   return object.type === "found";
-}
-
-function checkReturned(item: Object) {
-  if (isLostObject(item)) {
-    return item.isFound;
-  } else {
-    return item.isReturned;
-  }
 }
 
 export interface DisplayObjects {
@@ -71,4 +73,4 @@ export function mapObjectsToDisplayObjects(
   return objects.map(mapObjectToDisplayObject);
 }
 
-export { isLostObject, isFoundObject, checkReturned };
+export { isLostObject, isFoundObject };

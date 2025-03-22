@@ -1,5 +1,5 @@
 "use client";
-import { checkReturned, isLostObject, type Object } from "@/lib/types";
+import { isLostObject, type Object } from "@/lib/types";
 import { memo, useState } from "react";
 import { foundObjects, lostObjects } from "@/lib/fakeData";
 import {
@@ -59,7 +59,6 @@ export default ItemDisplayList;
 
 function Item({ item, onClick }: { item: Object; onClick: () => void }) {
   const islostObject = isLostObject(item);
-  const isreturnedObject = checkReturned(item);
 
   return (
     <div
@@ -74,7 +73,6 @@ function Item({ item, onClick }: { item: Object; onClick: () => void }) {
             <p className="text-sm text-gray-500">
               {islostObject ? "Lost" : "Found"} by {item.personName}
             </p>
-            <p>{isreturnedObject ? "Returned" : "Not Returned"}</p>
           </div>
         </div>
         <div>
@@ -92,7 +90,6 @@ function Item({ item, onClick }: { item: Object; onClick: () => void }) {
 
 function ItemDetailDialog({ item }: { item: Object }) {
   const islostObject = isLostObject(item);
-  const isreturnedObject = checkReturned(item);
 
   return (
     <DialogContent className="sm:max-w-md">
@@ -121,7 +118,7 @@ function ItemDetailDialog({ item }: { item: Object }) {
             <p className="font-medium">Date</p>
             <p className="text-sm text-gray-500">{item.date}</p>
             <p className="text-sm text-gray-500">
-              Status: {isreturnedObject ? "Returned" : "Not Returned"}
+              Status: {islostObject ? "Lost" : "Found"}
             </p>
           </div>
         </div>
@@ -144,9 +141,7 @@ function ItemDetailDialog({ item }: { item: Object }) {
 
       <div className="flex justify-end gap-2">
         <Button variant="outline">Contact</Button>
-        {!isreturnedObject && (
-          <Button>{islostObject ? "I Found This" : "This Is Mine"}</Button>
-        )}
+        <Button>{islostObject ? "I Found This" : "This Is Mine"}</Button>
       </div>
     </DialogContent>
   );
