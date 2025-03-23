@@ -7,8 +7,10 @@ import MarkerClusterGroup from "react-leaflet-cluster-4-next";
 
 function ObjectMarkers({
   objectLocations,
+  setSelectedObjectId,
 }: {
   objectLocations: DisplayObjects[];
+  setSelectedObjectId: (object: string) => void;
 }) {
   return (
     <MarkerClusterGroup
@@ -25,6 +27,9 @@ function ObjectMarkers({
               ? iconsMap.others.true
               : iconsMap.others.false
           }
+          eventHandlers={{
+            click: () => setSelectedObjectId(address.object_id),
+          }}
         />
       ))}
     </MarkerClusterGroup>

@@ -1,12 +1,21 @@
 "use client";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { MapContainer, Rectangle, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { centerPosition, mapBounds } from "@/lib/constants";
 import { lostObjects, foundObjects } from "@/lib/fakeData";
-import { mapObjectsToDisplayObjects, Object } from "@/lib/types";
+import { mapObjectsToDisplayObjects, Object, isLostObject } from "@/lib/types";
 import ObjectMarkers from "./Markers";
 import { useMapContext } from "../ContextProvider";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Calendar, MapPin, User } from "lucide-react";
 
 function MapController() {
   const map = useMap();
@@ -45,15 +54,25 @@ function MapController() {
 
 function Map() {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
+  const [selectedObjectId, setSelectedObjectId] = useState<string>();
   if (!accessToken) {
     throw new Error("Mapbox access token is required");
   }
 
   // Replace this with useQuery call or taking it from context provider if I implemented it
-  const objectLocations = useMemo(() => {
+  const objects = useMemo(() => {
     const objects: Object[] = (lostObjects as Object[]).concat(foundObjects);
-    return mapObjectsToDisplayObjects(objects);
+    return objects;
   }, []);
+
+  const objectLocations = useMemo(() => {
+    return mapObjectsToDisplayObjects(objects);
+  }, [objects]);
+
+  const selectedObject = useMemo(() => {
+    if (!selectedObjectId) return null;
+    return objects.find((obj) => obj.itemId === selectedObjectId) || null;
+  }, [selectedObjectId, objects]);
 
   return (
     <MapContainer
@@ -68,8 +87,78 @@ function Map() {
     >
       <TileLayer url={accessToken} />
       <MapController />
-      <ObjectMarkers objectLocations={objectLocations} />
+      <ObjectMarkers
+        objectLocations={objectLocations}
+        setSelectedObjectId={setSelectedObjectId}
+      />
+      <Dialog
+      // !! makes undefined to a boolean
+        open={!!selectedObjectId && !!selectedObject}
+        onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
+      >
+        {selectedObject && <ItemDetailDialog item={selectedObject} />}
+      </Dialog>
     </MapContainer>
+  );
+}
+
+function ItemDetailDialog({ item }: { item: Object }) {
+  const islostObject = isLostObject(item);
+
+  return (
+    <DialogContent className="sm:max-w-md">
+      <DialogHeader>
+        <DialogTitle>{item.itemName}</DialogTitle>
+        <DialogDescription>
+          {islostObject ? "Lost" : "Found"} item details
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="space-y-4 py-4">
+        <div className="flex items-start space-x-3">
+          <User className="h-5 w-5 text-gray-500 mt-0.5" />
+          <div>
+            <p className="font-medium">Person</p>
+            <p className="text-sm text-gray-500">{item.personName}</p>
+            <p className="text-sm text-gray-500">
+              {"No contact info provided"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start space-x-3">
+          <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
+          <div>
+            <p className="font-medium">Date</p>
+            <p className="text-sm text-gray-500">{item.date}</p>
+            <p className="text-sm text-gray-500">
+              Status: {islostObject ? "Lost" : "Found"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start space-x-3">
+          <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
+          <div>
+            <p className="font-medium">Location</p>
+            <p className="text-sm text-gray-500">
+              {item.location
+                ? `${item.location[0]}, ${item.location[1]}`
+                : "No location provided"}
+            </p>
+          </div>
+        </div>
+
+        <div className="pt-2">
+          <p className="font-medium">Description</p>
+          <p className="text-sm text-gray-600 mt-1">{item.itemDescription}</p>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <Button variant="outline">Contact</Button>
+      </div>
+    </DialogContent>
   );
 }
 
