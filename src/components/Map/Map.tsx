@@ -27,7 +27,7 @@ function MapController() {
     if (map) {
       map.setMaxBounds(bounds);
       if (selectedLocation) {
-        map.setView(selectedLocation, 18);
+        map.flyTo(selectedLocation, 18);
       } else {
         map.fitBounds(bounds);
       }
