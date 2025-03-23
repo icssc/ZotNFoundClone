@@ -1,4 +1,5 @@
 "use client";
+import { Providers } from "@/components/ContextProvider";
 import ItemDisplayList from "@/components/ItemDisplayList";
 import { Skeleton } from "@/components/ui/skeleton";
 import dynamic from "next/dynamic";
@@ -12,20 +13,22 @@ const LazyMap = dynamic(() => import("@/components/Map/Map"), {
 
 export default function Home() {
   return (
-    <div className="md:h-[85vh] w-full flex flex-col justify-center items-center p-4">
-      <main className="w-full p-12 h-full flex flex-row">
-        <div className="flex flex-row gap-10 h-full w-full">
-          <div className="w-8/10 h-full">
-            <LazyMap />
+    <Providers>
+      <div className="md:h-[85vh] w-full flex flex-col justify-center items-center p-4">
+        <main className="w-full p-12 h-full flex flex-row">
+          <div className="flex flex-row gap-10 h-full w-full">
+            <div className="w-8/10 h-full">
+              <LazyMap />
+            </div>
+            <div className="w-2/10 bg-gray-100 rounded-lg h-full">
+              <ItemDisplayList />
+            </div>
           </div>
-          <div className="w-2/10 bg-gray-100 rounded-lg h-full">
-            <ItemDisplayList />
-          </div>
+        </main>
+        <div className="text-white text-center container h-full">
+          Filter: The page into what it is
         </div>
-      </main>
-      <div className="text-white text-center container h-full">
-        Filter: The page into what it is
       </div>
-    </div>
+    </Providers>
   );
 }

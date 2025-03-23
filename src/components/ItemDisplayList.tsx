@@ -1,4 +1,5 @@
 "use client";
+// Also has to be a client compnonent because interaticitivity is needed with things like onClick and useState, but we could do ssr for getting the data here!
 import { isLostObject, type Object } from "@/lib/types";
 import { memo, useState } from "react";
 import { foundObjects, lostObjects } from "@/lib/fakeData";
@@ -11,29 +12,24 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, User } from "lucide-react";
+import { useMapContext } from "./ContextProvider";
 // TODO: Move up the items to global state with useContext, to 1. make re-renders easier to deal with, 2. make it easier to filter the items
 // ? https://tanstack.com/query/latest/docs/framework/react/guides/infinite-queries
 
 const ItemDisplayList = memo(function ItemDisplayList() {
+  const { setSelectedLocation } = useMapContext();
   const items: Object[] = (foundObjects as Object[]).concat(
     lostObjects as Object[]
   );
 
-  const moreitems: Object[] = [
-    ...items,
-    ...items,
-    ...items,
-    ...items,
-    ...items,
-    ...items,
-  ];
+  const moreitems: Object[] = items;
 
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Object | null>(null);
 
   const handleItemClick = (item: Object) => {
     setSelectedItem(item);
-    setOpen(true);
+    setSelectedLocation(item.location);
   };
 
   return (
@@ -44,6 +40,7 @@ const ItemDisplayList = memo(function ItemDisplayList() {
             key={`${item.itemId}-${index}`}
             item={item}
             onClick={() => handleItemClick(item)}
+            setOpen={setOpen}
           />
         ))}
       </div>
@@ -57,7 +54,15 @@ const ItemDisplayList = memo(function ItemDisplayList() {
 
 export default ItemDisplayList;
 
-function Item({ item, onClick }: { item: Object; onClick: () => void }) {
+function Item({
+  item,
+  onClick,
+  setOpen,
+}: {
+  item: Object;
+  onClick: () => void;
+  setOpen: (open: boolean) => void;
+}) {
   const islostObject = isLostObject(item);
 
   return (
@@ -83,6 +88,15 @@ function Item({ item, onClick }: { item: Object; onClick: () => void }) {
         <p className="text-sm text-gray-500 line-clamp-2">
           {item.itemDescription}
         </p>
+      </div>
+      <div className="flex flex-row justify-end">
+        <Button
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
+          {islostObject ? "I Found This" : "This Is Mine"}
+        </Button>
       </div>
     </div>
   );
@@ -141,7 +155,6 @@ function ItemDetailDialog({ item }: { item: Object }) {
 
       <div className="flex justify-end gap-2">
         <Button variant="outline">Contact</Button>
-        <Button>{islostObject ? "I Found This" : "This Is Mine"}</Button>
       </div>
     </DialogContent>
   );

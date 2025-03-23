@@ -1,15 +1,9 @@
 "use client";
-import dynamic from "next/dynamic";
 import { Marker } from "react-leaflet";
 import { DisplayObjects } from "@/lib/types";
 import { createClusterCustomIcon, iconsMap } from "@/lib/icons";
 import "leaflet/dist/leaflet.css";
-const MarkerClusterGroup = dynamic(
-  () => import("react-leaflet-cluster-4-next"),
-  {
-    ssr: false,
-  }
-);
+import MarkerClusterGroup from "react-leaflet-cluster-4-next";
 
 function ObjectMarkers({
   objectLocations,

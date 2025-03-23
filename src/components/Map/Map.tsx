@@ -6,11 +6,14 @@ import { centerPosition, mapBounds } from "@/lib/constants";
 import { lostObjects, foundObjects } from "@/lib/fakeData";
 import { mapObjectsToDisplayObjects, Object } from "@/lib/types";
 import ObjectMarkers from "./Markers";
+import { useMapContext } from "../ContextProvider";
 
-function SetBoundsRectangles() {
+function MapController() {
   const map = useMap();
+  const { selectedLocation } = useMapContext();
   const bounds = mapBounds;
   const transparentColor = { color: "#000", opacity: 0, fillOpacity: 0 };
+
   const outerHandlers = useMemo(
     () => ({
       click() {
@@ -22,9 +25,14 @@ function SetBoundsRectangles() {
 
   useEffect(() => {
     if (map) {
-      map.fitBounds(bounds);
+      map.setMaxBounds(bounds);
+      if (selectedLocation) {
+        map.setView(selectedLocation, 18);
+      } else {
+        map.fitBounds(bounds);
+      }
     }
-  }, [bounds, map]);
+  }, [map, selectedLocation, bounds]);
 
   return (
     <Rectangle
@@ -40,14 +48,18 @@ function Map() {
   if (!accessToken) {
     throw new Error("Mapbox access token is required");
   }
-  const objects: Object[] = (lostObjects as Object[]).concat(foundObjects);
-  const objectLocations = mapObjectsToDisplayObjects(objects);
+
+  // Replace this with useQuery call or taking it from context provider if I implemented it
+  const objectLocations = useMemo(() => {
+    const objects: Object[] = (lostObjects as Object[]).concat(foundObjects);
+    return mapObjectsToDisplayObjects(objects);
+  }, []);
+
   return (
     <MapContainer
       className="rounded-4xl z-0 h-full"
       center={centerPosition as [number, number]}
       zoom={17}
-      maxZoom={18}
       minZoom={16}
       maxBounds={mapBounds}
       zoomControl={false}
@@ -55,10 +67,10 @@ function Map() {
       maxBoundsViscosity={1.0}
     >
       <TileLayer url={accessToken} />
-      <SetBoundsRectangles />
+      <MapController />
       <ObjectMarkers objectLocations={objectLocations} />
     </MapContainer>
   );
 }
 
-export default Map;
+export { Map as default };
