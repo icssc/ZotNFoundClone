@@ -17,6 +17,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, User } from "lucide-react";
 
+// https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
+
 function MapController() {
   const map = useMap();
   const { selectedLocation } = useMapContext();
