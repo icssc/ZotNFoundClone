@@ -92,7 +92,7 @@ function Map() {
         setSelectedObjectId={setSelectedObjectId}
       />
       <Dialog
-      // !! makes undefined to a boolean
+        // !! makes undefined to a boolean
         open={!!selectedObjectId && !!selectedObject}
         onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
       >
