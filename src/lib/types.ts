@@ -10,6 +10,7 @@ interface BaseObject {
   personID: string;
   personEmail: string;
   personName: string;
+  bounty?: number;
 }
 
 // Object type definitions
