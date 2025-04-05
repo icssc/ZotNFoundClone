@@ -8,7 +8,6 @@
   - [ ] Profile Skeleton
 - [ ] Make a handle Scroll which does loading more data cleanly for infinite scroll without shifting and making it smooth and not jumpy
 - [ ] Make a search bar on the bottom along with filters on the bottom as well
-- [ ] Think and make a react state model so that state is shared nicely between components using React Context
 - [ ] Try to remove "use client" from as many components as possible since we want to take advantage of SSR as much as possible for SEO
   - [ ] Get Server Side Props for data fetching
 - [ ] Finishing about page
