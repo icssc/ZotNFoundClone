@@ -46,7 +46,7 @@ const ItemDisplayList = memo(function ItemDisplayList() {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        {selectedItem && <ItemDetailDialog item={selectedItem} />}
+        {/* {selectedItem && <ItemDetailDialog item={selectedItem} />} */}
       </Dialog>
     </>
   );

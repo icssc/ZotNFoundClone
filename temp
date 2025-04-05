@@ -1,6 +1,6 @@
 <!-- ITEMDISPLAYLIST.tsx -->
 
-function ItemDetailDialog({ item }: { item: Object }) {
+    function ItemDetailDialog({ item }: { item: Object }) {
 const islostObject = isLostObject(item);
 
 return (
