@@ -1,13 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
 // import { Button } from "@/components/ui/button";
-import ZotnFoundIG from "../../components/assets/images/zotnfound_ig.png"
-import ZotnFoundSmallLogo from "../../components/assets/images/ZotnFound_Small_Logo.png"
-import GetStartedImage from "../../components/assets/images/get_started.png"
-import NavigateAroundImage from "../../components/assets/images/navigate_around.png"
-import SearchForImage from "../../components/assets/images/search_for.png"
+import ZotnFoundIG from "../../../public/zotnfound_ig.png"
+import ZotnFoundSmallLogo from "../../../public/ZotnFound_Small_Logo.png"
+import GetStartedImage from "../../../public/get_started.png"
+import NavigateAroundImage from "../../../public/navigate_around.png"
+import SearchForImage from "../../../public/search_for.png"
 
 export default function About() {
+  const carousel = [
+    {
+      title: "Get Started - It's Simple & Easy",
+      description: "Log in with your UCI email and start listing lost & found items!",
+      image: GetStartedImage
+    },
+    {
+      title: "Navigate Around the Map",
+      description: "Effortlessly navigate UCI's interactive map to efficiently search for lost and found items.",
+      image: NavigateAroundImage
+    },
+    {
+      title: "Search for Lost & Found Items",
+      description: "Utilize the easy-to-use filter and search bar to look up specific items.",
+      image: SearchForImage
+    },
+  ]
+  
   return (
     <div className="text-center min-h-screen space-y-8 bg-slate-100">
       <div className="mx-4 md:mx-32 py-8 space-y-8">
@@ -59,23 +77,7 @@ export default function About() {
   <h1 className="text-2xl font-bold text-center mb-6">Explore how ZotnFound works</h1>
 
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-  {[
-    {
-      title: "Get Started - It's Simple & Easy",
-      description: "Log in with your UCI email and start listing lost & found items!",
-      image: GetStartedImage
-    },
-    {
-      title: "Navigate Around the Map",
-      description: "Effortlessly navigate UCI's interactive map to efficiently search for lost and found items.",
-      image: NavigateAroundImage
-    },
-    {
-      title: "Search for Lost & Found Items",
-      description: "Utilize the easy-to-use filter and search bar to look up specific items.",
-      image: SearchForImage
-    },
-  ].map((item, idx) => (
+  {carousel.map((item, idx) => (
     <div
       key={idx}
       className="w-full max-w-sm px-4 py-4 rounded-md shadow-lg transition-transform duration-300 hover:scale-105 bg-white flex flex-col items-center"
