@@ -1,8 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 
+interface CarouselItem {
+  title: string;
+  description: string;
+  image: string;
+  alt: string;
+}
+
 export default function About() {
-  const carousel = [
+  const carousel: CarouselItem[] = [
     {
       title: "Get Started - It's Simple & Easy",
       description:
