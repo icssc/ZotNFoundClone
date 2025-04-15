@@ -1,0 +1,19 @@
+"table_name","column_name","data_type","is_nullable","column_default"
+"items","id","integer","NO","nextval('items_id_seq'::regclass)"
+"items","name","character varying","YES",NULL
+"items","description","character varying","YES",NULL
+"items","type","character varying","YES",NULL
+"items","location","ARRAY","YES",NULL
+"items","date","character varying","YES",NULL
+"items","itemdate","character varying","YES",NULL
+"items","email","character varying","YES",NULL
+"items","image","character varying","YES",NULL
+"items","islost","boolean","YES",NULL
+"items","isresolved","boolean","YES",NULL
+"items","ishelped","boolean","YES",NULL
+"items","is_deleted","boolean","YES","false"
+"leaderboard","email","character varying","NO",NULL
+"leaderboard","points","integer","YES",NULL
+"leaderboard","subscription","boolean","YES",NULL
+"searches","keyword","character varying","NO",NULL
+"searches","emails","ARRAY","YES",NULL

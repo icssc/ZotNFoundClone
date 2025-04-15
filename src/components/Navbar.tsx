@@ -13,13 +13,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-// import { TestAction } from "@/server/actions/test/test";
 
 export default function Navbar() {
-//   const handleTest = async () => {
-//     await TestAction();
-//   };
-
   return (
     <nav className="bg-black text-white w-full py-4 px-4 md:px-6">
       <div className="flex items-center justify-between">
