@@ -4,18 +4,13 @@ import { MapContainer, Rectangle, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { centerPosition, mapBounds } from "@/lib/constants";
 import { lostObjects, foundObjects } from "@/lib/fakeData";
-import { mapObjectsToDisplayObjects, Object, isLostObject } from "@/lib/types";
+import { mapObjectsToDisplayObjects, Object } from "@/lib/types";
 import ObjectMarkers from "./Markers";
 import { useMapContext } from "../ContextProvider";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, User } from "lucide-react";
+import { ItemDetailDialog } from "@/components/Item/DetailedDialog";
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
 
@@ -101,66 +96,6 @@ function Map() {
         {selectedObject && <ItemDetailDialog item={selectedObject} />}
       </Dialog>
     </MapContainer>
-  );
-}
-
-function ItemDetailDialog({ item }: { item: Object }) {
-  const islostObject = isLostObject(item);
-
-  return (
-    <DialogContent className="sm:max-w-md">
-      <DialogHeader>
-        <DialogTitle>{item.itemName}</DialogTitle>
-        <DialogDescription>
-          {islostObject ? "Lost" : "Found"} item details
-        </DialogDescription>
-      </DialogHeader>
-
-      <div className="space-y-4 py-4">
-        <div className="flex items-start space-x-3">
-          <User className="h-5 w-5 text-gray-500 mt-0.5" />
-          <div>
-            <p className="font-medium">Person</p>
-            <p className="text-sm text-gray-500">{item.personName}</p>
-            <p className="text-sm text-gray-500">
-              {"No contact info provided"}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start space-x-3">
-          <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
-          <div>
-            <p className="font-medium">Date</p>
-            <p className="text-sm text-gray-500">{item.date}</p>
-            <p className="text-sm text-gray-500">
-              Status: {islostObject ? "Lost" : "Found"}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start space-x-3">
-          <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
-          <div>
-            <p className="font-medium">Location</p>
-            <p className="text-sm text-gray-500">
-              {item.location
-                ? `${item.location[0]}, ${item.location[1]}`
-                : "No location provided"}
-            </p>
-          </div>
-        </div>
-
-        <div className="pt-2">
-          <p className="font-medium">Description</p>
-          <p className="text-sm text-gray-600 mt-1">{item.itemDescription}</p>
-        </div>
-      </div>
-
-      <div className="flex justify-end gap-2">
-        <Button variant="outline">Contact</Button>
-      </div>
-    </DialogContent>
   );
 }
 

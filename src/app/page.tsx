@@ -1,6 +1,6 @@
 "use client";
 import { Providers } from "@/components/ContextProvider";
-import ItemDisplayList from "@/components/ItemDisplayList";
+import ItemDisplayList from "@/components/Item/ItemDisplayList";
 import { Skeleton } from "@/components/ui/skeleton";
 import dynamic from "next/dynamic";
 
