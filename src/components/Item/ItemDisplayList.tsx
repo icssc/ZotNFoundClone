@@ -5,7 +5,9 @@ import { useState } from "react";
 import { foundObjects, lostObjects } from "@/lib/fakeData";
 import { Dialog } from "@/components/ui/dialog";
 import { useMapContext } from "../ContextProvider";
-import { ItemDetailDialog, Item } from "@/components/Item/DetailedDialog";
+import { DetailedDialog } from "@/components/Item/DetailedDialog";
+import Item from "@/components/Item/Item";
+
 // TODO: Move up the items to global state with useContext, to 1. make re-renders easier to deal with, 2. make it easier to filter the items
 // ? https://tanstack.com/query/latest/docs/framework/react/guides/infinite-queries
 
@@ -37,7 +39,7 @@ function ItemDisplayList() {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        {selectedItem && <ItemDetailDialog item={selectedItem} />}
+        {selectedItem && <DetailedDialog item={selectedItem} />}
       </Dialog>
     </>
   );

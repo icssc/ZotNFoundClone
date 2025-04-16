@@ -10,7 +10,7 @@ import { useMapContext } from "../ContextProvider";
 import {
   Dialog,
 } from "@/components/ui/dialog";
-import { ItemDetailDialog } from "@/components/Item/DetailedDialog";
+import { DetailedDialog } from "@/components/Item/DetailedDialog";
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
 
@@ -93,7 +93,7 @@ function Map() {
         open={!!selectedObjectId && !!selectedObject}
         onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
       >
-        {selectedObject && <ItemDetailDialog item={selectedObject} />}
+        {selectedObject && <DetailedDialog item={selectedObject} />}
       </Dialog>
     </MapContainer>
   );
