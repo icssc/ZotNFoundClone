@@ -46,13 +46,42 @@ const ItemDisplayList = memo(function ItemDisplayList() {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        {/* {selectedItem && <ItemDetailDialog item={selectedItem} />} */}
+        {selectedItem && <ItemDetailDialog item={selectedItem} />}
       </Dialog>
     </>
   );
 });
 
 export default ItemDisplayList;
+
+function ItemDetailDialog({ item }: { item: Object }) {
+  const islostObject = isLostObject(item);
+  return (
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{item.itemName}</DialogTitle>
+        <DialogDescription>
+          {islostObject ? "Lost" : "Found"} by {item.personName}
+        </DialogDescription>
+      </DialogHeader>
+      <div className="flex flex-col space-y-4">
+        <div className="flex flex-row space-x-2">
+          <User size={16} />
+          <p>{item.personName}</p>
+        </div>
+        <div className="flex flex-row space-x-2">
+          <Calendar size={16} />
+          <p>{item.date}</p>
+        </div>
+        <div className="flex flex-row space-x-2">
+          <MapPin size={16} />
+          <p>{item.location}</p>
+        </div>
+        <p>{item.itemDescription}</p>
+      </div>
+    </DialogContent>
+  );
+}
 
 function Item({
   item,
