@@ -5,13 +5,13 @@
 
 declare module "sst" {
   export interface Resource {
-    "ZotNFoundClone": {
-      "type": "sst.aws.Nextjs"
-      "url": string
-    }
+    ZotNFoundClone: {
+      type: "sst.aws.Nextjs";
+      url: string;
+    };
   }
 }
 /// <reference path="sst-env.d.ts" />
 
-import "sst"
-export {}
+import "sst";
+export {};

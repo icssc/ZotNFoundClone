@@ -7,9 +7,7 @@ import { lostObjects, foundObjects } from "@/lib/fakeData";
 import { mapObjectsToDisplayObjects, Object } from "@/lib/types";
 import ObjectMarkers from "./Markers";
 import { useMapContext } from "../ContextProvider";
-import {
-  Dialog,
-} from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
