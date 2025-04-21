@@ -1,4 +1,3 @@
-"use client";
 import { Marker } from "react-leaflet";
 import { DisplayObjects } from "@/lib/types";
 import { createClusterCustomIcon, iconsMap } from "@/lib/icons";

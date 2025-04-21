@@ -7,9 +7,7 @@ import { lostObjects, foundObjects } from "@/lib/fakeData";
 import { mapObjectsToDisplayObjects, Object } from "@/lib/types";
 import ObjectMarkers from "./Markers";
 import { useMapContext } from "../ContextProvider";
-import {
-  Dialog,
-} from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
@@ -52,10 +50,6 @@ function MapController() {
 function Map() {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
   const [selectedObjectId, setSelectedObjectId] = useState<string>();
-  if (!accessToken) {
-    throw new Error("Mapbox access token is required");
-  }
-
   // Replace this with useQuery call or taking it from context provider if I implemented it
   const objects = useMemo(() => {
     const objects: Object[] = (lostObjects as Object[]).concat(foundObjects);

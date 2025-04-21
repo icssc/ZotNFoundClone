@@ -12,7 +12,6 @@ export default function Item({
   setOpen: (open: boolean) => void;
 }) {
   const islostObject = isLostObject(item);
-
   return (
     <div
       onClick={onClick}
