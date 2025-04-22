@@ -21,6 +21,9 @@ export default function ItemsReadTest() {
 
     if (isNaN(id)) {
       setItemError("Invalid ID format.");
+      setItem(null);
+      setEmail("")
+      setEmailError("");
       return;
     }
 
