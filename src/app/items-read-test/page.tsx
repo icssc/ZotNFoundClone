@@ -3,29 +3,46 @@
 import { getAllItems, getItem, getItemEmail } from "@/server/data/item/queries";
 import { useEffect, useState } from "react";
 import { db } from "@/db";
-import { items } from "@/db/schema";
+import { Item, items } from "@/db/schema";
+import { isErrorResponse } from "@/lib/utils";
 
 export default function ItemsReadTest() {
-  const [item, setItem] = useState<string>("");
+  const [item, setItem] = useState<Item | null>();
+  const [email, setEmail] = useState<string>("");
   const [itemId, setItemId] = useState<string>("");
 
-  const [email, setEmail] = useState<string>("");
+  const [itemError, setItemError] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
+  
 
   const handleItemSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const id = parseInt(itemId);
-    if (!isNaN(id)) {
-      try {
-        const itemResponse = await getItem(id);
-        const emailResponse = await getItemEmail(id);
-        setEmail(emailResponse);
-        setItem(itemResponse);
-      } catch (err) {
-        console.error("Failed to fetch email:", err);
-      }
+
+    if (isNaN(id)) {
+      setItemError("Invalid ID format.");
+      return;
+    }
+
+    const itemResponse = await getItem(id);
+    const emailResponse = await getItemEmail(id);
+
+    if (isErrorResponse(itemResponse)) {
+      setItem(null);
+      setItemError(itemResponse.error);
+    } else {
+      setItem(itemResponse);
+      setItemError("");
+    }
+
+    if (isErrorResponse(emailResponse)) {
+      setEmail("");
+      setEmailError(emailResponse.error);
+    } else {
+      setEmail(emailResponse);
+      setEmailError("");
     }
   };
-
 
   return (
     <div className="flex min-h-screen items-center bg-gray-900 px-4 space-x-8">
@@ -42,6 +59,7 @@ export default function ItemsReadTest() {
             />
           </form>
           {email && <p className="text-green-400"><strong>Email: </strong>{email}</p>}
+          {emailError && <p className="text-red-400">{emailError}</p>}
           
           {item && (
             <div className="text-green-400">
@@ -55,12 +73,7 @@ export default function ItemsReadTest() {
               </ul>
             </div>
           )}
-          {item === undefined && itemId && (
-            <p className="text-red-400">No item found for that ID.</p>
-          )}
-          {email === undefined && itemId && (
-            <p className="text-red-400">No email found for that ID.</p>
-          )}
+          {itemError && <p className="text-red-400">{itemError}</p>}
         </div>
       
       </div>

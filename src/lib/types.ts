@@ -66,3 +66,8 @@ export function mapObjectsToDisplayObjects(
 ): DisplayObjects[] {
   return objects.map(mapObjectToDisplayObject);
 }
+
+
+export type ErrorResponse = {
+  error : string;
+}

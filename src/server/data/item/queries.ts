@@ -1,42 +1,49 @@
 "use server";
 
 import { db } from "@/db";
-import { items } from "@/db/schema";
-import { Item } from "@/db/schema";
+import { items, Item } from "@/db/schema";
 import { eq } from 'drizzle-orm';
+import { ErrorResponse } from "@/lib/types";
 
 
 
-export async function getAllItems(): Promise<Item[]> {
+export async function getAllItems(): Promise<Item[] | ErrorResponse> {
   try {
     const result = await db.select().from(items);
     return result;
-  } catch (error) {
-    console.error("Error fetching items:", error);
-    throw error;
+  } catch (err) {
+    return { error : `Error fetching item: ${err}`};
   }
 }
 
-export async function getItem(id: number): Promise<Item | undefined> {
+export async function getItem(id: number): Promise<Item | ErrorResponse> {
   try {
     const result = await db.select().from(items).where(eq(items.id, id));
+
+    if (result[0] === null || result[0] === undefined) {
+      return {error: "Item not found for the given ID."};
+    }
+
     return result[0];
-  } catch (error) {
-    console.error("Error fetching item:", error);
-    throw error;
+  } catch (err) {
+    return { error : `Error fetching item: ${err}`};
   }
 }
 
-export async function getItemEmail(id: number): Promise<string | null> {
+export async function getItemEmail(id: number): Promise<string | ErrorResponse> {
   try {
     const result = await db
       .select({ email: items.email })
       .from(items)
       .where(eq(items.id, id));
 
-    return result[0]?.email;
-  } catch (error) {
-    console.error("Error fetching item email:", error);
-    throw error;
+    const email = result[0]?.email;
+    
+    if (email === null || email === undefined) {
+      return { error : "Email not found for the given item ID."};
+    }
+    return email;
+  } catch (err) {
+    return { error : `Error fetching item: ${err}`};
   }
 }
