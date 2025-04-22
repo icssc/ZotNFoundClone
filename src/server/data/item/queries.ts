@@ -9,7 +9,7 @@ import { ErrorResponse } from "@/lib/types";
 
 export async function getAllItems(): Promise<Item[] | ErrorResponse> {
   try {
-    const result = await db.select().from(items);
+    const result = await db.query.items.findMany();
     return result;
   } catch (err) {
     return { error : `Error fetching item: ${err}`};
@@ -18,13 +18,15 @@ export async function getAllItems(): Promise<Item[] | ErrorResponse> {
 
 export async function getItem(id: number): Promise<Item | ErrorResponse> {
   try {
-    const result = await db.select().from(items).where(eq(items.id, id));
+    const result = await db.query.items.findFirst({
+      where: eq(items.id, id)
+    })
 
-    if (result[0] === null || result[0] === undefined) {
+    if (result === null || result === undefined) {
       return {error: "Item not found for the given ID."};
     }
 
-    return result[0];
+    return result;
   } catch (err) {
     return { error : `Error fetching item: ${err}`};
   }
@@ -32,13 +34,15 @@ export async function getItem(id: number): Promise<Item | ErrorResponse> {
 
 export async function getItemEmail(id: number): Promise<string | ErrorResponse> {
   try {
-    const result = await db
-      .select({ email: items.email })
-      .from(items)
-      .where(eq(items.id, id));
+    const result = await db.query.items.findFirst({
+        columns: {
+          email: true, // Select only the email column
+          },
+        where: eq(items.id, id), // Filter by the provided id
+    });
 
-    const email = result[0]?.email;
-    
+    const email = result?.email;
+
     if (email === null || email === undefined) {
       return { error : "Email not found for the given item ID."};
     }
