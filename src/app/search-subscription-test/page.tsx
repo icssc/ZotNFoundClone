@@ -4,7 +4,7 @@ import { createKeywordSubscription } from "@/server/actions/search/create/action
 import { useState } from "react";
 import { KeywordSubscription } from "@/lib/types";
 import { removeKeywordSubscription } from "@/server/actions/search/remove/action";
-
+import { findEmailsSubscribedToKeyword } from "@/server/actions/search/lookup/action";
 export default function SearchSubscriptionTest() {
   const [subscriptionAdded, setSubscriptionAdded] = useState(false);
   const [subscriptionRemoved, setSubscriptionRemoved] = useState(false);
@@ -57,6 +57,19 @@ export default function SearchSubscriptionTest() {
       console.error(err);
       setSubscriptionRemoved(false);
     }
+  };
+
+  const handleCheckKeywordEmails = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault(); // Prevent default form submission
+
+    const formData = new FormData(e.currentTarget);
+    const keyword = formData.get("keyword") as string;
+
+    const result = await findEmailsSubscribedToKeyword(keyword);
+
+    console.log(result);
   };
 
   return (
@@ -123,6 +136,25 @@ export default function SearchSubscriptionTest() {
         {subscriptionRemoved && (
           <p className="text-red-500">Subscription removed successfully!</p>
         )}
+      </form>
+
+      <form
+        onSubmit={handleCheckKeywordEmails}
+        className="flex flex-col gap-4 items-center bg-white rounded-xl border-2 border-gray-200 p-4 w-1/2 mx-auto mt-4"
+      >
+        <input
+          name="keyword"
+          type="text"
+          className="p-2 rounded-md border border-gray-300 focus:border-blue-500"
+          placeholder="keyword"
+          required
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white p-2 rounded-md border-2 border-blue-600 hover:border-blue-700"
+        >
+          check
+        </button>
       </form>
     </div>
   );
