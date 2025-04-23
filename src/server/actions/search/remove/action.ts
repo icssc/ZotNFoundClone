@@ -10,21 +10,44 @@ export async function removeKeywordSubscription(
 ) {
   const { keyword, email } = subscription;
 
-  // Retrieve emails associated with the given keyword from db | Can be empty if the keyword doesn't exist yet
-  const emailsSubscribedToKeyword = await db
-    .select({ emails: searches.emails })
-    .from(searches)
-    .where(eq(searches.keyword, keyword));
+  try {
+    // Retrieve emails associated with the given keyword from db | Can be empty if the keyword doesn't exist yet
+    const emailsSubscribedToKeyword = await db.query.searches.findMany({
+      columns: {
+        emails: true,
+      },
+      where: eq(searches.keyword, keyword),
+    });
 
-  const existingEmails = emailsSubscribedToKeyword[0].emails ?? [];
+    const existingEmails = emailsSubscribedToKeyword[0]?.emails ?? [];
 
-  // Unsubscribe user from keyword
-  const [updatedSubscriptions] = await db
-    .update(searches)
-    .set({ emails: existingEmails.filter((e) => e !== email) })
-    .where(eq(searches.keyword, keyword))
-    .returning();
+    // If the keyword doesn't exist, return an error indicating so
+    if (existingEmails.length === 0) {
+      console.log("Keyword '" + keyword + "' does not exist");
+      return { error: "Keyword '" + keyword + "' does not exist" };
+    }
 
-  console.log("UPDATED SUBSCRIPTIONS AFTER REMOVAL:", updatedSubscriptions);
-  return { success: updatedSubscriptions };
+    try {
+      // Unsubscribe user from keyword
+      const [updatedSubscriptions] = await db
+        .update(searches)
+        .set({ emails: existingEmails.filter((e) => e !== email) })
+        .where(eq(searches.keyword, keyword))
+        .returning();
+
+      console.log("UPDATED SUBSCRIPTIONS AFTER REMOVAL:", updatedSubscriptions);
+      return { success: updatedSubscriptions };
+    } catch (error) {
+      return {
+        error:
+          "Cannot unsubscribe email '" +
+          email +
+          "' from keyword '" +
+          keyword +
+          "'",
+      };
+    }
+  } catch (error) {
+    return { error: "Could not retrieve emails for keyword '" + keyword + "'" };
+  }
 }
