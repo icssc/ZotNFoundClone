@@ -3,19 +3,25 @@
 import { KeyRound, NotebookPen } from "lucide-react";
 import { useState } from "react";
 import { createItem } from "@/server/actions/item/create/action";
+import { Input } from '@/components/ui/input';
+import { NewItem } from "@/db/schema";
 
 export default function ItemsPost() {
-  const [newItem, setNewItem] = useState({
+
+  const initialNewItem: NewItem = {
+    name: "",
+    description: "",
+    date: "",
     image: "",
-    islost: true,
-    itemName: "",
-    itemDescription: "",
-    itemDate: "",
-  });
+    islost: false,
+  };
+
+  const [newItem, setNewItem] = useState<NewItem>(initialNewItem);
 
   const addItem = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const result = await createItem(newItem);
+    await createItem(newItem);
+    setNewItem(initialNewItem);
   };
 
   const handleChange = (
@@ -24,7 +30,7 @@ export default function ItemsPost() {
     const { name, value } = e.target;
     setNewItem((prev) => ({
       ...prev,
-      [name]: value,
+      [name as keyof NewItem]: value,
     }));
   };
 
@@ -36,14 +42,13 @@ export default function ItemsPost() {
           <label htmlFor="name" className="block text-sm font-medium">
             Item Name
           </label>
-          <input
+          <Input
             type="text"
             id="name"
-            name="itemName"
+            name="name"
             placeholder="Ex: AirPods Pro, ..."
-            value={newItem.itemName}
+            value={newItem.name ?? ''}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 text-white rounded-md p-2"
             required
           />
         </div>
@@ -56,14 +61,12 @@ export default function ItemsPost() {
           >
             Description
           </label>
-          <textarea
+          <Input
             id="description"
-            name="itemDescription"
+            name="description"
             placeholder="Ex: Lost in DBH 1600, ..."
-            value={newItem.itemDescription}
+            value={newItem.description ?? ''}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 text-white rounded-md p-2"
-            rows={4}
             required
           />
         </div>
@@ -76,11 +79,11 @@ export default function ItemsPost() {
             Status
           </label>
           <div className="w-10">
-            <input
+            <Input
               type="checkbox"
               name="islost"
               id="status-toggle"
-              checked={newItem.islost}
+              checked={newItem.islost ?? false}
               onChange={(e) =>
                 setNewItem({
                   ...newItem,
@@ -114,18 +117,17 @@ export default function ItemsPost() {
           >
             Date
           </label>
-          <input
+          <Input
             type="date"
-            name="itemDate"
+            name="date"
             id="date"
-            value={newItem.itemDate}
+            value={newItem.date ?? ''}
             onChange={(e) =>
               setNewItem({
                 ...newItem,
-                itemDate: e.target.value,
+                date: e.target.value,
               })
             }
-            className="mt-1 block w-full p-2  border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             required
           />
         </div>
