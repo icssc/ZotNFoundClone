@@ -36,6 +36,14 @@ export type User = {
   picture: string;
 };
 
+export type ItemPostParams = {
+  image: string;
+  islost: boolean;
+  itemName: string;
+  itemDescription: string;
+  itemDate: string;
+};
+
 // Display object interface
 export interface DisplayObjects {
   object_id: string;
