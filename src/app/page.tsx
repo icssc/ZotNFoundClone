@@ -1,15 +1,9 @@
 "use client";
 import { Providers } from "@/components/ContextProvider";
 import ItemDisplayList from "@/components/Item/ItemDisplayList";
-import { Skeleton } from "@/components/ui/skeleton";
-import dynamic from "next/dynamic";
-
+import { LazyMap } from "@/components/Map/LazyMap";
 // https://stackoverflow.com/questions/77978480/nextjs-with-react-leaflet-ssr-webpack-window-not-defined-icon-not-found
 // https://nextjs.org/docs/pages/building-your-application/optimizing/lazy-loading
-const LazyMap = dynamic(() => import("@/components/Map/Map"), {
-  ssr: false,
-  loading: () => <Skeleton className="h-full rounded-4xl" />,
-});
 
 export default function Home() {
   return (

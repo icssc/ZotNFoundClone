@@ -21,3 +21,9 @@
 ## Potential Future Overkill Features & Optimizations
 
 - [ ] Maybe in the future adding convex for an even better sync layer along with tanstack query (already using tanstack/react-query)
+
+[Interleaving Causing second request](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#interleaving-server-and-client-components)
+[Why Context Providers work?](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#interleaving-server-and-client-components)
+[use Hook React](https://nextjs.org/docs/app/guides/single-page-applications#using-reacts-use-within-a-context-provider)
+
+We might not need react-query since we only want revalidation of state really, no caching needed I don't think but a decision to be made later of only using [swr](https://nextjs.org/docs/app/guides/single-page-applications#spas-with-swr)
