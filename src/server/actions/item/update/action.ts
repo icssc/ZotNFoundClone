@@ -8,10 +8,16 @@ import type { ItemUpdateParams } from "@/lib/types";
 export default async function updateItem(params: ItemUpdateParams) {
 	const { itemId, isHelped, isResolved } = params;
 
-	const item = await db
-		.update(items)
-		.set({ isresolved: isResolved, ishelped: isHelped })
-		.where(eq(items.id, itemId))
-		.returning();
-	return item;
+	try {
+		const item = await db
+			.update(items)
+			.set({ isresolved: isResolved, ishelped: isHelped })
+			.where(eq(items.id, itemId))
+			.returning();
+		return item;
+	}
+	catch (error) {
+		console.error("Error updating item:", error);
+		return null;
+	}
 }

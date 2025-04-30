@@ -1,19 +1,40 @@
 "use client"
+import { useState } from "react";
+
 import { ItemDeleteParams, ItemUpdateParams } from "@/lib/types";
 import updateItem from "@/server/actions/item/update/action";
 import deleteItem from "@/server/actions/item/delete/action";
 import { Providers } from "@/components/ContextProvider";
+
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 
 export default function ItemsManagement() {
+  const [failedAction, setFailedAction] = useState(false);
   const handleUpdate = async (updateParams: ItemUpdateParams) => {
     const result = await updateItem(updateParams);
+    if (result === null) {
+      setFailedAction(true);
+      return;
+    }
     console.log(result)
   };
 
   const handleDelete = async (deleteParams: ItemDeleteParams) => {
     const result = await deleteItem(deleteParams);
+    if (result === null) {
+      setFailedAction(true);
+      return;
+    }
     console.log(result)
   };
 
@@ -22,6 +43,10 @@ export default function ItemsManagement() {
     <Providers>
       <div className="text-white h-full w-full flex justify-center">
         <div className="flex gap-2 h-full flex-col">
+          <Button onClick={() => {
+            setFailedAction((prev) => !prev);
+          }}>Test Dialog</Button>
+
           <form className="flex flex-col" onSubmit={(e) => {
             e.preventDefault();
             const form = e.target as HTMLFormElement;
@@ -47,6 +72,14 @@ export default function ItemsManagement() {
             <input type="number" name="itemId" placeholder="Item ID" required />
             <Button variant="destructive" type="submit">Delete</Button>
           </form>
+          <Dialog open={failedAction} onOpenChange={setFailedAction}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Database Error</DialogTitle>
+              </DialogHeader>
+              <p>The database is currently down</p>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </Providers >
