@@ -75,6 +75,10 @@ export function mapObjectsToDisplayObjects(
   return objects.map(mapObjectToDisplayObject);
 }
 
+export interface KeywordSubscription {
+  keyword: string;
+  email: string;
+}
 
 export type ErrorResponse = {
   error : string;
