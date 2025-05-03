@@ -81,5 +81,5 @@ export interface KeywordSubscription {
 }
 
 export type ErrorResponse = {
-  error : string;
-}
+  error: string;
+};

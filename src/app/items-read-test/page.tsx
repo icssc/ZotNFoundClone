@@ -13,7 +13,6 @@ export default function ItemsReadTest() {
 
   const [itemError, setItemError] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
-  
 
   const handleItemSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,7 +21,7 @@ export default function ItemsReadTest() {
     if (isNaN(id)) {
       setItemError("Invalid ID format.");
       setItem(null);
-      setEmail("")
+      setEmail("");
       setEmailError("");
       return;
     }
@@ -61,9 +60,14 @@ export default function ItemsReadTest() {
               placeholder="Enter item ID"
             />
           </form>
-          {email && <p className="text-green-400"><strong>Email: </strong>{email}</p>}
+          {email && (
+            <p className="text-green-400">
+              <strong>Email: </strong>
+              {email}
+            </p>
+          )}
           {emailError && <p className="text-red-400">{emailError}</p>}
-          
+
           {item && (
             <div className="text-green-400">
               <p>Item:</p>
@@ -78,7 +82,6 @@ export default function ItemsReadTest() {
           )}
           {itemError && <p className="text-red-400">{itemError}</p>}
         </div>
-      
       </div>
     </div>
   );

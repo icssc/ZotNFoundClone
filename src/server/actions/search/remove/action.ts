@@ -13,9 +13,8 @@ export async function removeKeywordSubscription(
   let existingEmails: string[] = [];
 
   // Retrieve emails associated with the given keyword from db | Can be empty if the keyword doesn't exist yet
-  const emailsSubscribedToKeyword = await findEmailsSubscribedToKeyword(
-    keyword
-  );
+  const emailsSubscribedToKeyword =
+    await findEmailsSubscribedToKeyword(keyword);
 
   if (emailsSubscribedToKeyword.success) {
     existingEmails = emailsSubscribedToKeyword.success.emails ?? [];

@@ -3,11 +3,10 @@
 import { KeyRound, NotebookPen } from "lucide-react";
 import { useState } from "react";
 import { createItem } from "@/server/actions/item/create/action";
-import { Input } from '@/components/ui/input';
+import { Input } from "@/components/ui/input";
 import { NewItem } from "@/db/schema";
 
 export default function ItemsPost() {
-
   const initialNewItem: NewItem = {
     name: "",
     description: "",
@@ -47,7 +46,7 @@ export default function ItemsPost() {
             id="name"
             name="name"
             placeholder="Ex: AirPods Pro, ..."
-            value={newItem.name ?? ''}
+            value={newItem.name ?? ""}
             onChange={handleChange}
             required
           />
@@ -65,7 +64,7 @@ export default function ItemsPost() {
             id="description"
             name="description"
             placeholder="Ex: Lost in DBH 1600, ..."
-            value={newItem.description ?? ''}
+            value={newItem.description ?? ""}
             onChange={handleChange}
             required
           />
@@ -121,7 +120,7 @@ export default function ItemsPost() {
             type="date"
             name="date"
             id="date"
-            value={newItem.date ?? ''}
+            value={newItem.date ?? ""}
             onChange={(e) =>
               setNewItem({
                 ...newItem,

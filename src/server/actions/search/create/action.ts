@@ -13,9 +13,8 @@ export async function createKeywordSubscription(
   let existingEmails: string[] = [];
 
   // Retrieve emails associated with the given keyword from db | Can be empty if the keyword doesn't exist yet
-  const emailsSubscribedToKeyword = await findEmailsSubscribedToKeyword(
-    keyword
-  );
+  const emailsSubscribedToKeyword =
+    await findEmailsSubscribedToKeyword(keyword);
 
   // Get the first result's emails array, or empty array if no results
   if (emailsSubscribedToKeyword.success) {
