@@ -1,40 +1,37 @@
 "use server";
 
 import { db } from "@/db";
-import { searches } from "@/db/schema";
+import { searches, Search } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { KeywordSubscription } from "@/lib/types";
-import { findEmailsSubscribedToKeyword } from "../lookup/action";
+import { ActionResult, isError, KeywordSubscription } from "@/lib/types";
+import { findEmailsSubscribedToKeyword } from "@/server/actions/search/lookup/action";
 
 export async function removeKeywordSubscription(
   subscription: KeywordSubscription
-) {
+): Promise<ActionResult<Search>> {
   const { keyword, email } = subscription;
-  let existingEmails: string[] = [];
+  const lookup = await findEmailsSubscribedToKeyword(keyword);
 
-  // Retrieve emails associated with the given keyword from db | Can be empty if the keyword doesn't exist yet
-  const emailsSubscribedToKeyword =
-    await findEmailsSubscribedToKeyword(keyword);
-
-  if (emailsSubscribedToKeyword.success) {
-    existingEmails = emailsSubscribedToKeyword.success.emails ?? [];
+  if (isError(lookup)) {
+    return { error: `Error fetching emails for keyword: ${lookup.error}` };
   }
-  try {
-    if (existingEmails.includes(email)) {
-      // Unsubscribe user from keyword
-      const [updatedSubscriptions] = await db
-        .update(searches)
-        .set({ emails: existingEmails.filter((e) => e !== email) })
-        .where(eq(searches.keyword, keyword))
-        .returning();
 
-      console.log("UPDATED SUBSCRIPTIONS AFTER REMOVAL:", updatedSubscriptions);
-      return { success: updatedSubscriptions };
-    } else {
-      console.log("EMAIL NOT SUBSCRIBED TO KEYWORD (remove):", email);
-      return { error: "Email not subscribed to keyword: " + keyword };
-    }
+  const existingEmails = lookup.success.emails || [];
+  if (!existingEmails.includes(email)) {
+    return { error: "Email was not subscribed to this keyword." };
+  }
+
+  const updatedEmails = existingEmails.filter((e) => e !== email);
+
+  try {
+    const [result] = await db
+      .update(searches)
+      .set({ emails: updatedEmails })
+      .where(eq(searches.keyword, keyword))
+      .returning();
+
+    return { success: result };
   } catch (error) {
-    return { error: "Could not remove keyword subscription" };
+    return { error: `Error removing subscription for keyword: ${error}` };
   }
 }

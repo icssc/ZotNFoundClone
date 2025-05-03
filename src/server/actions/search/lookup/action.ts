@@ -3,21 +3,25 @@
 import { db } from "@/db";
 import { searches } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { KeywordSubscription } from "@/lib/types";
+import { ActionResult } from "@/lib/types";
 
-export async function findEmailsSubscribedToKeyword(keyword: string) {
+export async function findEmailsSubscribedToKeyword(
+  keyword: string
+): Promise<ActionResult<{ emails: string[] | null }>> {
   try {
-    const emailsSubscribedToKeyword = await db.query.searches.findMany({
+    const [emailsSubscribedToKeyword] = await db.query.searches.findMany({
       columns: {
         emails: true,
       },
       where: eq(searches.keyword, keyword),
     });
-    console.log("EMAILS FOUND (lookup):", emailsSubscribedToKeyword[0]);
-    return { success: emailsSubscribedToKeyword[0] };
+    if (!emailsSubscribedToKeyword) {
+      return { error: "Keyword not found." };
+    }
+    return { success: emailsSubscribedToKeyword };
   } catch (error) {
     return {
-      error: "Keyword '" + keyword + "' not found",
+      error: `Error fetching emails subscribed to keyword: ${error}`,
     };
   }
 }
