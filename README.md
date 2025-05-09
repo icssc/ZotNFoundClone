@@ -14,7 +14,7 @@
 - [ ] Finishing about page
 - [ ] Finishing contact page
 - [x] Adding markers and clustering
-- [ ] Making it so that it prompts user that chrome will have the best experience
+- [ ] Making it so that it prompts user that chrome will have the best experience (since the rasterization is better in chrome)
 - [ ] Making it so that it prompts user that they can add it to their home screen
 - [x] Changing the dialog to a shared dialog with data passed in changing the content
 

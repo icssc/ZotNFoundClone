@@ -3,10 +3,8 @@ import { LatLngExpression } from "leaflet";
 import {
   QueryClient,
   QueryClientProvider,
-  useQuery,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Object } from "@/lib/types";
 
 // ---- Query Client Setup ----
 export const queryClient = new QueryClient();
@@ -18,37 +16,6 @@ export function getBrowserQueryClient() {
   }
   return browserQueryClient;
 }
-
-// ---- Data Context ----
-export const DataContext = createContext<{
-  objects: Object[] | undefined;
-  loading: boolean;
-}>({
-  objects: undefined,
-  loading: true,
-});
-
-export const DataProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: objects, isLoading: loading } = useQuery({
-    queryKey: ["objects"],
-    queryFn: async () => {
-      const res = await fetch("/api/objects");
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return res.json() as Promise<Object[]>;
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  return (
-    <DataContext.Provider value={{ objects, loading }}>
-      {children}
-    </DataContext.Provider>
-  );
-};
-
-export const useData = () => useContext(DataContext);
 
 // ---- Map Context ----
 type MapContextType = {
@@ -81,9 +48,7 @@ export function useMapContext() {
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <DataProvider>
-        <MapProvider>{children}</MapProvider>
-      </DataProvider>
+      <MapProvider>{children}</MapProvider>
       <ReactQueryDevtools />
     </QueryClientProvider>
   );

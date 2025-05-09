@@ -5,7 +5,7 @@ const lostObjects: LostObject[] = [
   {
     type: "lost",
     personName: "Priyansh",
-    itemId: "1",
+    itemId: 1,
     itemName: "Keys",
     itemDescription: "A set of keys",
     location: [33.647238, -117.842651],
@@ -15,7 +15,7 @@ const lostObjects: LostObject[] = [
   },
   {
     type: "lost",
-    itemId: "2",
+    itemId: 2,
     personName: "Priyansh",
     itemName: "Wallet",
     itemDescription: "A wallet",
@@ -26,7 +26,7 @@ const lostObjects: LostObject[] = [
   },
   {
     type: "lost",
-    itemId: "2",
+    itemId: 3,
     personName: "Priyansh",
     itemName: "Wallet",
     itemDescription: "A wallet",
@@ -37,7 +37,7 @@ const lostObjects: LostObject[] = [
   },
   {
     type: "lost",
-    itemId: "3",
+    itemId: 4,
     personName: "Priyansh",
     itemName: "Phone",
     itemDescription: "A phone",
@@ -51,7 +51,7 @@ const lostObjects: LostObject[] = [
 const foundObjects: FoundObject[] = [
   {
     type: "found",
-    itemId: "4",
+    itemId: 2,
     personName: "Priyansh",
     itemName: "Keys",
     itemDescription: "A set of keys",
@@ -62,7 +62,7 @@ const foundObjects: FoundObject[] = [
   },
   {
     type: "found",
-    itemId: "5",
+    itemId: 5,
     personName: "Priyansh",
     itemName: "Wallet",
     itemDescription: "A wallet",
@@ -73,7 +73,7 @@ const foundObjects: FoundObject[] = [
   },
   {
     type: "found",
-    itemId: "6",
+    itemId: 6,
     personName: "Priyansh",
     itemName: "Phone",
     itemDescription: "A phone",

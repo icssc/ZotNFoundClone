@@ -9,6 +9,7 @@ import ObjectMarkers from "./Markers";
 import { useMapContext } from "../ContextProvider";
 import { Dialog } from "@/components/ui/dialog";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
+import { useItems } from "../../hooks/GetAllItems";
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
 
@@ -49,7 +50,7 @@ function MapController() {
 
 function Map() {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
-  const [selectedObjectId, setSelectedObjectId] = useState<string>();
+  const [selectedObjectId, setSelectedObjectId] = useState<number>();
   // Replace this with useQuery call or taking it from context provider if I implemented it
   const objects = useMemo(() => {
     const objects: Object[] = (lostObjects as Object[]).concat(foundObjects);
@@ -59,7 +60,12 @@ function Map() {
   const objectLocations = useMemo(() => {
     return mapObjectsToDisplayObjects(objects);
   }, [objects]);
-
+  const { data, error, isLoading } = useItems();
+  useEffect(() => {
+    console.log("data", data);
+    console.log("error", error);
+    console.log("isLoading", isLoading);
+  }, [data, error, isLoading]);
   const selectedObject = useMemo(() => {
     if (!selectedObjectId) return null;
     return objects.find((obj) => obj.itemId === selectedObjectId) || null;

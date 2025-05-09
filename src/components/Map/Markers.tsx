@@ -9,7 +9,7 @@ function ObjectMarkers({
   setSelectedObjectId,
 }: {
   objectLocations: DisplayObjects[];
-  setSelectedObjectId: (object: string) => void;
+  setSelectedObjectId: (object: number) => void;
 }) {
   return (
     <MarkerClusterGroup
@@ -20,7 +20,7 @@ function ObjectMarkers({
         <Marker
           key={index}
           position={address.location}
-          title={address.object_id}
+          title={address.object_id.toString()}
           icon={
             address.type === "lost"
               ? iconsMap.others.true
