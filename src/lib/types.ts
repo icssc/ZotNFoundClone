@@ -57,7 +57,6 @@ export interface ItemUpdateParams {
   isResolved: boolean;
 }
 
-
 export interface ItemDeleteParams {
   itemId: number;
 }
