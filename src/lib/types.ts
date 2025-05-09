@@ -2,7 +2,7 @@ import { PointTuple } from "leaflet";
 
 // Base interface for common properties
 interface BaseObject {
-  itemId: string;
+  itemId: number;
   itemName: string;
   itemDescription: string;
   location: PointTuple;
@@ -46,9 +46,20 @@ export type ItemPostParams = {
 
 // Display object interface
 export interface DisplayObjects {
-  object_id: string;
+  object_id: number;
   type: string;
   location: PointTuple;
+}
+
+export interface ItemUpdateParams {
+  itemId: number;
+  isHelped: boolean;
+  isResolved: boolean;
+}
+
+
+export interface ItemDeleteParams {
+  itemId: number;
 }
 
 // Type guards
