@@ -80,10 +80,10 @@ export interface KeywordSubscription {
   email: string;
 }
 
-export type ActionResult<T> =
-  | { success: T }
-  | { error: string };
+export type ActionResult<T> = { data: T } | { error: string };
 
-export function isError<T>(result: ActionResult<T>): result is { error: string } {
+export function isError<T>(
+  result: ActionResult<T>
+): result is { error: string } {
   return "error" in result;
 }

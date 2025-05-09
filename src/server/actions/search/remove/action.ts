@@ -16,7 +16,7 @@ export async function removeKeywordSubscription(
     return { error: `Error fetching emails for keyword: ${lookup.error}` };
   }
 
-  const existingEmails = lookup.success.emails || [];
+  const existingEmails = lookup.data.emails || [];
   if (!existingEmails.includes(email)) {
     return { error: "Email was not subscribed to this keyword." };
   }
@@ -30,7 +30,7 @@ export async function removeKeywordSubscription(
       .where(eq(searches.keyword, keyword))
       .returning();
 
-    return { success: result };
+    return { data: result };
   } catch (error) {
     return { error: `Error removing subscription for keyword: ${error}` };
   }

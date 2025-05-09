@@ -18,7 +18,7 @@ export async function findEmailsSubscribedToKeyword(
     if (!emailsSubscribedToKeyword) {
       return { error: "Keyword not found." };
     }
-    return { success: emailsSubscribedToKeyword };
+    return { data: emailsSubscribedToKeyword };
   } catch (error) {
     return {
       error: `Error fetching emails subscribed to keyword: ${error}`,

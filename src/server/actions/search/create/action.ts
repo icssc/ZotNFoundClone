@@ -16,7 +16,7 @@ export async function createKeywordSubscription(
     return { error: `Error fetching emails for keyword: ${lookup.error}` };
   }
 
-  const existingEmails = lookup.success.emails || [];
+  const existingEmails = lookup.data.emails || [];
   if (existingEmails.includes(email)) {
     return { error: "You are already subscribed to this keyword." };
   }
@@ -35,7 +35,7 @@ export async function createKeywordSubscription(
             .returning();
 
     const [result] = await query;
-    return { success: result };
+    return { data: result };
   } catch (error) {
     return {
       error: existingEmails.length

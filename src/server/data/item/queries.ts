@@ -8,7 +8,7 @@ import { eq } from "drizzle-orm";
 export async function getAllItems(): Promise<ActionResult<Item[]>> {
   try {
     const result = await db.query.items.findMany();
-    return { success: result };
+    return { data: result };
   } catch (err) {
     return { error: `Error fetching item: ${err}` };
   }
@@ -24,7 +24,7 @@ export async function getItem(id: number): Promise<ActionResult<Item>> {
       return { error: "Item not found for the given ID." };
     }
 
-    return { success: result };
+    return { data: result };
   } catch (err) {
     return { error: `Error fetching item: ${err}` };
   }
@@ -46,7 +46,7 @@ export async function getItemEmail(id: number): Promise<ActionResult<string>> {
     if (!email) {
       return { error: "Email not found for the given item ID." };
     }
-    return { success: email };
+    return { data: email };
   } catch (err) {
     return { error: `Error fetching item: ${err}` };
   }

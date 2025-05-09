@@ -9,7 +9,7 @@ export async function createItem(
 ): Promise<ActionResult<NewItem>> {
   try {
     const [newItem] = await db.insert(items).values(itemData).returning();
-    return { success: newItem };
+    return { data: newItem };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return { error: `Error adding item: ${msg}` };
