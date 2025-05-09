@@ -36,6 +36,14 @@ export type User = {
   picture: string;
 };
 
+export type ItemPostParams = {
+  image: string;
+  islost: boolean;
+  itemName: string;
+  itemDescription: string;
+  itemDate: string;
+};
+
 // Display object interface
 export interface DisplayObjects {
   object_id: number;
@@ -76,4 +84,17 @@ export function mapObjectsToDisplayObjects(
   objects: Object[]
 ): DisplayObjects[] {
   return objects.map(mapObjectToDisplayObject);
+}
+
+export interface KeywordSubscription {
+  keyword: string;
+  email: string;
+}
+
+export type ActionResult<T> = { data: T } | { error: string };
+
+export function isError<T>(
+  result: ActionResult<T>
+): result is { error: string } {
+  return "error" in result;
 }

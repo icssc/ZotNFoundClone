@@ -1,13 +1,14 @@
+"use server";
+import { ActionResult } from "./../../../lib/types";
 import { db } from "@/db";
-import { searches } from "@/db/schema";
 import { Search } from "@/db/schema";
 
-export async function getAllSearches(): Promise<Search[]> {
+export async function getAllSearches(): Promise<ActionResult<Search[]>> {
   try {
-    const result = await db.select().from(searches);
-    return result;
+    const result = await db.query.searches.findMany();
+    return { data: result };
   } catch (error) {
     console.error("Error fetching searches:", error);
-    throw error;
+    return { error: `Error fetching searches: ${error}` };
   }
 }
