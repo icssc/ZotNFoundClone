@@ -1,9 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { LatLngExpression } from "leaflet";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // ---- Query Client Setup ----
