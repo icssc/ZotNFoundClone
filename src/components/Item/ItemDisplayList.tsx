@@ -1,47 +1,50 @@
 "use client";
 
-import { type Object } from "@/lib/types";
+import { stringArrayToLatLng } from "@/lib/types";
 import { useState } from "react";
-import { foundObjects, lostObjects } from "@/lib/fakeData";
 import { Dialog } from "@/components/ui/dialog";
 import { useSharedContext } from "../ContextProvider";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import Item from "@/components/Item/Item";
-// import { useItems } from "@/hooks/GetAllItems";
+import { useItems } from "@/hooks/Items";
+import { Item as ItemType } from "@/db/schema";
+import { LatLngExpression } from "leaflet";
 
 function ItemDisplayList() {
   const { setSelectedLocation } = useSharedContext();
   const [open, setOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<Object | null>(null);
-  // const { data, error, isLoading } = useItems();
-  const handleItemClick = (item: Object) => {
+  const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
+  const { data, error, isLoading } = useItems();
+  const handleItemClick = (item: ItemType) => {
     setSelectedItem(item);
-    setSelectedLocation(item.location);
+    if (item.location) {
+      const location: LatLngExpression = stringArrayToLatLng(item.location);
+      setSelectedLocation(location);
+    }
   };
 
-  const data: Object[] = (lostObjects as Object[]).concat(foundObjects);
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex h-full items-center justify-center">
-  //       <p>Loading items...</p>
-  //     </div>
-  //   );
-  // }
+  if (isLoading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p>Loading items...</p>
+      </div>
+    );
+  }
 
-  // if (error) {
-  //   return (
-  //     <div className="flex h-full items-center justify-center">
-  //       <p>Error loading items: {error.message}</p>
-  //     </div>
-  //   );
-  // }
+  if (error) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p>Error loading items: {error.message}</p>
+      </div>
+    );
+  }
 
   return (
     <>
       <div className="flex h-full overflow-y-scroll flex-col p-4 space-y-4">
-        {data.map((item: Object, index) => (
+        {data!.map((item: ItemType, index: number) => (
           <Item
-            key={`${item.itemId}-${index}`}
+            key={index}
             item={item}
             onClick={() => handleItemClick(item)}
             setOpen={setOpen}

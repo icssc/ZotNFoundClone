@@ -1,15 +1,16 @@
 import { Marker } from "react-leaflet";
-import { DisplayObjects } from "@/lib/types";
+import { stringArrayToLatLng } from "@/lib/types";
 import { createClusterCustomIcon, iconsMap } from "@/lib/icons";
 import "leaflet/dist/leaflet.css";
 import MarkerClusterGroup from "react-leaflet-cluster-4-next";
+import { Item } from "@/db/schema";
 
 function ObjectMarkers({
-  objectLocations,
+  objects,
   setSelectedObjectId,
   filter,
 }: {
-  objectLocations: DisplayObjects[];
+  objects: Item[];
   setSelectedObjectId: (object: number) => void;
   filter: string;
 }) {
@@ -19,22 +20,19 @@ function ObjectMarkers({
       chunkedLoading
       iconCreateFunction={createClusterCustomIcon}
     >
-      {/* TODO: .filter() when needed */}
-      {objectLocations.map((address, index) => (
-        <Marker
-          key={index}
-          position={address.location}
-          title={address.object_id.toString()}
-          icon={
-            address.type === "lost"
-              ? iconsMap.others.true
-              : iconsMap.others.false
-          }
-          eventHandlers={{
-            click: () => setSelectedObjectId(address.object_id),
-          }}
-        />
-      ))}
+      {objects
+        .filter((object: Item) => object.location)
+        .map((object: Item, index) => (
+          <Marker
+            key={index}
+            position={stringArrayToLatLng(object.location!)}
+            title={object.name!}
+            icon={object.islost ? iconsMap.others.true : iconsMap.others.false}
+            eventHandlers={{
+              click: () => setSelectedObjectId(object.id),
+            }}
+          />
+        ))}
     </MarkerClusterGroup>
   );
 }

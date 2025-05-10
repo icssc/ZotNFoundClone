@@ -3,8 +3,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { MapContainer, Rectangle, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { centerPosition, mapBounds } from "@/lib/constants";
-import { lostObjects, foundObjects } from "@/lib/fakeData";
-import { mapObjectsToDisplayObjects, Object } from "@/lib/types";
 import ObjectMarkers from "./Markers";
 import { useSharedContext } from "@/components/ContextProvider";
 import { Dialog } from "@/components/ui/dialog";
@@ -56,24 +54,14 @@ function Map() {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
   const [selectedObjectId, setSelectedObjectId] = useState<number>();
   // Replace this with useQuery call or taking it from context provider if I implemented it
-  const objects = useMemo(() => {
-    const objects: Object[] = (lostObjects as Object[]).concat(foundObjects);
-    return objects;
-  }, []);
   const { selectedLocation, filter } = useSharedContext();
-  const objectLocations = useMemo(() => {
-    return mapObjectsToDisplayObjects(objects);
-  }, [objects]);
-  const { data, error, isLoading } = useItems();
-  useEffect(() => {
-    console.log("data", data);
-    console.log("error", error);
-    console.log("isLoading", isLoading);
-  }, [data, error, isLoading]);
+
+  const { data } = useItems();
+
   const selectedObject = useMemo(() => {
     if (!selectedObjectId) return null;
-    return objects.find((obj) => obj.itemId === selectedObjectId) || null;
-  }, [selectedObjectId, objects]);
+    return data!.find((obj) => obj.id === selectedObjectId) || null;
+  }, [selectedObjectId, data]);
 
   return (
     <MapContainer
@@ -88,11 +76,13 @@ function Map() {
     >
       <TileLayer url={accessToken} />
       <MapController selectedLocation={selectedLocation} />
-      <ObjectMarkers
-        objectLocations={objectLocations}
-        setSelectedObjectId={setSelectedObjectId}
-        filter={filter}
-      />
+      {data && data.length > 0 && (
+        <ObjectMarkers
+          objects={data}
+          setSelectedObjectId={setSelectedObjectId}
+          filter={filter}
+        />
+      )}
       <Dialog
         // !! makes undefined to a boolean
         open={!!selectedObjectId && !!selectedObject}

@@ -1,32 +1,5 @@
-import { PointTuple } from "leaflet";
-
-// Base interface for common properties
-interface BaseObject {
-  itemId: number;
-  itemName: string;
-  itemDescription: string;
-  location: PointTuple;
-  date: string;
-  personID: string;
-  personEmail: string;
-  personName: string;
-  bounty?: number;
-}
-
-// Object type definitions
-export interface LostObject extends BaseObject {
-  type: "lost";
-}
-
-export interface FoundObject extends BaseObject {
-  type: "found";
-}
-
-export interface ReturnedObject extends BaseObject {
-  type: "returned";
-}
-
-export type Object = LostObject | FoundObject;
+import { Item } from "@/db/schema";
+import { LatLngExpression, PointTuple } from "leaflet";
 
 // User type definition
 export type User = {
@@ -62,27 +35,17 @@ export interface ItemDeleteParams {
 }
 
 // Type guards
-export function isLostObject(object: Object): object is LostObject {
-  return object.type === "lost";
+export function isLostObject(object: Item) {
+  return object.islost;
 }
 
-export function isFoundObject(object: Object): object is FoundObject {
-  return object.type === "found";
+export function isFoundObject(object: Item) {
+  return !object.islost;
 }
 
-// Mapping functions
-export function mapObjectToDisplayObject(item: Object): DisplayObjects {
-  return {
-    object_id: item.itemId,
-    type: item.type,
-    location: item.location,
-  };
-}
-
-export function mapObjectsToDisplayObjects(
-  objects: Object[]
-): DisplayObjects[] {
-  return objects.map(mapObjectToDisplayObject);
+export function stringArrayToLatLng(location: string[]): LatLngExpression {
+  const [lat, lng] = location.map(Number);
+  return [lat, lng];
 }
 
 export interface KeywordSubscription {

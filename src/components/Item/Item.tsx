@@ -1,13 +1,13 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { isLostObject, type Object } from "@/lib/types";
-
+import { isLostObject } from "@/lib/types";
+import { Item as ItemType } from "@/db/schema";
 export default function Item({
   item,
   onClick,
   setOpen,
 }: {
-  item: Object;
+  item: ItemType;
   onClick: () => void;
   setOpen: (open: boolean) => void;
 }) {
@@ -21,9 +21,9 @@ export default function Item({
         <div className="flex flex-row items-center space-x-2">
           <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
           <div>
-            <p className="font-semibold">{item.itemName}</p>
+            <p className="font-semibold">{item.name}</p>
             <p className="text-sm text-gray-500">
-              {islostObject ? "Lost" : "Found"} by {item.personName}
+              {islostObject ? "Lost" : "Found"}
             </p>
           </div>
         </div>
@@ -32,9 +32,7 @@ export default function Item({
         </div>
       </div>
       <div>
-        <p className="text-sm text-gray-500 line-clamp-2">
-          {item.itemDescription}
-        </p>
+        <p className="text-sm text-gray-500 line-clamp-2">{item.description}</p>
       </div>
       <div className="flex flex-row justify-end">
         <Button
