@@ -7,15 +7,19 @@ import MarkerClusterGroup from "react-leaflet-cluster-4-next";
 function ObjectMarkers({
   objectLocations,
   setSelectedObjectId,
+  filter,
 }: {
   objectLocations: DisplayObjects[];
   setSelectedObjectId: (object: number) => void;
+  filter: string;
 }) {
+  console.log("filter", filter);
   return (
     <MarkerClusterGroup
       chunkedLoading
       iconCreateFunction={createClusterCustomIcon}
     >
+      {/* TODO: .filter() when needed */}
       {objectLocations.map((address, index) => (
         <Marker
           key={index}

@@ -6,16 +6,20 @@ import { centerPosition, mapBounds } from "@/lib/constants";
 import { lostObjects, foundObjects } from "@/lib/fakeData";
 import { mapObjectsToDisplayObjects, Object } from "@/lib/types";
 import ObjectMarkers from "./Markers";
-import { useMapContext } from "../ContextProvider";
+import { useSharedContext } from "@/components/ContextProvider";
 import { Dialog } from "@/components/ui/dialog";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
-import { useItems } from "../../hooks/GetAllItems";
+import { useItems } from "../../hooks/Items";
+import { LatLngExpression } from "leaflet";
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
 
-function MapController() {
+function MapController({
+  selectedLocation,
+}: {
+  selectedLocation: LatLngExpression | null;
+}) {
   const map = useMap();
-  const { selectedLocation } = useMapContext();
   const bounds = mapBounds;
   const transparentColor = { color: "#000", opacity: 0, fillOpacity: 0 };
 
@@ -56,7 +60,7 @@ function Map() {
     const objects: Object[] = (lostObjects as Object[]).concat(foundObjects);
     return objects;
   }, []);
-
+  const { selectedLocation, filter } = useSharedContext();
   const objectLocations = useMemo(() => {
     return mapObjectsToDisplayObjects(objects);
   }, [objects]);
@@ -83,10 +87,11 @@ function Map() {
       maxBoundsViscosity={1.0}
     >
       <TileLayer url={accessToken} />
-      <MapController />
+      <MapController selectedLocation={selectedLocation} />
       <ObjectMarkers
         objectLocations={objectLocations}
         setSelectedObjectId={setSelectedObjectId}
+        filter={filter}
       />
       <Dialog
         // !! makes undefined to a boolean

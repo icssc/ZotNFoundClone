@@ -1,12 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  BookmarkIcon,
-  InfoIcon,
-  UserIcon,
-  BellIcon,
-} from "lucide-react";
+import { BookmarkIcon, InfoIcon, UserIcon, BellIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";

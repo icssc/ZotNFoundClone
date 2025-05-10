@@ -4,13 +4,13 @@ import { type Object } from "@/lib/types";
 import { useState } from "react";
 import { foundObjects, lostObjects } from "@/lib/fakeData";
 import { Dialog } from "@/components/ui/dialog";
-import { useMapContext } from "../ContextProvider";
+import { useSharedContext } from "../ContextProvider";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import Item from "@/components/Item/Item";
 // import { useItems } from "@/hooks/GetAllItems";
 
 function ItemDisplayList() {
-  const { setSelectedLocation } = useMapContext();
+  const { setSelectedLocation } = useSharedContext();
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<Object | null>(null);
   // const { data, error, isLoading } = useItems();
