@@ -2,6 +2,17 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item as ItemType } from "@/db/schema";
+import Image from "next/image";
+
+function isValidUrl(string: string) {
+  try {
+    new URL(string);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export default function Item({
   item,
   onClick,
@@ -12,6 +23,9 @@ export default function Item({
   setOpen: (open: boolean) => void;
 }) {
   const islostObject = isLostObject(item);
+  if (!item) {
+    return;
+  }
   return (
     <div
       onClick={onClick}
@@ -19,7 +33,19 @@ export default function Item({
     >
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center space-x-2">
-          <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+          <div className="h-8 w-8 relative rounded-full overflow-hidden">
+            <Image
+              src={
+                item.image && isValidUrl(item.image)
+                  ? item.image
+                  : "/placeholder.jpg"
+              }
+              alt={item.name || "Item Image"}
+              layout="fill"
+              objectFit="cover"
+              loading="lazy"
+            />
+          </div>
           <div>
             <p className="font-semibold">{item.name}</p>
             <p className="text-sm text-gray-500">
