@@ -4,11 +4,8 @@ import Link from "next/link";
 import {
   BookmarkIcon,
   InfoIcon,
-  // MenuIcon,
-  // SearchIcon,
   UserIcon,
   BellIcon,
-  BookOpenIcon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -47,13 +44,7 @@ export default function Navbar() {
             <BellIcon className="h-4 w-4" />
             <span>Updates</span>
           </Link>
-          <Link
-            href="/tutorial"
-            className="hover:text-gray-300 flex items-center gap-1"
-          >
-            <BookOpenIcon className="h-4 w-4" />
-            <span>Tutorial</span>
-          </Link>
+
           <Link
             href="/bookmarks"
             className="hover:text-gray-300 flex items-center gap-1"

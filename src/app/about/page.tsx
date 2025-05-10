@@ -120,7 +120,7 @@ export default function About() {
           <div className="flex justify-center">
             <div className="w-[400px]">
               <Image
-                src="zotnfound_ig.png"
+                src="/zotnfound_ig.png"
                 alt="ZotnFound Instagram"
                 width={400}
                 height={400}
