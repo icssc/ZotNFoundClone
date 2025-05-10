@@ -2,12 +2,12 @@
 
 import { db } from "@/db";
 import { eq } from "drizzle-orm";
-import { items, NewItem } from "@/db/schema";
+import { Item, items } from "@/db/schema";
 import type { ActionResult, ItemDeleteParams } from "@/lib/types";
 
 export default async function deleteItem(
   params: ItemDeleteParams
-): Promise<ActionResult<NewItem>> {
+): Promise<ActionResult<Item>> {
   const { itemId } = params;
 
   try {
