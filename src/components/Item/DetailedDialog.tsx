@@ -7,15 +7,15 @@ import {
 import { User, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DialogHeader } from "@/components/ui/dialog";
-import { isLostObject, type Object } from "@/lib/types";
-
-function DetailedDialog({ item }: { item: Object }) {
+import { isLostObject } from "@/lib/types";
+import { Item } from "@/db/schema";
+function DetailedDialog({ item }: { item: Item }) {
   const islostObject = isLostObject(item);
 
   return (
     <DialogContent className="sm:max-w-md">
       <DialogHeader>
-        <DialogTitle>{item.itemName}</DialogTitle>
+        <DialogTitle>{item.name}</DialogTitle>
         <DialogDescription>
           {islostObject ? "Lost" : "Found"} item details
         </DialogDescription>
@@ -26,10 +26,7 @@ function DetailedDialog({ item }: { item: Object }) {
           <User className="h-5 w-5 text-gray-500 mt-0.5" />
           <div>
             <p className="font-medium">Person</p>
-            <p className="text-sm text-gray-500">{item.personName}</p>
-            <p className="text-sm text-gray-500">
-              {"No contact info provided"}
-            </p>
+            <p className="text-sm text-gray-500">{item.email}</p>
           </div>
         </div>
 
@@ -56,7 +53,7 @@ function DetailedDialog({ item }: { item: Object }) {
 
         <div className="pt-2">
           <p className="font-medium">Description</p>
-          <p className="text-sm text-gray-600 mt-1">{item.itemDescription}</p>
+          <p className="text-sm text-gray-600 mt-1">{item.description}</p>
         </div>
       </div>
 
