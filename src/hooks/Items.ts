@@ -5,6 +5,7 @@ import deleteItem from "@/server/actions/item/delete/action";
 import updateItem from "@/server/actions/item/update/action";
 import { getAllItems } from "@/server/data/item/queries";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { queryClient } from "@/components/ContextProvider";
 
 export function useItems() {
   const { data, error, isLoading } = useQuery<Item[], Error>({
@@ -31,6 +32,10 @@ export function useCreateItem(item: NewItem) {
       }
       return mutation.data;
     },
+    onSuccess: () =>
+      queryClient.setQueryData(["items"], (oldData: Item[] | undefined) =>
+        oldData ? [...oldData, item] : [item]
+      ),
   });
 
   return { data, error };
@@ -55,6 +60,14 @@ export function useUpdateItem(
       }
       return mutation.data;
     },
+    onSuccess: () =>
+      queryClient.setQueryData(["items"], (oldData: Item[] | undefined) =>
+        oldData
+          ? oldData.map((item) =>
+              item.id === itemId ? { ...item, is_resolved } : item
+            )
+          : []
+      ),
   });
   return { data, error };
 }
@@ -72,6 +85,10 @@ export function useDeleteItem(itemId: number) {
       }
       return mutation.data;
     },
+    onSuccess: () =>
+      queryClient.setQueryData(["items"], (oldData: Item[] | undefined) =>
+        oldData ? oldData.filter((item) => item.id !== itemId) : []
+      ),
   });
   return { data, error };
 }
