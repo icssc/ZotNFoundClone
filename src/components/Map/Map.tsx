@@ -9,6 +9,8 @@ import { Dialog } from "@/components/ui/dialog";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import { useItems } from "../../hooks/Items";
 import { LatLngExpression } from "leaflet";
+import { Button } from "@/components/ui/button";
+import { AddLocationDialog } from "./AddLocationDialog";
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
 
@@ -58,39 +60,53 @@ function Map() {
 
   const { data } = useItems();
 
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
   const selectedObject = useMemo(() => {
     if (!selectedObjectId) return null;
     return data!.find((obj) => obj.id === selectedObjectId) || null;
   }, [selectedObjectId, data]);
 
   return (
-    <MapContainer
-      className="rounded-4xl z-0 h-full"
-      center={centerPosition as [number, number]}
-      zoom={17}
-      minZoom={16}
-      maxBounds={mapBounds}
-      zoomControl={false}
-      attributionControl={false}
-      maxBoundsViscosity={1.0}
-    >
-      <TileLayer url={accessToken} />
-      <MapController selectedLocation={selectedLocation} />
-      {data && data.length > 0 && (
-        <ObjectMarkers
-          objects={data}
-          setSelectedObjectId={setSelectedObjectId}
-          filter={filter}
-        />
-      )}
-      <Dialog
-        // !! makes undefined to a boolean
-        open={!!selectedObjectId && !!selectedObject}
-        onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
+    <div className="relative h-full">
+      <MapContainer
+        className="rounded-4xl z-0 h-full"
+        center={centerPosition as [number, number]}
+        zoom={17}
+        minZoom={16}
+        maxBounds={mapBounds}
+        zoomControl={false}
+        attributionControl={false}
+        maxBoundsViscosity={1.0}
       >
-        {selectedObject && <DetailedDialog item={selectedObject} />}
-      </Dialog>
-    </MapContainer>
+        <TileLayer url={accessToken} />
+        <MapController selectedLocation={selectedLocation} />
+        {data && data.length > 0 && (
+          <ObjectMarkers
+            objects={data}
+            setSelectedObjectId={setSelectedObjectId}
+            filter={filter}
+          />
+        )}
+        <Dialog
+          open={!!selectedObjectId && !!selectedObject}
+          onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
+        >
+          {selectedObject && <DetailedDialog item={selectedObject} />}
+        </Dialog>
+      </MapContainer>
+      <Button 
+        className="absolute bottom-4 right-4 z-[2] bg-blue-500 text-white p-2 rounded-full w-12 h-12 text-xl"
+        onClick={() => setIsAddDialogOpen(true)}
+      >
+        +
+      </Button>
+
+      <AddLocationDialog
+        open={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+      />
+    </div>
   );
 }
 
