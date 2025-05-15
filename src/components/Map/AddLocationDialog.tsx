@@ -179,7 +179,7 @@ export function AddLocationDialog({ open, onOpenChange }: AddLocationDialogProps
       case 4:
         return (
           <div className="space-y-2">
-            <Label htmlFor="file" className="text-white">📸 Upload an image (optional):</Label>
+            <Label htmlFor="file" className="text-white">📸 Upload an image:</Label>
             <Input 
               id="file" 
               type="file" 
