@@ -7,7 +7,8 @@ export const FETCH_ITEMS = queryOptions({
   queryFn: async () => {
     const data = await getAllItems();
     if (isError(data)) {
-      throw new Error(data.error);
+      console.error("Error fetching items:", data);
+      return [];
     }
     return data.data;
   },

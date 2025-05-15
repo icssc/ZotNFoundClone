@@ -5,7 +5,6 @@ import {
   boolean,
   integer,
 } from "drizzle-orm/pg-core";
-// import { PgArray } from "drizzle-orm/pg-core";
 
 export const items = pgTable("items", {
   id: serial("id").primaryKey(),

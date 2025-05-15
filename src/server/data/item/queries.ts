@@ -51,3 +51,19 @@ export async function getItemEmail(id: number): Promise<ActionResult<string>> {
     return { error: `Error fetching item: ${err}` };
   }
 }
+
+export async function getTopFewItems(
+  limit: number,
+  offset: number
+): Promise<ActionResult<Item[]>> {
+  try {
+    const result = await db.query.items.findMany({
+      limit,
+      offset,
+    });
+
+    return { data: result };
+  } catch (err) {
+    return { error: `Error fetching item: ${err}` };
+  }
+}
