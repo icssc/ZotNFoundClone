@@ -19,7 +19,7 @@ export function useCreateItem(item: NewItem) {
     onSuccess: () =>
       browserQueryClient!.setQueryData(
         ["items"],
-        (oldData: Item[] | undefined) => (oldData ? [...oldData, item] : [item])
+        (oldData: Item[] | undefined) => (oldData ? [item, ...oldData] : [item])
       ),
   });
 
