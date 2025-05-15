@@ -172,7 +172,7 @@ export function AddLocationDialog({ open, onOpenChange }: AddLocationDialogProps
               onSelect={(newDate) => {
                 setFormData({ ...formData, date: newDate || new Date() });
               }}
-              className="rounded-md border shadow"
+              className="rounded-md border shadow text-white"
             />
           </div>
         );
