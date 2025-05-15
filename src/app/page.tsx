@@ -8,10 +8,11 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 // https://nextjs.org/docs/pages/building-your-application/optimizing/lazy-loading
 
 // Prefetch items on server or initial client render
-
+export const dynamic = "force-dynamic"; // Force server component to be dynamic
 export default function Home() {
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(FETCH_ITEMS);
+
   return (
     <div className="md:h-[85vh] w-full flex flex-col justify-center items-center p-4">
       <main className="w-full p-12 h-full flex flex-row">
