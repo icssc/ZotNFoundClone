@@ -5,7 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { getQueryClient } from "@/lib/create-query-client";
 
-// ---- Map Context ----
+// ---- Shared Context ----
 type SharedContextType = {
   selectedLocation: LatLngExpression | null;
   filter: string;
@@ -34,7 +34,7 @@ export function SharedProviders({ children }: { children: ReactNode }) {
 export function useSharedContext() {
   const context = useContext(SharedContext);
   if (context === undefined) {
-    throw new Error("useMapContext must be used within a MapProvider");
+    throw new Error("useSharedContext must be used within a SharedProvider");
   }
   return context;
 }
