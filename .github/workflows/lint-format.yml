@@ -3,10 +3,10 @@ name: Lint and Format Check
 on:
   push:
     branches:
-      - main # Or your main development branch
+      - master
   pull_request:
     branches:
-      - main # Or your main development branch
+      - master
 
 jobs:
   lint-and-format:
