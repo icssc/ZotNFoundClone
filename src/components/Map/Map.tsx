@@ -7,8 +7,9 @@ import ObjectMarkers from "./Markers";
 import { useSharedContext } from "@/components/ContextProvider";
 import { Dialog } from "@/components/ui/dialog";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
-import { useItems } from "../../hooks/Items";
 import { LatLngExpression } from "leaflet";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { FETCH_ITEMS } from "@/lib/options";
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
 
@@ -56,7 +57,7 @@ function Map() {
   // Replace this with useQuery call or taking it from context provider if I implemented it
   const { selectedLocation, filter } = useSharedContext();
 
-  const { data } = useItems();
+  const { data } = useSuspenseQuery(FETCH_ITEMS);
 
   const selectedObject = useMemo(() => {
     if (!selectedObjectId) return null;
