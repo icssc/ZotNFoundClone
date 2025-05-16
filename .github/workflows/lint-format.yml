@@ -3,10 +3,10 @@ name: Lint and Format Check
 on:
   push:
     branches:
-      - master
+      - main # Or your main development branch
   pull_request:
     branches:
-      - master
+      - main # Or your main development branch
 
 jobs:
   lint-and-format:
@@ -16,16 +16,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "latest"
+          bun-version: latest
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies with Bun
+        run: bun install
 
       - name: Run ESLint
-        run: npm run lint
+        run: bun run lint
 
       - name: Check code formatting with Prettier
-        run: npx prettier --check .
+        run: bun x prettier --check .
