@@ -11,6 +11,7 @@ import { useItems } from "../../hooks/Items";
 import { LatLngExpression } from "leaflet";
 import { Button } from "@/components/ui/button";
 import { AddLocationDialog } from "./AddLocationDialog";
+import { PlusIcon } from "lucide-react";
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
 
@@ -99,7 +100,7 @@ function Map() {
         className="absolute bottom-4 right-4 z-[2] bg-blue-500 text-white p-2 rounded-full w-12 h-12 text-xl"
         onClick={() => setIsAddDialogOpen(true)}
       >
-        +
+        <PlusIcon className="h-6 w-6" />
       </Button>
 
       <AddLocationDialog
