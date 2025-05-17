@@ -96,7 +96,7 @@ function Map() {
           {selectedObject && <DetailedDialog item={selectedObject} />}
         </Dialog>
       </MapContainer>
-      <Button 
+      <Button
         className="absolute bottom-4 right-4 z-[2] bg-blue-500 text-white p-2 rounded-full w-12 h-12 text-xl"
         onClick={() => setIsAddDialogOpen(true)}
       >

@@ -73,4 +73,4 @@ export interface LocationFormData {
 export interface StepProps {
   formData: LocationFormData;
   setFormData: React.Dispatch<React.SetStateAction<LocationFormData>>;
-} 
+}
