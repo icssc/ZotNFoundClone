@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Step1BasicInfo } from "./Steps/Step1BasicInfo";
 import { LocationFormData } from "@/lib/types";
 import { Step2ItemType } from "./Steps/Step2ItemType";
@@ -15,6 +15,9 @@ import { Step3DateSelection } from "./Steps/Step3DateSelection";
 import { Step4FileUpload } from "./Steps/Step4FileUpload";
 import { Step5Confirmation } from "./Steps/Step5Confirmation";
 import { Step6LocationSelection } from "./Steps/Step6LocationSelection";
+import { useCreateItem } from "@/hooks/Items";
+import { NewItem } from "@/db/schema";
+import { format } from "date-fns";
 
 interface AddLocationDialogProps {
   open: boolean;
@@ -36,6 +39,28 @@ export function AddLocationDialog({
     location: null,
   });
 
+  const [itemToCreate, setItemToCreate] = useState<NewItem | null>(null);
+  const { data, error } = useCreateItem(itemToCreate as NewItem);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (data && isSubmitting) {
+      onOpenChange(false);
+      setCurrentStep(1);
+      setFormData({
+        name: "",
+        description: "",
+        type: "",
+        date: new Date(),
+        file: null,
+        isLost: true,
+        location: null,
+      });
+      setIsSubmitting(false);
+      setItemToCreate(null);
+    }
+  }, [data, isSubmitting, onOpenChange]);
+
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
@@ -55,23 +80,38 @@ export function AddLocationDialog({
     }
   };
 
+  const handleSubmit = async () => {
+    if (!formData.location || !formData.file) return;
+
+    setIsSubmitting(true);
+
+    // Convert the file to base64
+    const reader = new FileReader();
+    reader.readAsDataURL(formData.file);
+
+    reader.onload = () => {
+      const base64String = reader.result as string;
+
+      const newItem: NewItem = {
+        name: formData.name,
+        description: formData.description,
+        type: formData.type,
+        date: format(formData.date, "yyyy-MM-dd"),
+        image: base64String,
+        islost: formData.isLost,
+        location: formData.location?.map(String) ?? [],
+        isresolved: false,
+        ishelped: false,
+      };
+      setItemToCreate(newItem);
+    };
+  };
+
   const handleContinue = () => {
     if (currentStep < 6) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Submit the form
-      onOpenChange(false);
-      // Reset form state
-      setCurrentStep(1);
-      setFormData({
-        name: "",
-        description: "",
-        type: "",
-        date: new Date(),
-        file: null,
-        isLost: true,
-        location: null,
-      });
+      handleSubmit();
     }
   };
 
@@ -196,8 +236,15 @@ export function AddLocationDialog({
               >
                 Cancel
               </Button>
-              <Button disabled={!isStepValid()} onClick={handleContinue}>
-                {currentStep === 6 ? "Submit" : "Continue"}
+              <Button
+                disabled={!isStepValid() || isSubmitting}
+                onClick={handleContinue}
+              >
+                {currentStep === 6
+                  ? isSubmitting
+                    ? "Submitting..."
+                    : "Submit"
+                  : "Continue"}
               </Button>
             </div>
           </div>
