@@ -39,12 +39,11 @@ export function AddLocationDialog({
     location: null,
   });
 
-  const [itemToCreate, setItemToCreate] = useState<NewItem | null>(null);
-  const { data, error } = useCreateItem(itemToCreate as NewItem);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const createItemMutation = useCreateItem();
 
   useEffect(() => {
-    if (data && isSubmitting) {
+    if (isSubmitting) {
       onOpenChange(false);
       setCurrentStep(1);
       setFormData({
@@ -57,16 +56,8 @@ export function AddLocationDialog({
         location: null,
       });
       setIsSubmitting(false);
-      setItemToCreate(null);
     }
-  }, [data, isSubmitting, onOpenChange]);
-
-  useEffect(() => {
-    if (error) {
-      console.error("Error creating item:", error);
-      setIsSubmitting(false);
-    }
-  }, [error]);
+  }, [isSubmitting, onOpenChange]);
 
   const isStepValid = () => {
     switch (currentStep) {
@@ -96,20 +87,21 @@ export function AddLocationDialog({
     reader.readAsDataURL(formData.file);
 
     reader.onload = () => {
-      const base64String = reader.result as string;
-
       const newItem: NewItem = {
         name: formData.name,
         description: formData.description,
         type: formData.type,
         date: format(formData.date, "yyyy-MM-dd"),
-        image: base64String,
+        itemdate: format(formData.date, "yyyy-MM-dd"),
+        image:
+          "https://zotnfound-dang-backend-bucketbucketf19722a9-jcjpp0t0r8mh.s3.amazonaws.com/uploads/1747113328595-4b8b2932-5ba4-4440-a256-66a1f9b4a7bc.jpeg",
         islost: formData.isLost,
         location: formData.location?.map(String) ?? [],
         isresolved: false,
         ishelped: false,
+        email: "priyanshpokemon@gmail.com",
       };
-      setItemToCreate(newItem);
+      createItemMutation.mutate(newItem);
     };
   };
 
@@ -207,7 +199,13 @@ export function AddLocationDialog({
                 <div className="flex flex-col items-center z-10 relative">
                   <div
                     className={`flex items-center justify-center w-8 h-8 rounded-full text-white
-                      ${step.active ? "border-2 border-blue-400" : currentStep > step.number ? "bg-blue-400" : "bg-slate-700"} mb-1`}
+                      ${
+                        step.active
+                          ? "border-2 border-blue-400"
+                          : currentStep > step.number
+                          ? "bg-blue-400"
+                          : "bg-slate-700"
+                      } mb-1`}
                   >
                     {currentStep > step.number ? "✓" : step.number}
                   </div>
