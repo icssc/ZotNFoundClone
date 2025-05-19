@@ -98,7 +98,12 @@ export function AddLocationDialog({
       case 5:
         return <Step5Confirmation formData={formData} />;
       case 6:
-        return <Step6LocationSelection formData={formData} setFormData={setFormData} />;
+        return (
+          <Step6LocationSelection
+            formData={formData}
+            setFormData={setFormData}
+          />
+        );
       default:
         return null;
     }

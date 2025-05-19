@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import { Label } from "@/components/ui/label";
 import { StepProps } from "@/lib/types";
@@ -21,8 +21,8 @@ function LocationMarker({ formData, setFormData }: StepProps) {
   }, [map]);
 
   return formData.location ? (
-    <Marker 
-      position={formData.location} 
+    <Marker
+      position={formData.location}
       icon={formData.isLost ? iconsMap.others.true : iconsMap.others.false}
     />
   ) : null;
@@ -50,8 +50,9 @@ export function Step6LocationSelection({ formData, setFormData }: StepProps) {
         </MapContainer>
       </div>
       <p className="text-sm text-gray-400">
-        Click on the map to place a marker where the item was {formData.isLost ? "lost" : "found"}.
+        Click on the map to place a marker where the item was{" "}
+        {formData.isLost ? "lost" : "found"}.
       </p>
     </div>
   );
-} 
+}
