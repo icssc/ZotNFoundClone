@@ -68,6 +68,7 @@ export interface LocationFormData {
   date: Date;
   file: File | null;
   isLost: boolean;
+  location: [number, number] | null;
 }
 
 export interface StepProps {

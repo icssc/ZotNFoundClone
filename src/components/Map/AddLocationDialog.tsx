@@ -14,6 +14,7 @@ import { Step2ItemType } from "./Steps/Step2ItemType";
 import { Step3DateSelection } from "./Steps/Step3DateSelection";
 import { Step4FileUpload } from "./Steps/Step4FileUpload";
 import { Step5Confirmation } from "./Steps/Step5Confirmation";
+import { Step6LocationSelection } from "./Steps/Step6LocationSelection";
 
 interface AddLocationDialogProps {
   open: boolean;
@@ -32,6 +33,7 @@ export function AddLocationDialog({
     date: new Date(),
     file: null,
     isLost: true,
+    location: null,
   });
 
   const isStepValid = () => {
@@ -44,13 +46,17 @@ export function AddLocationDialog({
         return !!formData.date;
       case 4:
         return !!formData.file;
+      case 5:
+        return true;
+      case 6:
+        return !!formData.location;
       default:
         return true;
     }
   };
 
   const handleContinue = () => {
-    if (currentStep < 5) {
+    if (currentStep < 6) {
       setCurrentStep(currentStep + 1);
     } else {
       // Submit the form
@@ -64,6 +70,7 @@ export function AddLocationDialog({
         date: new Date(),
         file: null,
         isLost: true,
+        location: null,
       });
     }
   };
@@ -90,6 +97,8 @@ export function AddLocationDialog({
         );
       case 5:
         return <Step5Confirmation formData={formData} />;
+      case 6:
+        return <Step6LocationSelection formData={formData} setFormData={setFormData} />;
       default:
         return null;
     }
@@ -136,6 +145,12 @@ export function AddLocationDialog({
                 sublabel: "Check Info",
                 active: currentStep === 5,
               },
+              {
+                number: 6,
+                label: "Sixth",
+                sublabel: "Set Location",
+                active: currentStep === 6,
+              },
             ].map((step) => (
               <div className="flex items-center" key={step.number}>
                 <div className="flex flex-col items-center z-10 relative">
@@ -177,7 +192,7 @@ export function AddLocationDialog({
                 Cancel
               </Button>
               <Button disabled={!isStepValid()} onClick={handleContinue}>
-                {currentStep === 5 ? "Submit" : "Continue"}
+                {currentStep === 6 ? "Submit" : "Continue"}
               </Button>
             </div>
           </div>
