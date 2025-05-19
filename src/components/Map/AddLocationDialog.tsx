@@ -61,6 +61,13 @@ export function AddLocationDialog({
     }
   }, [data, isSubmitting, onOpenChange]);
 
+  useEffect(() => {
+    if (error) {
+      console.error("Error creating item:", error);
+      setIsSubmitting(false);
+    }
+  }, [error]);
+
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
@@ -85,7 +92,6 @@ export function AddLocationDialog({
 
     setIsSubmitting(true);
 
-    // Convert the file to base64
     const reader = new FileReader();
     reader.readAsDataURL(formData.file);
 
