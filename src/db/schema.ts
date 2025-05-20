@@ -16,7 +16,7 @@ export const items = pgTable("items", {
   date: varchar("date").notNull(),
   itemdate: varchar("itemdate").notNull(),
   email: varchar("email").notNull(),
-  image: varchar("image"),
+  image: varchar("image").notNull(),
   islost: boolean("islost").notNull(),
   isresolved: boolean("isresolved").notNull(),
   ishelped: boolean("ishelped"),
