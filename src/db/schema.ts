@@ -9,29 +9,29 @@ import {
 
 export const items = pgTable("items", {
   id: serial("id").primaryKey(),
-  name: varchar("name"),
-  description: varchar("description"),
-  type: varchar("type"),
-  location: varchar("location").array(),
-  date: varchar("date"),
-  itemdate: varchar("itemdate"),
-  email: varchar("email"),
+  name: varchar("name").notNull(),
+  description: varchar("description").notNull(),
+  type: varchar("type").notNull(),
+  location: varchar("location").array().notNull(),
+  date: varchar("date").notNull(),
+  itemdate: varchar("itemdate").notNull(),
+  email: varchar("email").notNull(),
   image: varchar("image"),
-  islost: boolean("islost"),
-  isresolved: boolean("isresolved"),
+  islost: boolean("islost").notNull(),
+  isresolved: boolean("isresolved").notNull(),
   ishelped: boolean("ishelped"),
   is_deleted: boolean("is_deleted").default(false),
+  foundby: varchar("foundby"),
 });
 
 export const leaderboard = pgTable("leaderboard", {
   email: varchar("email").primaryKey(),
-  points: integer("points"),
-  subscription: boolean("subscription"),
+  points: integer("points").notNull(),
 });
 
 export const searches = pgTable("searches", {
   keyword: varchar("keyword").primaryKey(),
-  emails: varchar("emails").array(),
+  emails: varchar("emails").array().default([]).notNull(),
 });
 
 // Types for TypeScript
