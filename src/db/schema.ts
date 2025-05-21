@@ -18,7 +18,7 @@ export const items = pgTable("items", {
   email: varchar("email").notNull(),
   image: varchar("image").notNull(),
   isLost: boolean("islost").notNull(),
-  isResolved: boolean("isresolved").notNull(),
+  isResolved: boolean("isresolved").default(false).notNull(),
   isHelped: boolean("ishelped"),
   is_deleted: boolean("is_deleted").default(false),
   foundBy: varchar("foundby"),
