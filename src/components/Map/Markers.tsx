@@ -27,7 +27,7 @@ function ObjectMarkers({
             key={index}
             position={stringArrayToLatLng(object.location!)}
             title={object.name!}
-            icon={object.islost ? iconsMap.others.true : iconsMap.others.false}
+            icon={object.isLost ? iconsMap.others.true : iconsMap.others.false}
             eventHandlers={{
               click: () => setSelectedObjectId(object.id),
             }}
