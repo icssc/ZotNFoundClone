@@ -33,6 +33,7 @@
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
     "react-leaflet-cluster-4-next": "^2.1.2",
+    "server-only": "^0.0.1",
     "sst": "3.13.10",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7"
