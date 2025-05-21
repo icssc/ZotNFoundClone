@@ -11,7 +11,7 @@ export type User = {
 
 export type ItemPostParams = {
   image: string;
-  islost: boolean;
+  isLost: boolean;
   itemName: string;
   itemDescription: string;
   itemDate: string;
@@ -36,11 +36,11 @@ export interface ItemDeleteParams {
 
 // Type guards
 export function isLostObject(object: Item) {
-  return object.islost;
+  return object.isLost;
 }
 
 export function isFoundObject(object: Item) {
-  return !object.islost;
+  return !object.isLost;
 }
 
 export function stringArrayToLatLng(location: string[]): LatLngExpression {
