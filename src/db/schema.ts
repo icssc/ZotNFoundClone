@@ -14,14 +14,14 @@ export const items = pgTable("items", {
   type: varchar("type").notNull(),
   location: varchar("location").array().notNull(),
   date: varchar("date").notNull(),
-  itemdate: varchar("itemdate").notNull(),
+  itemDate: varchar("itemdate").notNull(),
   email: varchar("email").notNull(),
   image: varchar("image").notNull(),
-  islost: boolean("islost").notNull(),
-  isresolved: boolean("isresolved").notNull(),
-  ishelped: boolean("ishelped"),
+  isLost: boolean("islost").notNull(),
+  isResolved: boolean("isresolved").notNull(),
+  isHelped: boolean("ishelped"),
   is_deleted: boolean("is_deleted").default(false),
-  foundby: varchar("foundby"),
+  foundBy: varchar("foundby"),
 });
 
 export const leaderboard = pgTable("leaderboard", {
