@@ -13,7 +13,7 @@ export default async function updateItem(
   try {
     const [item] = await db
       .update(items)
-      .set({ isresolved: isResolved, ishelped: isHelped })
+      .set({ isResolved: isResolved, isHelped: isHelped })
       .where(eq(items.id, itemId))
       .returning();
     return { data: item };
