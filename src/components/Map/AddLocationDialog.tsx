@@ -130,9 +130,7 @@ export function AddLocationDialog({
           <Step4FileUpload formData={formData} setFormData={setFormData} />
         );
       case 5:
-        return (
-          <Step5Confirmation formData={formData} />
-        );
+        return <Step5Confirmation formData={formData} />;
       case 6:
         return (
           <Step6LocationSelection
@@ -201,8 +199,8 @@ export function AddLocationDialog({
                         step.active
                           ? "border-2 border-blue-400"
                           : currentStep > step.number
-                          ? "bg-blue-400"
-                          : "bg-slate-700"
+                            ? "bg-blue-400"
+                            : "bg-slate-700"
                       } mb-1`}
                   >
                     {currentStep > step.number ? "✓" : step.number}

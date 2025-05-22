@@ -76,4 +76,4 @@ export interface StepProps {
   setFormData: React.Dispatch<React.SetStateAction<LocationFormData>>;
 }
 
-export interface ConfirmationStepProps extends Pick<StepProps, 'formData'> {}
+export interface ConfirmationStepProps extends Pick<StepProps, "formData"> {}
