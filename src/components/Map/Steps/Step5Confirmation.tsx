@@ -1,11 +1,7 @@
 import Image from "next/image";
-import { LocationFormData } from "@/lib/types";
+import { ConfirmationStepProps } from "@/lib/types";
 
-interface Step5Props {
-  formData: LocationFormData;
-}
-
-export function Step5Confirmation({ formData }: Step5Props) {
+export function Step5Confirmation({ formData }: ConfirmationStepProps) {
   return (
     <div className="space-y-4">
       <h3 className="font-medium text-lg text-white">Confirm and Submit</h3>

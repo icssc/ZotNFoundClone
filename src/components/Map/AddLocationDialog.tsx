@@ -42,23 +42,6 @@ export function AddLocationDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const createItemMutation = useCreateItem();
 
-  useEffect(() => {
-    if (isSubmitting) {
-      onOpenChange(false);
-      setCurrentStep(1);
-      setFormData({
-        name: "",
-        description: "",
-        type: "",
-        date: new Date(),
-        file: null,
-        isLost: true,
-        location: null,
-      });
-      setIsSubmitting(false);
-    }
-  }, [isSubmitting, onOpenChange]);
-
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
@@ -102,6 +85,19 @@ export function AddLocationDialog({
         email: "priyanshpokemon@gmail.com",
       };
       createItemMutation.mutate(newItem);
+
+      onOpenChange(false);
+      setCurrentStep(1);
+      setFormData({
+        name: "",
+        description: "",
+        type: "",
+        date: new Date(),
+        file: null,
+        isLost: true,
+        location: null,
+      });
+      setIsSubmitting(false);
     };
   };
 
@@ -134,7 +130,9 @@ export function AddLocationDialog({
           <Step4FileUpload formData={formData} setFormData={setFormData} />
         );
       case 5:
-        return <Step5Confirmation formData={formData} />;
+        return (
+          <Step5Confirmation formData={formData} />
+        );
       case 6:
         return (
           <Step6LocationSelection
