@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Step1BasicInfo } from "./Steps/Step1BasicInfo";
 import { LocationFormData } from "@/lib/types";
 import { Step2ItemType } from "./Steps/Step2ItemType";
