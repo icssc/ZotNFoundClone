@@ -1,9 +1,4 @@
-import {
-  text,
-  timestamp,
-  boolean,
-  pgSchema,
-} from "drizzle-orm/pg-core";
+import { text, timestamp, boolean, pgSchema } from "drizzle-orm/pg-core";
 
 // TODO: Make sure this changes for the production database
 export const dev = pgSchema("dev");
