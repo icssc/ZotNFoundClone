@@ -20,7 +20,7 @@
     "@types/leaflet": "^1.9.16",
     "@types/leaflet.markercluster": "^1.5.5",
     "babel-plugin-react-compiler": "^19.0.0-beta-bafa41b-20250307",
-    "better-auth": "^1.2.7",
+    "better-auth": "^1.2.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",

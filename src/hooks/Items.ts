@@ -1,25 +1,10 @@
 import { Item, NewItem } from "@/db/schema";
+import { browserQueryClient } from "@/lib/create-query-client";
 import { isError, ItemDeleteParams, ItemUpdateParams } from "@/lib/types";
 import { createItem } from "@/server/actions/item/create/action";
 import deleteItem from "@/server/actions/item/delete/action";
 import updateItem from "@/server/actions/item/update/action";
-import { getAllItems } from "@/server/data/item/queries";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { queryClient } from "@/components/ContextProvider";
-
-export function useItems() {
-  const { data, error, isLoading } = useQuery<Item[], Error>({
-    queryKey: ["items"],
-    queryFn: async () => {
-      const data = await getAllItems();
-      if (isError(data)) {
-        throw new Error(data.error);
-      }
-      return data.data;
-    },
-  });
-  return { data, error, isLoading };
-}
+import { useMutation } from "@tanstack/react-query";
 
 export function useCreateItem(item: NewItem) {
   const { data, error } = useMutation<NewItem, Error>({
@@ -32,8 +17,9 @@ export function useCreateItem(item: NewItem) {
       return mutation.data;
     },
     onSuccess: () =>
-      queryClient.setQueryData(["items"], (oldData: Item[] | undefined) =>
-        oldData ? [...oldData, item] : [item]
+      browserQueryClient!.setQueryData(
+        ["items"],
+        (oldData: Item[] | undefined) => (oldData ? [...oldData, item] : [item])
       ),
   });
 
@@ -60,12 +46,14 @@ export function useUpdateItem(
       return mutation.data;
     },
     onSuccess: () =>
-      queryClient.setQueryData(["items"], (oldData: Item[] | undefined) =>
-        oldData
-          ? oldData.map((item) =>
-              item.id === itemId ? { ...item, is_resolved } : item
-            )
-          : []
+      browserQueryClient!.setQueryData(
+        ["items"],
+        (oldData: Item[] | undefined) =>
+          oldData
+            ? oldData.map((item) =>
+                item.id === itemId ? { ...item, is_resolved } : item
+              )
+            : []
       ),
   });
   return { data, error };
@@ -85,8 +73,10 @@ export function useDeleteItem(itemId: number) {
       return mutation.data;
     },
     onSuccess: () =>
-      queryClient.setQueryData(["items"], (oldData: Item[] | undefined) =>
-        oldData ? oldData.filter((item) => item.id !== itemId) : []
+      browserQueryClient!.setQueryData(
+        ["items"],
+        (oldData: Item[] | undefined) =>
+          oldData ? oldData.filter((item) => item.id !== itemId) : []
       ),
   });
   return { data, error };

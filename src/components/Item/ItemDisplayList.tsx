@@ -6,15 +6,16 @@ import { Dialog } from "@/components/ui/dialog";
 import { useSharedContext } from "../ContextProvider";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import Item from "@/components/Item/Item";
-import { useItems } from "@/hooks/Items";
 import { Item as ItemType } from "@/db/schema";
 import { LatLngExpression } from "leaflet";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { FETCH_ITEMS } from "@/lib/options";
 
 function ItemDisplayList() {
   const { setSelectedLocation } = useSharedContext();
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
-  const { data, error, isLoading } = useItems();
+  const { data, error, isLoading } = useSuspenseQuery(FETCH_ITEMS);
   const handleItemClick = (item: ItemType) => {
     setSelectedItem(item);
     if (item.location) {

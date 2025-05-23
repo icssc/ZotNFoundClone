@@ -1,31 +1,11 @@
+"use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { LatLngExpression } from "leaflet";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { getQueryClient } from "@/lib/create-query-client";
 
-// ---- Query Client Setup ----
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
-    mutations: {
-      retry: 1,
-    },
-  },
-});
-let browserQueryClient: QueryClient | undefined = undefined;
-
-export function getBrowserQueryClient() {
-  if (!browserQueryClient) {
-    browserQueryClient = new QueryClient();
-  }
-  return browserQueryClient;
-}
-
-// ---- Map Context ----
+// ---- Shared Context ----
 type SharedContextType = {
   selectedLocation: LatLngExpression | null;
   filter: string;
@@ -54,13 +34,14 @@ export function SharedProviders({ children }: { children: ReactNode }) {
 export function useSharedContext() {
   const context = useContext(SharedContext);
   if (context === undefined) {
-    throw new Error("useMapContext must be used within a MapProvider");
+    throw new Error("useSharedContext must be used within a SharedProvider");
   }
   return context;
 }
 
 // ---- Main Provider Component ----
 export function Providers({ children }: { children: ReactNode }) {
+  const queryClient = getQueryClient();
   return (
     <QueryClientProvider client={queryClient}>
       <SharedProviders>{children}</SharedProviders>
