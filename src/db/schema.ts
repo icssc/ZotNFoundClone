@@ -26,7 +26,6 @@ export const items = pgTable("items", {
 export const leaderboard = pgTable("leaderboard", {
   email: varchar("email").primaryKey(),
   points: integer("points"),
-  subscription: boolean("subscription"),
 });
 
 export const searches = pgTable("searches", {

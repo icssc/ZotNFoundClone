@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { BookmarkIcon, InfoIcon, UserIcon, BellIcon } from "lucide-react";
+import {
+  BookmarkIcon,
+  InfoIcon,
+  UserIcon,
+  BellIcon,
+  CookieIcon,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -46,6 +52,14 @@ export default function Navbar() {
           >
             <BookmarkIcon className="h-4 w-4" />
             <span>Bookmarks</span>
+          </Link>
+
+          <Link
+            href="/leaderboard"
+            className="hover:text-gray-300 flex items-center gap-1"
+          >
+            <CookieIcon className="h-4 w-4" />
+            <span>LeaderBoard</span>
           </Link>
 
           {/* Sign In/Profile */}
