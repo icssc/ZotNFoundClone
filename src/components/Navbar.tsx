@@ -5,6 +5,7 @@ import { BookmarkIcon, InfoIcon, UserIcon, BellIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import SearchBar from "@/components/SearchBar";
 
 export default function Navbar() {
   return (
@@ -25,6 +26,7 @@ export default function Navbar() {
         </div>
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6">
+          <SearchBar />
           <Link
             href="/about"
             className="hover:text-gray-300 flex items-center gap-1"
