@@ -4,7 +4,7 @@
 
 - [ ] Add skeletons for everything, streaming in data as it comes in
   - [x] Map Skeleton
-  - [ ] Card/ List Skeleton
+  - [x] Card/ List Skeleton (not needed prefetched)
   - [ ] Profile Skeleton
 - [ ] Make a search bar on the bottom along with filters on the bottom as well
 - [ ] Try to remove "use client" from as many components as possible since we want to take advantage of SSR as much as possible for SEO
@@ -19,7 +19,8 @@
 
 ## Potential Future Overkill Features & Optimizations
 
-- [ ] Maybe in the future adding convex for an even better sync layer along with tanstack query (already using tanstack/react-query)
+- [x] Maybe in the future adding convex for an even better sync layer along with tanstack query (already using tanstack/react-query)
+_ => convex is too much overhead for the team
 
 [Interleaving Causing second request](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#interleaving-server-and-client-components)
 [Why Context Providers work?](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#interleaving-server-and-client-components)
