@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { BookmarkIcon, InfoIcon, UserIcon, BellIcon } from "lucide-react";
+import { InfoIcon, UserIcon, BellIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { BookmarkModal } from "@/components/BookmarkModal";
 import Image from "next/image";
 
 export default function Navbar() {
@@ -40,13 +41,7 @@ export default function Navbar() {
             <span>Updates</span>
           </Link>
 
-          <Link
-            href="/bookmarks"
-            className="hover:text-gray-300 flex items-center gap-1"
-          >
-            <BookmarkIcon className="h-4 w-4" />
-            <span>Bookmarks</span>
-          </Link>
+          <BookmarkModal />
 
           {/* Sign In/Profile */}
           <Button
