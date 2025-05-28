@@ -19,5 +19,3 @@ const pool = new Pool({
 
 // Create drizzle instance with schema configuration
 export const db = drizzle(pool, { schema });
-
-// const result = await db.execute("select * from dev.items");
