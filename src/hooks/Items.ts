@@ -15,29 +15,33 @@ export function useItems() {
       if (isError(data)) {
         throw new Error(data.error);
       }
+      data.data.sort((a, b) => {
+        const dateA = new Date(a.date!);
+        const dateB = new Date(b.date!);
+        return dateB.getTime() - dateA.getTime();
+      });
       return data.data;
     },
   });
   return { data, error, isLoading };
 }
 
-export function useCreateItem(item: NewItem) {
-  const { data, error } = useMutation<NewItem, Error>({
+export function useCreateItem() {
+  return useMutation<NewItem, Error, NewItem>({
     mutationKey: ["items"],
-    mutationFn: async () => {
+    mutationFn: async (item: NewItem) => {
       const mutation = await createItem(item);
       if (isError(mutation)) {
+        console.log(mutation.error);
         throw new Error(mutation.error);
       }
       return mutation.data;
     },
-    onSuccess: () =>
+    onSuccess: (item: NewItem) =>
       queryClient.setQueryData(["items"], (oldData: Item[] | undefined) =>
-        oldData ? [...oldData, item] : [item]
+        oldData ? [item, ...oldData] : [item]
       ),
   });
-
-  return { data, error };
 }
 
 export function useUpdateItem(
