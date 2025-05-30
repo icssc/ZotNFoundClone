@@ -29,7 +29,7 @@ export default async function Leaderboard() {
       imageY: 108,
       altText: "Found Item Icon",
       title: "Find an item",
-      amount: 1,
+      amount: 3,
     },
     {
       image: "/logos/resolved.png",
@@ -37,7 +37,7 @@ export default async function Leaderboard() {
       imageY: 108,
       altText: "Resolve Found Icon",
       title: "Resolve a FOUND Item",
-      amount: 1,
+      amount: 5,
     },
     {
       image: "/logos/resolved.png",
@@ -45,7 +45,7 @@ export default async function Leaderboard() {
       imageY: 108,
       altText: "Resolve Lost Icon",
       title: "Resolve a LOST Item",
-      amount: 1,
+      amount: 2,
     },
   ];
   const leaderboard = await getAllLeaderboard();
