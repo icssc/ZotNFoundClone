@@ -4,7 +4,6 @@ import { db } from "@/db";
 import { items, Item } from "@/db/schema";
 import { ActionResult } from "@/lib/types";
 import { eq } from "drizzle-orm";
-
 export async function getAllItems(): Promise<ActionResult<Item[]>> {
   try {
     const result = await db.query.items.findMany();
