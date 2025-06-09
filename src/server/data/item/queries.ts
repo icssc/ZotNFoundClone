@@ -4,7 +4,6 @@ import { db } from "@/db";
 import { items, Item } from "@/db/schema";
 import { ActionResult } from "@/lib/types";
 import { eq } from "drizzle-orm";
-
 export async function getAllItems(): Promise<ActionResult<Item[]>> {
   try {
     const result = await db.query.items.findMany();
@@ -47,6 +46,22 @@ export async function getItemEmail(id: number): Promise<ActionResult<string>> {
       return { error: "Email not found for the given item ID." };
     }
     return { data: email };
+  } catch (err) {
+    return { error: `Error fetching item: ${err}` };
+  }
+}
+
+export async function getTopFewItems(
+  limit: number,
+  offset: number
+): Promise<ActionResult<Item[]>> {
+  try {
+    const result = await db.query.items.findMany({
+      limit,
+      offset,
+    });
+
+    return { data: result };
   } catch (err) {
     return { error: `Error fetching item: ${err}` };
   }
