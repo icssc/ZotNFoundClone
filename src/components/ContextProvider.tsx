@@ -1,9 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { LatLngExpression } from "leaflet";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { getQueryClient } from "@/lib/create-query-client";
 
 // ---- Shared Context ----
 type SharedContextType = {
@@ -13,18 +10,21 @@ type SharedContextType = {
   setFilter: (filter: string) => void;
 };
 
-export const SharedContext = createContext<SharedContextType | undefined>(
-  undefined
-);
+const SharedContext = createContext<SharedContextType | undefined>(undefined);
 
-export function SharedProviders({ children }: { children: ReactNode }) {
-  const [selectedLocation, setSelectedLocation] =
-    useState<LatLngExpression | null>(null);
+// ---- Shared Provider Component ----
+function SharedProviders({ children }: { children: ReactNode }) {
+  const [selectedLocation, setSelectedLocation] = useState<LatLngExpression | null>(null);
   const [filter, setFilter] = useState<string>("");
 
   return (
     <SharedContext.Provider
-      value={{ selectedLocation, setSelectedLocation, filter, setFilter }}
+      value={{
+        selectedLocation,
+        filter,
+        setSelectedLocation,
+        setFilter,
+      }}
     >
       {children}
     </SharedContext.Provider>
@@ -41,11 +41,5 @@ export function useSharedContext() {
 
 // ---- Main Provider Component ----
 export function Providers({ children }: { children: ReactNode }) {
-  const queryClient = getQueryClient();
-  return (
-    <QueryClientProvider client={queryClient}>
-      <SharedProviders>{children}</SharedProviders>
-      <ReactQueryDevtools />
-    </QueryClientProvider>
-  );
+  return <SharedProviders>{children}</SharedProviders>;
 }

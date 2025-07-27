@@ -8,8 +8,11 @@ import { useSharedContext } from "@/components/ContextProvider";
 import { Dialog } from "@/components/ui/dialog";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import { LatLngExpression } from "leaflet";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { FETCH_ITEMS } from "@/lib/options";
+import { Item as ItemType } from "@/db/schema";
+
+interface MapProps {
+  initialItems: ItemType[];
+}
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
 
@@ -51,18 +54,15 @@ function MapController({
   );
 }
 
-function Map() {
+function Map({ initialItems }: MapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
   const [selectedObjectId, setSelectedObjectId] = useState<number>();
-  // Replace this with useQuery call or taking it from context provider if I implemented it
   const { selectedLocation, filter } = useSharedContext();
-
-  const { data } = useSuspenseQuery(FETCH_ITEMS);
 
   const selectedObject = useMemo(() => {
     if (!selectedObjectId) return null;
-    return data!.find((obj) => obj.id === selectedObjectId) || null;
-  }, [selectedObjectId, data]);
+    return initialItems.find((obj) => obj.id === selectedObjectId) || null;
+  }, [selectedObjectId, initialItems]);
 
   return (
     <MapContainer
@@ -77,9 +77,9 @@ function Map() {
     >
       <TileLayer url={accessToken} />
       <MapController selectedLocation={selectedLocation} />
-      {data && data.length > 0 && (
+      {initialItems && initialItems.length > 0 && (
         <ObjectMarkers
-          objects={data}
+          objects={initialItems}
           setSelectedObjectId={setSelectedObjectId}
           filter={filter}
         />
@@ -95,4 +95,4 @@ function Map() {
   );
 }
 
-export { Map as default };
+export default Map;
