@@ -14,7 +14,8 @@ const SharedContext = createContext<SharedContextType | undefined>(undefined);
 
 // ---- Shared Provider Component ----
 function SharedProviders({ children }: { children: ReactNode }) {
-  const [selectedLocation, setSelectedLocation] = useState<LatLngExpression | null>(null);
+  const [selectedLocation, setSelectedLocation] =
+    useState<LatLngExpression | null>(null);
   const [filter, setFilter] = useState<string>("");
 
   return (

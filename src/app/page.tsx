@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const itemsResult = await getAllItems();
-  
+
   if (isError(itemsResult)) {
     return (
       <div className="flex h-full items-center justify-center">

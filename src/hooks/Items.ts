@@ -83,7 +83,14 @@ export function useOptimisticItems(items: Item[]) {
 
   const [optimisticItemsUpdate, updateOptimisticItem] = useOptimistic(
     items,
-    (state, { itemId, is_resolved, is_helped }: { itemId: number; is_resolved: boolean; is_helped: boolean }) =>
+    (
+      state,
+      {
+        itemId,
+        is_resolved,
+        is_helped,
+      }: { itemId: number; is_resolved: boolean; is_helped: boolean }
+    ) =>
       state.map((item) =>
         item.id === itemId ? { ...item, is_resolved, is_helped } : item
       )
