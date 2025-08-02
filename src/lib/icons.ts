@@ -1,4 +1,6 @@
-import L, { MarkerCluster } from "leaflet";
+import "leaflet.markercluster";
+import L from "leaflet";
+
 const resolvedIcon = L.icon({
   iconUrl: "/logos/resolved.png",
   iconSize: [40, 40],
@@ -33,8 +35,9 @@ export const iconsMap = {
     false: resolvedIcon,
   },
 };
-
-export const createClusterCustomIcon = (cluster: MarkerCluster) => {
+// L.MarkerCluster doesn't seem to work, even though we are importing leaflet.markercluster
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const createClusterCustomIcon = (cluster: any) => {
   const count = cluster.getChildCount();
   let size;
 
