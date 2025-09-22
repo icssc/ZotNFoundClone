@@ -1,31 +1,8 @@
+"use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { LatLngExpression } from "leaflet";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-// ---- Query Client Setup ----
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
-    mutations: {
-      retry: 1,
-    },
-  },
-});
-let browserQueryClient: QueryClient | undefined = undefined;
-
-export function getBrowserQueryClient() {
-  if (!browserQueryClient) {
-    browserQueryClient = new QueryClient();
-  }
-  return browserQueryClient;
-}
-
-// ---- Map Context ----
+// ---- Shared Context ----
 type SharedContextType = {
   selectedLocation: LatLngExpression | null;
   filter: string;
@@ -33,18 +10,22 @@ type SharedContextType = {
   setFilter: (filter: string) => void;
 };
 
-export const SharedContext = createContext<SharedContextType | undefined>(
-  undefined
-);
+const SharedContext = createContext<SharedContextType | undefined>(undefined);
 
-export function SharedProviders({ children }: { children: ReactNode }) {
+// ---- Shared Provider Component ----
+function SharedProviders({ children }: { children: ReactNode }) {
   const [selectedLocation, setSelectedLocation] =
     useState<LatLngExpression | null>(null);
   const [filter, setFilter] = useState<string>("");
 
   return (
     <SharedContext.Provider
-      value={{ selectedLocation, setSelectedLocation, filter, setFilter }}
+      value={{
+        selectedLocation,
+        filter,
+        setSelectedLocation,
+        setFilter,
+      }}
     >
       {children}
     </SharedContext.Provider>
@@ -54,17 +35,12 @@ export function SharedProviders({ children }: { children: ReactNode }) {
 export function useSharedContext() {
   const context = useContext(SharedContext);
   if (context === undefined) {
-    throw new Error("useMapContext must be used within a MapProvider");
+    throw new Error("useSharedContext must be used within a SharedProvider");
   }
   return context;
 }
 
 // ---- Main Provider Component ----
 export function Providers({ children }: { children: ReactNode }) {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <SharedProviders>{children}</SharedProviders>
-      <ReactQueryDevtools />
-    </QueryClientProvider>
-  );
+  return <SharedProviders>{children}</SharedProviders>;
 }

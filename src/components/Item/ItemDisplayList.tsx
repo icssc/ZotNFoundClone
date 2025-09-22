@@ -6,15 +6,18 @@ import { Dialog } from "@/components/ui/dialog";
 import { useSharedContext } from "../ContextProvider";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import Item from "@/components/Item/Item";
-import { useItems } from "@/hooks/Items";
 import { Item as ItemType } from "@/db/schema";
 import { LatLngExpression } from "leaflet";
 
-function ItemDisplayList() {
+interface ItemDisplayListProps {
+  initialItems: ItemType[];
+}
+
+function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const { setSelectedLocation } = useSharedContext();
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
-  const { data, error, isLoading } = useItems();
+
   const handleItemClick = (item: ItemType) => {
     setSelectedItem(item);
     if (item.location) {
@@ -23,26 +26,10 @@ function ItemDisplayList() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <p>Loading items...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <p>Error loading items: {error.message}</p>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="flex h-full overflow-y-scroll flex-col p-4 space-y-4">
-        {data!.map((item: ItemType, index: number) => (
+        {initialItems.map((item: ItemType, index: number) => (
           <Item
             key={index}
             item={item}
