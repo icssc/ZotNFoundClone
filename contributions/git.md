@@ -20,10 +20,12 @@ This is our approach to Git.
 4. **Make Changes**: Make your changes in the codebase. Ensure your code follows the project's coding style (Prettier) and conventions(ESLint).
 5. **Test Your Changes**: Please run exhaustive tests before committing your code.
 6. **Commit Your Changes**: Commit your changes with a clear and descriptive commit message:
+
    ```bash
    git add .
    git commit -m <conventional-commit>
    ```
+
    We follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit messages. Here are some examples:
    - `feat: add new feature`
    - `fix: fix a bug`

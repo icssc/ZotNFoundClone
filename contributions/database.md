@@ -22,13 +22,13 @@ After Connecting your AWS EC2 Instance, you will need to set up the database sch
    ```
    This will create the necessary tables and structures in your PostgreSQL database as defined in the migration files.
 3. **Verify the Setup**: After running the migrations, you can verify that the tables have been created by connecting to your PostgreSQL database and checking the schema using drizzle-kit.
-    ```bash
-    bunx drizzle-kit migrate:status
-    ```
-    or
-    ```bash
-    npx drizzle-kit migrate:status
-    ```
+   ```bash
+   bunx drizzle-kit migrate:status
+   ```
+   or
+   ```bash
+   npx drizzle-kit migrate:status
+   ```
 
 The database should be ready with the required schema for ZotNFoundClone. You can now proceed with running the application and testing its functionality.
 Keep in mind, there is no data in the database yet, you will need to add data directly into the database.

@@ -16,6 +16,7 @@ These are the requirements to run and develop ZotNFound:
 - **dotenv** (for environment variable management)
 
 ### API Keys & Environment Variables
+
 Create a `.env.local` file in the project root with the following (example names, adjust as needed):
 
 ```env
@@ -39,12 +40,9 @@ AWS_PORT=5432
 - **GOOGLE_CLIENT_ID** and **GOOGLE_CLIENT_SECRET**: For Google OAuth authentication. Set up a project in the [Google Developer Console](https://console.developers.google.com/). (We might just swap to the UCI Shared Auth provider in the future)
 - - **AWS_USER**, **AWS_PASSWORD**, **AWS_HOST**, **AWS_PORT**, **AWS_DB_NAME**: We are connecting to a PostgreSQL database hosted on AWS, you will need to set these environment variables for authentication. You can obtain these credentials from your AWS Console under the RDS or EC2 dashboard. For more information on retrieving database credentials, see the [AWS EC2 documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-connect-to-db.html).
 
-
 ### Other Notes
 
 - Run `bun install` (or `npm install`) to install dependencies.
 - Use `bun run dev` (or `npm run dev`) to start the development server.
 - For formatting and linting, use `bun run format` and `bun run lint`.
 - For type checking, use `bun run type-check`.
-
-
