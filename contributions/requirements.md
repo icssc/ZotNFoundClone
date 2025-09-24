@@ -48,21 +48,29 @@ AWS_PORT=5432
 - For type checking, use `bun run type-check`.
 
 ### AWS Configuration
+
 - Resource: [AWS CLI Docs](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)
+
 1.  Install the AWS CLI ([Download Link](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)) for your OS
-2. Go to your terminal or powershell and run the command below to confirm that you have installed the CLI
+2.  Go to your terminal or powershell and run the command below to confirm that you have installed the CLI
+
 ```
 aws --version
 ```
+
 3. Run:
+
 ```
 aws configure
 ```
+
 It should produce output in this format:
+
 ```
 AWS Access Key ID [None]: [paste your AWS Access Key]
 AWS Secret Key ID [None]: [paste your AWS Secret Key]
 Default region name [None]: [just hit enter]
 Default output format [None]: [just hit enter]
 ```
+
 4. AWS CLI is configured

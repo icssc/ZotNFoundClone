@@ -18,10 +18,13 @@ This is our approach to Git.
 (The Github CLI streamlines this process with `gh repo fork` and `gh repo clone` commands! We recommend using it. Check out [GitHub CLI](https://cli.github.com/) for more details.)
 
 4. **Make Changes**: Make your changes in the codebase. Ensure your code follows the project's coding style (Prettier) and conventions(ESLint). Specifically, before each commit, run the following commands:
+
 ```
 npm lint
 npm format
+npx prettier --write .
 ```
+
 5. **Test Your Changes**: Please run exhaustive tests before committing your code.
 6. **Commit Your Changes**: Commit your changes with a clear and descriptive commit message:
 
