@@ -12,6 +12,6 @@ The documentation of the following conventions we use, while using NextJS, TypeS
 - **`/lib`**: Utility functions and constants.
 - **`/db`**: Database-related code, schema for things like auth and our data.
 - **`/server`**: Server-side code, make sure to `import "server-only";` at the top of files here, since this runs on the server only and performs actions like DB queries.
-  - **`/actions`**: Server actions that can be called from the client. Generall `/create`, `/update`, `/delete` actions for the data model / table we want.
+  - **`/actions`**: Server actions that can be called from the client. General `/create`, `/update`, `/delete` actions for the data model / table we want.
   - **`/data`**: Data fetching functions.
 - **`/hooks`**: Custom React hooks.
