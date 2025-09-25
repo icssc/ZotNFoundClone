@@ -22,7 +22,6 @@ This is our approach to Git.
 ```
 npm lint
 npm format
-npx prettier --write .
 ```
 
 5. **Test Your Changes**: Please run exhaustive tests before committing your code.
