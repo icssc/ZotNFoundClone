@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { BookmarkModal } from "@/components/BookmarkModal";
 import Image from "next/image";
 import { signInWithGoogle } from "@/lib/auth-client";
+import { SearchBar } from "./SearchBar";
 
 export default function Navbar() {
   const handleSignIn = async () => {
@@ -35,6 +36,9 @@ export default function Navbar() {
           <Link href="/" className="text-xl font-bold">
             ZotNFound
           </Link>
+        </div>
+        <div className="flex-1 px-4 max-w-xl">
+          <SearchBar />
         </div>
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6">
