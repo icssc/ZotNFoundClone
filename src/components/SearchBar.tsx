@@ -7,18 +7,6 @@ import { useSharedContext } from "@/components/ContextProvider";
 
 export function SearchBar() {
   const { filter, setFilter } = useSharedContext();
-  const [keyword, setKeyword] = useState<string>(filter || "");
-
-  useEffect(() => {
-    setKeyword(filter || "");
-  }, [filter]);
-
-  useEffect(() => {
-    const filterDelay: ReturnType<typeof setTimeout> = setTimeout(() => {
-      setFilter(keyword.trim());
-    }, 150);
-    return () => clearTimeout(filterDelay);
-  }, [keyword, setFilter]);
 
   return (
     <div className="relative w-full">
@@ -28,8 +16,8 @@ export function SearchBar() {
       <Input
         className="pl-9"
         placeholder="Search items..."
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
       />
     </div>
   );
