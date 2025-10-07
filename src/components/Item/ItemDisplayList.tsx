@@ -8,13 +8,14 @@ import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import Item from "@/components/Item/Item";
 import { Item as ItemType } from "@/db/schema";
 import { LatLngExpression } from "leaflet";
+import { filterItems } from "@/lib/utils";
 
 interface ItemDisplayListProps {
   initialItems: ItemType[];
 }
 
 function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
-  const { setSelectedLocation } = useSharedContext();
+  const { setSelectedLocation, filter } = useSharedContext();
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
 
@@ -26,10 +27,11 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
     }
   };
 
+  const filteredItems = filterItems(initialItems, filter);
   return (
     <>
       <div className="flex h-full overflow-y-scroll flex-col p-4 space-y-4">
-        {initialItems.map((item: ItemType, index: number) => (
+        {filteredItems.map((item: ItemType, index: number) => (
           <Item
             key={index}
             item={item}

@@ -30,9 +30,6 @@ export default async function Home() {
           </div>
         </div>
       </main>
-      <div className="text-white text-center container h-full">
-        Filter: The page into what it is
-      </div>
     </div>
   );
 }
