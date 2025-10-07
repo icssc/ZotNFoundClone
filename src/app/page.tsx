@@ -3,7 +3,6 @@ import { LazyMap } from "@/components/Map/LazyMap";
 import { getAllItems } from "@/server/data/item/queries";
 import { isError } from "@/lib/types";
 
-
 export default async function Home() {
   const itemsResult = await getAllItems();
 
