@@ -18,6 +18,8 @@ import { Step6LocationSelection } from "./Steps/Step6LocationSelection";
 import { useCreateItem } from "@/hooks/Items";
 import { NewItem } from "@/db/schema";
 import { format } from "date-fns";
+import imageCompression from "browser-image-compression";
+import uploadImageToS3 from "@/server/actions/item/upload/action";
 
 interface AddLocationDialogProps {
   open: boolean;
@@ -66,18 +68,37 @@ export function AddLocationDialog({
 
     setIsSubmitting(true);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(formData.file);
+     const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: "image/jpeg",
+      preserveExif: false,
+    };
+    const compressedFile = await imageCompression(
+      formData.file,
+      options
+    );
 
-    reader.onload = () => {
+    const reader = new FileReader();
+    reader.readAsDataURL(compressedFile);
+    const base64Data = await new Promise<string>((resolve) => {
+      reader.onloadend = () => {
+        resolve(reader.result as string);
+      };
+    });
+
+    const imgUrl: string = await uploadImageToS3(base64Data);
+
+    console.log("Image uploaded to S3 with URL:", imgUrl);
+    
       const newItem: NewItem = {
         name: formData.name,
         description: formData.description,
         type: formData.type,
         date: format(formData.date, "yyyy-MM-dd"),
         itemdate: format(formData.date, "yyyy-MM-dd"),
-        image:
-          "https://zotnfound-dang-backend-bucketbucketf19722a9-jcjpp0t0r8mh.s3.amazonaws.com/uploads/1747113328595-4b8b2932-5ba4-4440-a256-66a1f9b4a7bc.jpeg",
+        image: imgUrl,
         islost: formData.isLost,
         location: formData.location?.map(String) ?? [],
         isresolved: false,
@@ -98,8 +119,8 @@ export function AddLocationDialog({
         location: null,
       });
       setIsSubmitting(false);
+
     };
-  };
 
   const handleContinue = () => {
     if (currentStep < 6) {
