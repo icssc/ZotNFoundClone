@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import {
   DialogContent,
   DialogTitle,
@@ -9,8 +10,72 @@ import { Button } from "@/components/ui/button";
 import { DialogHeader } from "@/components/ui/dialog";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
+import { Input } from "@/components/ui/input";
+
 function DetailedDialog({ item }: { item: Item }) {
   const islostObject = isLostObject(item);
+
+  // Local contact form state
+  const [showForm, setShowForm] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<null | "sending" | "ok" | "error">(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const resetForm = () => {
+    setName("");
+    setEmail("");
+    setShowForm(false);
+    setStatus(null);
+    setMessage(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim()) {
+      setMessage("Please provide name and email.");
+      setStatus("error");
+      return;
+    }
+
+    setStatus("sending");
+    setMessage(null);
+
+    try {
+      const payload = {
+        item: {
+          id: item.id,
+          name: item.name,
+          type: item.type,
+          email: item.email,
+          image: item.image,
+        },
+        finderName: name.trim(),
+        finderEmail: email.trim(),
+      };
+
+      const res = await fetch("/api/resend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const json = await res.json();
+      if (res.ok) {
+        setStatus("ok");
+        setMessage("Contact sent. The owner has been notified.");
+        // keep the form visible briefly so user sees confirmation
+        setTimeout(resetForm, 2000);
+      } else {
+        setStatus("error");
+        setMessage(json?.error ?? "Failed to send contact.");
+      }
+    } catch (err) {
+      console.error("contact send error:", err);
+      setStatus("error");
+      setMessage("Failed to send contact.");
+    }
+  };
 
   return (
     <DialogContent className="sm:max-w-md">
@@ -55,10 +120,76 @@ function DetailedDialog({ item }: { item: Item }) {
           <p className="font-medium">Description</p>
           <p className="text-sm text-gray-600 mt-1">{item.description}</p>
         </div>
+
+        {showForm && (
+          <form className="space-y-3 pt-2" onSubmit={handleSubmit}>
+            <div>
+              <label className="text-sm font-medium block mb-1">
+                Your name
+              </label>
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your name"
+                type="text"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium block mb-1">
+                Your email
+              </label>
+              <Input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@domain.edu"
+                type="email"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                type="submit"
+                variant="default"
+                disabled={status === "sending"}
+              >
+                {status === "sending" ? "Sending..." : "Send Contact"}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setShowForm(false);
+                  setMessage(null);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+
+            {message && (
+              <p
+                className={`text-sm ${status === "error" ? "text-red-500" : "text-green-600"}`}
+              >
+                {message}
+              </p>
+            )}
+          </form>
+        )}
       </div>
 
       <div className="flex justify-end gap-2">
-        <Button variant="outline">Contact</Button>
+        {!showForm ? (
+          <Button
+            variant="outline"
+            onClick={() => {
+              setShowForm(true);
+              setMessage(null);
+            }}
+          >
+            Contact
+          </Button>
+        ) : null}
       </div>
     </DialogContent>
   );
