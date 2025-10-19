@@ -10,10 +10,10 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
         🔍 Select Item Type:
       </Label>
 
-      <div className="flex flex-wrap gap-2 items-center justify-center">
+      <div className="flex flex-col md:flex-row md:flex-wrap gap-2 items-center justify-center w-full">
         <Button
           variant={formData.type === "electronics" ? "default" : "outline"}
-          className={`w-48 h-48 ${formData.type === "electronics" ? "bg-black" : ""}`}
+          className={`w-full md:w-32 md:h-32 ${formData.type === "electronics" ? "bg-black" : ""}`}
           onClick={() => setFormData({ ...formData, type: "electronics" })}
         >
           <Headphones className="w-4 h-4 mr-2" />
@@ -21,7 +21,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
         </Button>
         <Button
           variant={formData.type === "clothing" ? "default" : "outline"}
-          className={`w-48 h-48 ${formData.type === "clothing" ? "bg-black" : ""}`}
+          className={`w-full md:w-32 md:h-32 ${formData.type === "clothing" ? "bg-black" : ""}`}
           onClick={() => setFormData({ ...formData, type: "clothing" })}
         >
           <Shirt className="w-4 h-4 mr-2" />
@@ -29,7 +29,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
         </Button>
         <Button
           variant={formData.type === "accessories" ? "default" : "outline"}
-          className={`w-48 h-48 ${formData.type === "accessories" ? "bg-black" : ""}`}
+          className={`w-full md:w-32 md:h-32 ${formData.type === "accessories" ? "bg-black" : ""}`}
           onClick={() => setFormData({ ...formData, type: "accessories" })}
         >
           <Key className="w-4 h-4 mr-2" />
@@ -37,7 +37,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
         </Button>
         <Button
           variant={formData.type === "documents" ? "default" : "outline"}
-          className={`w-48 h-48 ${formData.type === "documents" ? "bg-black" : ""}`}
+          className={`w-full md:w-32 md:h-32 ${formData.type === "documents" ? "bg-black" : ""}`}
           onClick={() => setFormData({ ...formData, type: "documents" })}
         >
           <File className="w-4 h-4 mr-2" />
@@ -45,7 +45,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
         </Button>
         <Button
           variant={formData.type === "other" ? "default" : "outline"}
-          className={`w-48 h-48 ${formData.type === "other" ? "bg-black" : ""}`}
+          className={`w-full md:w-32 md:h-32 ${formData.type === "other" ? "bg-black" : ""}`}
           onClick={() => setFormData({ ...formData, type: "other" })}
         >
           <CircleDot className="w-4 h-4 mr-2" />
@@ -54,7 +54,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
       </div>
       <div className="flex items-center justify-center bg-slate-800 rounded-lg p-1 w-full max-w-xs mx-auto">
         <button
-          className={`flex-1 py-2 px-4 rounded-md transition-all ${
+          className={`flex-1 md:py-2 md:px-4 py-1 px-2 rounded-md transition-all ${
             formData.isLost
               ? "bg-blue-600 text-white"
               : "bg-transparent text-gray-400 hover:text-white"
@@ -64,7 +64,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
           Lost Item
         </button>
         <button
-          className={`flex-1 py-2 px-4 rounded-md transition-all ${
+          className={`flex-1 md:py-2 md:px-4 py-1 px-2 rounded-md transition-all ${
             !formData.isLost
               ? "bg-blue-600 text-white"
               : "bg-transparent text-gray-400 hover:text-white"

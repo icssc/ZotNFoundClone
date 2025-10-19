@@ -16,7 +16,7 @@ export function Step4FileUpload({ formData, setFormData }: StepProps) {
           const file = e.target.files?.[0] || null;
           setFormData({ ...formData, file });
         }}
-        className="py-48 bg-slate-400"
+        className="py-32 bg-slate-400"
       />
     </div>
   );

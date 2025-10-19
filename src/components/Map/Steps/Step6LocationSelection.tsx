@@ -34,7 +34,7 @@ export function Step6LocationSelection({ formData, setFormData }: StepProps) {
   return (
     <div className="space-y-2">
       <Label className="text-white">📍 Select the location on the map:</Label>
-      <div className="h-[400px] w-[600px] rounded-md overflow-hidden">
+      <div className="md:h-[400px] h-[300px] md:w-[600px] w-full rounded-md overflow-hidden">
         <MapContainer
           center={centerPosition as [number, number]}
           zoom={17}

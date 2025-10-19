@@ -145,13 +145,13 @@ export function AddLocationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-slate-700 !max-w-fit">
-        <DialogHeader>
-          <DialogTitle className="text-white">Add New Location</DialogTitle>
+      <DialogContent className={`bg-slate-700 sm:mx-4 overflow-y-auto ${currentStep >= 5 ? "!max-w-fit" : "md:max-w-xl"}`}>
+        <DialogHeader className="pb-2 sm:pb-4">
+          <DialogTitle className="text-white text-lg sm:text-xl">Add New Location</DialogTitle>
         </DialogHeader>
 
-        <div className="w-full bg-slate-800 p-3 rounded-md">
-          <div className="flex items-center justify-around w-full space-x-4">
+        <div className="w-full bg-slate-800 p-2 sm:p-3 rounded-md">
+          <div className="flex items-center justify-around w-full space-x-1 sm:space-x-4 min-w-max">
             {/* Steps with connecting lines between them */}
             {[
               {
@@ -194,7 +194,7 @@ export function AddLocationDialog({
               <div className="flex items-center" key={step.number}>
                 <div className="flex flex-col items-center z-10 relative">
                   <div
-                    className={`flex items-center justify-center w-8 h-8 rounded-full text-white
+                    className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full text-white text-xs sm:text-sm
                       ${
                         step.active
                           ? "border-2 border-blue-400"
@@ -205,30 +205,32 @@ export function AddLocationDialog({
                   >
                     {currentStep > step.number ? "✓" : step.number}
                   </div>
-                  <div className="text-xs text-white font-medium">
+                  <div className="text-xs sm:text-xs text-white font-medium text-center">
                     {step.label}
                   </div>
-                  <div className="text-xs text-slate-400">{step.sublabel}</div>
+                  <div className="text-xs sm:text-xs text-slate-400 text-center hidden sm:block">{step.sublabel}</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="py-4 space-y-4">
-          {renderStepContent()}
+        <div className="py-2 sm:py-4 space-y-3 sm:space-y-4">
+          <div className="w-full px-2 sm:px-4">
+            {renderStepContent()}
+          </div>
 
-          <div className="flex justify-between space-x-2 pt-4">
-            <div>
+          <div className="flex flex-row justify-between items-end space-x-2 pt-2 sm:pt-4">
+            <div className="flex-shrink-0">
               {currentStep > 1 && (
-                <Button variant="outline" onClick={handleBack}>
+                <Button variant="outline" onClick={handleBack} className="w-auto">
                   Back
                 </Button>
               )}
             </div>
-            <div className="flex space-x-2">
+            <div className="flex flex-row space-x-2">
               <Button
-                className="bg-red-100 hover:bg-red-200 text-black"
+                className="bg-red-100 hover:bg-red-200 text-black w-auto"
                 onClick={() => {
                   onOpenChange(false);
                   setCurrentStep(1);
@@ -239,6 +241,7 @@ export function AddLocationDialog({
               <Button
                 disabled={!isStepValid() || isSubmitting}
                 onClick={handleContinue}
+                className="w-auto"
               >
                 {currentStep === 6
                   ? isSubmitting
