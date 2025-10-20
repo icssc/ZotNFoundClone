@@ -12,12 +12,20 @@ export default async function uploadImageToS3(base64Data: string): Promise<strin
     const s3Client = new S3Client({
         region: "us-east-1", // not sure what this should be
     });  
-    const type = "image/jpeg";
+    const type = "image/png";
     const key = `uploads/${Date.now()}-${randomUUID()}.${type.split("/")[1]}`;
+
+    // const uploadParams: PutObjectCommandInput = {
+    //     ACL: "public-read",
+    //     Bucket: "zotnfound-rebecca-backend-bucketbucketf19722a9-byo4gmbw2dew", // replace with Bucket.bucket.bucketName
+    //     Key: key,
+    //     Body: base64Data,
+    //     ContentType: type,
+    // };
 
     const uploadParams: PutObjectCommandInput = {
         ACL: "public-read",
-        Bucket: "zotnfound-rebecca-backend-bucketbucketf19722a9-byo4gmbw2dew", // replace with Bucket.bucket.bucketName
+        Bucket: "zotnfound-dang-backend-bucketbucketf19722a9-jcjpp0t0r8mh", // replace with Bucket.bucket.bucketName
         Key: key,
         Body: base64Data,
         ContentType: type,
@@ -26,7 +34,8 @@ export default async function uploadImageToS3(base64Data: string): Promise<strin
     const uploadCommand = new PutObjectCommand(uploadParams);
     await s3Client.send(uploadCommand);
 
-    const url = `https://zotnfound-rebecca-backend-bucketbucketf19722a9-byo4gmbw2dew.s3.amazonaws.com/${key}`;
+    const url = `https://zotnfound-dang-backend-bucketbucketf19722a9-jcjpp0t0r8mh.s3.amazonaws.com/${key}`;
+    // const url = `https://zotnfound-rebecca-backend-bucketbucketf19722a9-byo4gmbw2dew.s3.amazonaws.com/${key}`;
 
     // const url = `https://${Bucket.bucket.bucketName}.s3.amazonaws.com/${key}`;
     return url;
