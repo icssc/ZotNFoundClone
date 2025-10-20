@@ -42,7 +42,7 @@ function SharedProviders({
       console.log("Updating user email to:", newUser);
       setUser(newUser);
     }
-  }, [sessionAndUserData]);
+  }, [sessionAndUserData, user]);
 
   return (
     <SharedContext.Provider
