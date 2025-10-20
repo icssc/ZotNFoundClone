@@ -4,6 +4,8 @@ import "./globals.css";
 // import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import { Providers } from "@/components/ContextProvider";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,11 +22,14 @@ export const metadata: Metadata = {
   description: "Helping UCI students locate and recover lost belongings",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const data = await auth.api.getSession({ headers: await headers() });
+  const initialUser: string | null = data?.user?.email || null;
+  console.log("Initial user from server:", initialUser);
   return (
     <html lang="en">
       {/* <head>
@@ -36,7 +41,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-900`}
       >
-        <Providers>
+        <Providers initialUser={initialUser}>
           <Navbar />
           {children}
         </Providers>
