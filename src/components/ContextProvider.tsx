@@ -33,7 +33,7 @@ function SharedProviders({
   const [filter, setFilter] = useState<string>("");
   const [user, setUser] = useState<string | null>(initialUser);
   const { data: sessionAndUserData } = authClient.useSession();
-  
+
   useEffect(() => {
     console.log("Session user changed:", sessionAndUserData);
     console.log("Current user email:", user);
