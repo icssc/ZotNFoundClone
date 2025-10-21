@@ -7,10 +7,10 @@
     "build": "next build",
     "dev": "next dev --turbopack",
     "format": "npx prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "eslint .",
     "start": "next start",
-    "type-check": "tsc --noEmit",
-    "format:check": "prettier --check ."
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -34,7 +34,7 @@
     "react-leaflet": "^5.0.0",
     "react-leaflet-cluster-4-next": "^2.1.2",
     "server-only": "^0.0.1",
-    "sst": "3.13.10",
+    "sst": "3.17.19",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7"
   },
