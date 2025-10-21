@@ -5,7 +5,7 @@ import { items, Item } from "@/db/schema";
 import { ActionResult } from "@/lib/types";
 import { eq } from "drizzle-orm";
 export async function getAllItems(): Promise<ActionResult<Item[]>> {
-  "use cache"
+  "use cache";
   try {
     const result = await db.query.items.findMany();
     return { data: result };
