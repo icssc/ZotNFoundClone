@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     cacheComponents: true,
+    browserDebugInfoInTerminal: true,
   },
   reactCompiler: true,
 };
