@@ -45,10 +45,10 @@ function DetailedDialog({ item }: { item: Item}) {
   };
 
   return (
-    <DialogContent className="sm:max-w-2xl p-0 ">
+    <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0">
       <div className="flex flex-col sm:flex-row gap-4 my-8">
         {/* Image - Top on mobile, Left on desktop */}
-        <div className="w-full sm:w-64 h-64 relative mx-4 sm:mx-8">
+        <div className="w-full max-w-sm sm:w-64 h-80 sm:h-64 relative mx-auto sm:mx-8">
           <Image
             src={isValidUrl(item.image) ? item.image : "/placeholder.jpg"}
             alt={item.name || "Item Image"}
