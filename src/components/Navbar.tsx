@@ -1,12 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { BookmarkIcon, InfoIcon, UserIcon, BellIcon } from "lucide-react";
+import { InfoIcon, UserIcon, BellIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { BookmarkModal } from "@/components/BookmarkModal";
 import Image from "next/image";
+import { signInWithGoogle } from "@/lib/auth-client";
+import { SearchBar } from "./SearchBar";
 
 export default function Navbar() {
+  const handleSignIn = async () => {
+    try {
+      const data = await signInWithGoogle();
+      // Handle successful sign-in
+      console.log("Signed in successfully:", data);
+    } catch (error) {
+      // Handle sign-in error
+      console.error("Sign-in error:", error);
+    }
+  };
+
   return (
     <nav className="bg-black text-white w-full py-4 px-4 md:px-6">
       <div className="flex items-center justify-between">
@@ -22,6 +36,9 @@ export default function Navbar() {
           <Link href="/" className="text-xl font-bold">
             ZotNFound
           </Link>
+        </div>
+        <div className="flex-1 px-4 max-w-xl">
+          <SearchBar />
         </div>
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6">
@@ -40,19 +57,14 @@ export default function Navbar() {
             <span>Updates</span>
           </Link>
 
-          <Link
-            href="/bookmarks"
-            className="hover:text-gray-300 flex items-center gap-1"
-          >
-            <BookmarkIcon className="h-4 w-4" />
-            <span>Bookmarks</span>
-          </Link>
+          <BookmarkModal />
 
           {/* Sign In/Profile */}
           <Button
             variant="outline"
             size="sm"
             className="hover:bg-white hover:text-black text-white bg-black transition-colors duration-250"
+            onClick={handleSignIn}
           >
             <UserIcon className="h-4 w-4 mr-2" />
             Sign In

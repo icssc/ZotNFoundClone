@@ -15,9 +15,10 @@ import { Step3DateSelection } from "./Steps/Step3DateSelection";
 import { Step4FileUpload } from "./Steps/Step4FileUpload";
 import { Step5Confirmation } from "./Steps/Step5Confirmation";
 import { Step6LocationSelection } from "./Steps/Step6LocationSelection";
-import { useCreateItem } from "@/hooks/Items";
 import { NewItem } from "@/db/schema";
 import { format } from "date-fns";
+import { createItem } from "@/server/actions/item/create/action";
+import { useRouter } from "next/navigation";
 
 interface AddLocationDialogProps {
   open: boolean;
@@ -28,6 +29,7 @@ export function AddLocationDialog({
   open,
   onOpenChange,
 }: AddLocationDialogProps) {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<LocationFormData>({
     name: "",
@@ -40,7 +42,6 @@ export function AddLocationDialog({
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const createItemMutation = useCreateItem();
 
   const isStepValid = () => {
     switch (currentStep) {
@@ -69,22 +70,27 @@ export function AddLocationDialog({
     const reader = new FileReader();
     reader.readAsDataURL(formData.file);
 
-    reader.onload = () => {
-      const newItem: NewItem = {
+    reader.onload = async () => {
+      const itemToCreate: NewItem = {
         name: formData.name,
         description: formData.description,
         type: formData.type,
         date: format(formData.date, "yyyy-MM-dd"),
-        itemdate: format(formData.date, "yyyy-MM-dd"),
+        itemDate: format(formData.date, "yyyy-MM-dd"),
         image:
           "https://zotnfound-dang-backend-bucketbucketf19722a9-jcjpp0t0r8mh.s3.amazonaws.com/uploads/1747113328595-4b8b2932-5ba4-4440-a256-66a1f9b4a7bc.jpeg",
-        islost: formData.isLost,
+        isLost: formData.isLost,
         location: formData.location?.map(String) ?? [],
-        isresolved: false,
-        ishelped: false,
+        isResolved: false,
+        isHelped: false,
         email: "priyanshpokemon@gmail.com",
       };
-      createItemMutation.mutate(newItem);
+
+      const creationResult = await createItem(itemToCreate);
+      if ("data" in creationResult) {
+        router.refresh();
+      }
+      // TODO: Create Toast in a false state.
 
       onOpenChange(false);
       setCurrentStep(1);
@@ -145,9 +151,13 @@ export function AddLocationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className={`bg-slate-700 sm:mx-4 overflow-y-auto ${currentStep >= 5 ? "!max-w-fit" : "md:max-w-xl"}`}>
+      <DialogContent
+        className={`bg-slate-700 sm:mx-4 overflow-y-auto ${currentStep >= 5 ? "!max-w-fit" : "md:max-w-xl"}`}
+      >
         <DialogHeader className="pb-2 sm:pb-4">
-          <DialogTitle className="text-white text-lg sm:text-xl">Add New Location</DialogTitle>
+          <DialogTitle className="text-white text-lg sm:text-xl">
+            Add New Location
+          </DialogTitle>
         </DialogHeader>
 
         <div className="w-full bg-slate-800 p-2 sm:p-3 rounded-md">
@@ -208,7 +218,9 @@ export function AddLocationDialog({
                   <div className="text-xs sm:text-xs text-white font-medium text-center">
                     {step.label}
                   </div>
-                  <div className="text-xs sm:text-xs text-slate-400 text-center hidden sm:block">{step.sublabel}</div>
+                  <div className="text-xs sm:text-xs text-slate-400 text-center hidden sm:block">
+                    {step.sublabel}
+                  </div>
                 </div>
               </div>
             ))}
@@ -216,14 +228,16 @@ export function AddLocationDialog({
         </div>
 
         <div className="py-2 sm:py-4 space-y-3 sm:space-y-4">
-          <div className="w-full px-2 sm:px-4">
-            {renderStepContent()}
-          </div>
+          <div className="w-full px-2 sm:px-4">{renderStepContent()}</div>
 
           <div className="flex flex-row justify-between items-end space-x-2 pt-2 sm:pt-4">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               {currentStep > 1 && (
-                <Button variant="outline" onClick={handleBack} className="w-auto">
+                <Button
+                  variant="outline"
+                  onClick={handleBack}
+                  className="w-auto"
+                >
                   Back
                 </Button>
               )}

@@ -41,8 +41,9 @@ export default function Item({
                   : "/placeholder.jpg"
               }
               alt={item.name || "Item Image"}
-              layout="fill"
-              objectFit="cover"
+              fill
+              sizes="32px"
+              style={{ objectFit: "cover" }}
               loading="lazy"
             />
           </div>

@@ -17,8 +17,13 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    reactCompiler: true,
-    ppr: true,
+    cacheComponents: true,
+  },
+  reactCompiler: true,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
   },
 };
 

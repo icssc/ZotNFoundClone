@@ -4,28 +4,19 @@
 
 - [ ] Add skeletons for everything, streaming in data as it comes in
   - [x] Map Skeleton
-  - [ ] Card/ List Skeleton
+  - [x] Card/ List Skeleton (not needed prefetched)
   - [ ] Profile Skeleton
 - [ ] Make a search bar on the bottom along with filters on the bottom as well
-- [ ] Try to remove "use client" from as many components as possible since we want to take advantage of SSR as much as possible for SEO
-  - [ ] Get Server Side Props for data fetching
-  - [ ] Re-considering this for optimistic updates (Mutation with useQuery) though since, if we want to make changes to the UI and the app, server side props are static by nature and don't allow for dynamic updates since that would require polling {to be fore we can do this with react-query}
-- [ ] Finishing about page
+- [ ] Making a post does ISR, so that everything else can remain static.
+- [-] Finishing about page
 - [ ] Finishing contact page
 - [x] Adding markers and clustering
 - [ ] Making it so that it prompts user that chrome will have the best experience (since the rasterization is better in chrome)
 - [ ] Making it so that it prompts user that they can add it to their home screen
 - [x] Changing the dialog to a shared dialog with data passed in changing the content
-
-## Potential Future Overkill Features & Optimizations
-
-- [ ] Maybe in the future adding convex for an even better sync layer along with tanstack query (already using tanstack/react-query)
+- [ ] [Profile picture caching](https://github.com/icssc/ZotNFoundClone/pull/42#issuecomment-3424244820)
 
 [Interleaving Causing second request](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#interleaving-server-and-client-components)
-[Why Context Providers work?](https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns#interleaving-server-and-client-components)
-[use Hook React](https://nextjs.org/docs/app/guides/single-page-applications#using-reacts-use-within-a-context-provider)
-
-We might not need react-query since we only want revalidation of state really, no caching needed I don't think but a decision to be made later of only using [swr](https://nextjs.org/docs/app/guides/single-page-applications#spas-with-swr)
 
 - [x] Make a handle Scroll which does loading more data cleanly for infinite scroll without shifting and making it smooth and not jumpy
       => this would be impossible since the markers would also have to be changing, and you can't progressively gtet more items, simply becayuse markers

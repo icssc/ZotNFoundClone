@@ -1,20 +1,39 @@
 "use client";
 
 import { stringArrayToLatLng } from "@/lib/types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { useSharedContext } from "../ContextProvider";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import Item from "@/components/Item/Item";
-import { useItems } from "@/hooks/Items";
 import { Item as ItemType } from "@/db/schema";
 import { LatLngExpression } from "leaflet";
+import { filterItems } from "@/lib/utils";
 
-function ItemDisplayList() {
-  const { setSelectedLocation } = useSharedContext();
+interface ItemDisplayListProps {
+  initialItems: ItemType[];
+}
+
+function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
+  const { setSelectedLocation, filter } = useSharedContext();
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
-  const { data, error, isLoading } = useItems();
+  const items = initialItems;
+  useEffect(() => {
+    function handleItemCreated(event: Event) {
+      const createdEvent = event as CustomEvent<ItemType>;
+    }
+    function handleItemCreateFailed() {
+      // Optionally handle failure (toast/snackbar). No optimistic revert needed now.
+    }
+    window.addEventListener("item-created", handleItemCreated);
+    window.addEventListener("item-create-failed", handleItemCreateFailed);
+    return () => {
+      window.removeEventListener("item-created", handleItemCreated);
+      window.removeEventListener("item-create-failed", handleItemCreateFailed);
+    };
+  }, []);
+
   const handleItemClick = (item: ItemType) => {
     setSelectedItem(item);
     if (item.location) {
@@ -23,28 +42,13 @@ function ItemDisplayList() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <p>Loading items...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <p>Error loading items: {error.message}</p>
-      </div>
-    );
-  }
-
+  const filteredItems = filterItems(items, filter);
   return (
     <>
       <div className="flex h-full overflow-y-scroll flex-col p-4 space-y-4">
-        {data!.map((item: ItemType, index: number) => (
+        {filteredItems.map((item: ItemType, index: number) => (
           <Item
-            key={index}
+            key={item.id ?? index}
             item={item}
             onClick={() => handleItemClick(item)}
             setOpen={setOpen}

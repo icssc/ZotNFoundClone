@@ -4,7 +4,9 @@ import { ConfirmationStepProps } from "@/lib/types";
 export function Step5Confirmation({ formData }: ConfirmationStepProps) {
   return (
     <div className="space-y-4 max-h-[50vh] sm:max-h-[70vh] overflow-y-auto">
-      <h3 className="font-medium md:text-lg text-sm text-white">Confirm and Submit</h3>
+      <h3 className="font-medium md:text-lg text-sm text-white">
+        Confirm and Submit
+      </h3>
       <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
         <div className="bg-gray-800 p-4 rounded-md space-y-2 md:w-80 md:h-80 w-56 h-56">
           <Image
