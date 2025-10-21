@@ -19,7 +19,7 @@ type ContactState = {
   message: string | null;
 };
 
-function DetailedDialog({ item, user }: { item: Item, user: UserType | null }) {
+function DetailedDialog({ item, user }: { item: Item; user: UserType | null }) {
   const islostObject = isLostObject(item);
 
   const [showConfirm, setShowConfirm] = useState(false);
