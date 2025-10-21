@@ -3,14 +3,13 @@ import { Input } from "@/components/ui/input";
 import { LocationFormData } from "@/lib/types";
 
 interface Step4Props {
-  formData: LocationFormData;
   updateField: <K extends keyof LocationFormData>(
     field: K,
     value: LocationFormData[K]
   ) => void;
 }
 
-export function Step4FileUpload({ formData, updateField }: Step4Props) {
+export function Step4FileUpload({ updateField }: Step4Props) {
   return (
     <div className="space-y-2">
       <Label htmlFor="file" className="text-white">

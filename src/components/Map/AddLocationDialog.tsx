@@ -27,7 +27,11 @@ interface AddLocationDialogProps {
 }
 
 type FormAction =
-  | { type: "UPDATE_FIELD"; field: keyof LocationFormData; value: any }
+  | {
+      type: "UPDATE_FIELD";
+      field: keyof LocationFormData;
+      value: LocationFormData[keyof LocationFormData];
+    }
   | { type: "NEXT_STEP" }
   | { type: "PREV_STEP" }
   | { type: "RESET" };
@@ -284,7 +288,7 @@ export function AddLocationDialog({
       case 3:
         return <Step3DateSelection {...props} />;
       case 4:
-        return <Step4FileUpload {...props} />;
+        return <Step4FileUpload updateField={updateField} />;
       case 5:
         return <Step5Confirmation formData={props.formData} />;
       case 6:
