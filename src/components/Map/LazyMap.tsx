@@ -10,9 +10,15 @@ interface LazyMapProps {
 
 const MapComponent = dynamic(() => import("@/components/Map/Map"), {
   ssr: false,
-  loading: () => <Skeleton className="h-full rounded-4xl" />,
+  loading: () => (
+    <Skeleton className="h-full w-full rounded-lg transition-all duration-300 animate-pulse" />
+  ),
 });
 
 export const LazyMap = ({ initialItems }: LazyMapProps) => {
-  return <MapComponent initialItems={initialItems} />;
+  return (
+    <div className="w-full h-full transition-all duration-300 ease-out">
+      <MapComponent initialItems={initialItems} />
+    </div>
+  );
 };

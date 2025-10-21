@@ -22,75 +22,52 @@ export default async function Home() {
   });
 
   return (
-    <div className="w-full flex flex-col items-center px-3 sm:px-4 lg:px-8 py-4">
+    <div className="w-full h-[90vh] flex flex-col items-center px-3 sm:px-4 lg:px-6 py-3">
       <main
         className="
-          w-full flex flex-col gap-6
+          w-full
+          h-[90vh]
+          flex
+          flex-col
+          gap-4
           lg:flex-row
-          lg:items-start
-          lg:justify-center
-          animate-in fade-in duration-300
+          animate-in
+          fade-in
+          duration-500
+          transition-all
         "
       >
-        {/* Map Wrapper with Corner Decorations */}
+        {/* Map Section */}
         <div
           className="
-            relative w-full lg:w-[80%]
-            h-[46vh] sm:h-[55vh] md:h-[60vh] lg:h-[70vh]
-            flex
-            items-stretch
-            group
-            transition-all
-          "
+          w-full
+          h-[55vh]
+          lg:h-full
+          lg:flex-1
+          animate-in
+          slide-in-from-left
+          duration-700
+          transition-all
+          ease-out
+        "
         >
-          {/* Corner accents */}
-          {/* Top Left */}
-          <div className="pointer-events-none absolute top-0 left-0 h-8 w-8">
-            <div className="absolute top-0 left-0 h-6 w-1 bg-white" />
-            <div className="absolute top-0 left-0 w-6 h-1 bg-white" />
-          </div>
-          {/* Top Right */}
-          <div className="pointer-events-none absolute top-0 right-0 h-8 w-8">
-            <div className="absolute top-0 right-0 h-6 w-1 bg-white" />
-            <div className="absolute top-0 right-0 w-6 h-1 bg-white" />
-          </div>
-          {/* Bottom Left */}
-          <div className="pointer-events-none absolute bottom-0 left-0 h-8 w-8">
-            <div className="absolute bottom-0 left-0 h-6 w-1 bg-white" />
-            <div className="absolute bottom-0 left-0 w-6 h-1 bg-white" />
-          </div>
-          {/* Bottom Right */}
-          <div className="pointer-events-none absolute bottom-0 right-0 h-8 w-8">
-            <div className="absolute bottom-0 right-0 h-6 w-1 bg-white" />
-            <div className="absolute bottom-0 right-0 w-6 h-1 bg-white" />
-          </div>
-
-          {/* Map container border frame */}
-          <div
-            className="
-              absolute inset-0 border border-white/20
-              rounded-sm
-              shadow-[0_0_0_1px_rgba(255,255,255,0.05)]
-            "
-          />
-
-          <div className="relative z-10 w-full h-full">
-            <LazyMap initialItems={items} />
-          </div>
+          <LazyMap initialItems={items} />
         </div>
 
-        {/* Item List */}
+        {/* Item List Section */}
         <div
           className="
-            w-full lg:w-[20%]
-            h-[38vh] sm:h-[42vh] md:h-[50vh] lg:h-[70vh]
-            overflow-hidden
-            border border-white/15
-            rounded-md
-            bg-black
-            animate-in fade-in duration-300
-            shadow-inner
-          "
+          w-full
+          h-[40vh]
+          lg:h-full
+          lg:w-[420px]
+          xl:w-[480px]
+          animate-in
+          slide-in-from-right
+          duration-700
+          transition-all
+          ease-out
+        "
         >
           <ItemDisplayList initialItems={items} />
         </div>

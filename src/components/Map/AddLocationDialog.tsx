@@ -81,7 +81,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
   ];
 
   return (
-    <div className="w-full bg-slate-800 p-2 sm:p-3 rounded-md">
+    <div className="w-full bg-black/95 border border-white/20 p-2 sm:p-3 rounded-md">
       <div className="flex items-center justify-around w-full space-x-1 sm:space-x-4 min-w-max">
         {steps.map((step) => (
           <div className="flex items-center" key={step.number}>
@@ -90,10 +90,10 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                 className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full text-white text-xs sm:text-sm
                   ${
                     currentStep === step.number
-                      ? "border-2 border-blue-400"
+                      ? "border-2 border-white"
                       : currentStep > step.number
-                        ? "bg-blue-400"
-                        : "bg-slate-700"
+                        ? "bg-white text-black"
+                        : "bg-white/20"
                   } mb-1`}
               >
                 {currentStep > step.number ? "✓" : step.number}
@@ -101,7 +101,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
               <div className="text-xs sm:text-xs text-white font-medium text-center">
                 {step.label}
               </div>
-              <div className="text-xs sm:text-xs text-slate-400 text-center hidden sm:block">
+              <div className="text-xs sm:text-xs text-gray-400 text-center hidden sm:block">
                 {step.sublabel}
               </div>
             </div>
@@ -118,13 +118,13 @@ function ErrorDisplay({ actionState }: { actionState: CreateItemState }) {
   return (
     <>
       {actionState.error && (
-        <div className="bg-red-500 text-white p-3 rounded-md text-sm">
+        <div className="bg-red-500/90 border border-red-400 text-white p-3 rounded-md text-sm">
           {actionState.error}
         </div>
       )}
 
       {actionState.errors && (
-        <div className="bg-red-500 text-white p-3 rounded-md text-sm space-y-1">
+        <div className="bg-red-500/90 border border-red-400 text-white p-3 rounded-md text-sm space-y-1">
           {Object.entries(actionState.errors).map(([field, errors]) => (
             <div key={field}>
               <strong>{field}:</strong> {errors?.join(", ")}
@@ -159,7 +159,7 @@ function DialogActions({
             variant="outline"
             onClick={onBack}
             disabled={isPending}
-            className="w-auto"
+            className="w-auto bg-black hover:bg-white/10 border-white/30 text-white transition-all duration-200"
           >
             Back
           </Button>
@@ -167,7 +167,7 @@ function DialogActions({
       </div>
       <div className="flex flex-row space-x-2">
         <Button
-          className="bg-red-100 hover:bg-red-200 text-black w-auto"
+          className="bg-red-500/90 hover:bg-red-600 border border-red-400 text-white w-auto transition-all duration-200"
           onClick={onCancel}
           disabled={isPending}
         >
@@ -176,7 +176,7 @@ function DialogActions({
         <Button
           disabled={!isStepValid || isPending}
           onClick={onContinue}
-          className="w-auto"
+          className="w-auto bg-white hover:bg-gray-200 text-black transition-all duration-200"
         >
           {currentStep === 6
             ? isPending
@@ -301,7 +301,7 @@ export function AddLocationDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={`bg-slate-700 sm:mx-4 overflow-y-auto ${formState.currentStep >= 5 ? "max-w-fit!" : "md:max-w-xl"}`}
+        className={`bg-black/95 border-white/20 text-white sm:mx-4 overflow-y-auto ${formState.currentStep >= 5 ? "max-w-fit!" : "md:max-w-xl"}`}
       >
         <DialogHeader className="pb-2 sm:pb-4">
           <DialogTitle className="text-white text-lg sm:text-xl">

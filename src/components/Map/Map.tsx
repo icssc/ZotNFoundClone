@@ -69,75 +69,70 @@ function Map({ initialItems }: MapProps) {
   }, [selectedObjectId, items]);
 
   return (
-    <div className="relative w-full h-full animate-in fade-in duration-300">
-      <div className="pointer-events-none absolute z-10 top-0 left-0 h-10 w-10">
-        <div className="absolute top-0 left-0 h-8 w-[3px] bg-black" />
-        <div className="absolute top-0 left-0 w-8 h-[3px] bg-black" />
-      </div>
-      <div className="pointer-events-none absolute top-0 right-0 h-10 w-10">
-        <div className="absolute top-0 right-0 h-8 w-[3px] bg-black" />
-        <div className="absolute top-0 right-0 w-8 h-[3px] bg-black" />
-      </div>
-      <div className="pointer-events-none absolute bottom-0 left-0 h-10 w-10">
-        <div className="absolute bottom-0 left-0 h-8 w-[3px] bg-black" />
-        <div className="absolute bottom-0 left-0 w-8 h-[3px] bg-black" />
-      </div>
-      <div className="pointer-events-none absolute bottom-0 right-0 h-10 w-10">
-        <div className="absolute bottom-0 right-0 h-8 w-[3px] bg-black" />
-        <div className="absolute bottom-0 right-0 w-8 h-[3px] bg-black" />
-      </div>
+    <div className="relative w-full h-full bg-black animate-in fade-in duration-300 transition-all">
+      {/* White border frame with black spacing */}
+      <div className="absolute inset-0 border border-white pointer-events-none" />
 
-      {/* Inner subtle border frame */}
-      <div className="pointer-events-none absolute inset-0 border border-white/15 rounded-sm" />
-
-      <MapContainer
-        className="w-full h-full rounded-sm z-10 border border-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
-        center={centerPosition as [number, number]}
-        zoom={17}
-        minZoom={16}
-        maxBounds={mapBounds}
-        zoomControl={false}
-        attributionControl={false}
-        maxBoundsViscosity={1.0}
-      >
-        <TileLayer url={accessToken} />
-        <MapController selectedLocation={selectedLocation} />
-        {items && items.length > 0 && (
-          <ObjectMarkers
-            objects={items}
-            setSelectedObjectId={setSelectedObjectId}
-            filter={filter}
-          />
-        )}
-        <TileLayer url={accessToken} />
-        <MapController selectedLocation={selectedLocation} />
-        {items && items.length > 0 && (
-          <ObjectMarkers
-            objects={items}
-            setSelectedObjectId={setSelectedObjectId}
-            filter={filter}
-          />
-        )}
-        <Dialog
-          open={!!selectedObjectId && !!selectedObject}
-          onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
-        >
-          {selectedObject && <DetailedDialog item={selectedObject} />}
-        </Dialog>
-        <div>
-          <Button
-            className="absolute bottom-4 right-4 z-1000 bg-black hover:bg-white/10 border border-white/30 text-white p-2 rounded-full w-12 h-12 text-xl transition-colors"
-            onClick={() => setIsAddDialogOpen(true)}
-          >
-            <PlusIcon className="h-6 w-6" />
-          </Button>
-
-          <AddLocationDialog
-            open={isAddDialogOpen}
-            onOpenChange={setIsAddDialogOpen}
-          />
+      {/* Inner content with padding to create black space between border and map */}
+      <div className="relative w-full h-full p-1.5">
+        {/* Corner accents */}
+        <div className="pointer-events-none absolute z-10 -top-px -left-px h-10 w-10">
+          <div className="absolute -top-px -left-px h-8 w-[3px] bg-white" />
+          <div className="absolute -top-px -left-px w-8 h-[3px] bg-white" />
         </div>
-      </MapContainer>
+        <div className="pointer-events-none absolute z-10 -top-px -right-px h-10 w-10">
+          <div className="absolute -top-px -right-px h-8 w-[3px] bg-white" />
+          <div className="absolute -top-px -right-px w-8 h-[3px] bg-white" />
+        </div>
+        <div className="pointer-events-none absolute z-10 -bottom-px -left-px h-10 w-10">
+          <div className="absolute -bottom-px -left-px h-8 w-[3px] bg-white" />
+          <div className="absolute -bottom-px -left-px w-8 h-[3px] bg-white" />
+        </div>
+        <div className="pointer-events-none absolute z-10 -bottom-px -right-px h-10 w-10">
+          <div className="absolute -bottom-px -right-px h-8 w-[3px] bg-white" />
+          <div className="absolute -bottom-px -right-px w-8 h-[3px] bg-white" />
+        </div>
+
+        <MapContainer
+          className="w-full h-full z-0 shadow-2xl transition-all duration-300 border-black"
+          center={centerPosition as [number, number]}
+          zoom={17}
+          minZoom={16}
+          maxBounds={mapBounds}
+          zoomControl={false}
+          attributionControl={false}
+          maxBoundsViscosity={1.0}
+        >
+          <TileLayer url={accessToken} />
+          <MapController selectedLocation={selectedLocation} />
+          {items && items.length > 0 && (
+            <ObjectMarkers
+              objects={items}
+              setSelectedObjectId={setSelectedObjectId}
+              filter={filter}
+            />
+          )}
+          <Dialog
+            open={!!selectedObjectId && !!selectedObject}
+            onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
+          >
+            {selectedObject && <DetailedDialog item={selectedObject} />}
+          </Dialog>
+          <div>
+            <Button
+              className="absolute bottom-4 right-4 z-1000 bg-black hover:bg-white/10 border border-white/30 text-white p-2 rounded-full w-12 h-12 text-xl transition-all duration-300 hover:scale-110 hover:shadow-xl"
+              onClick={() => setIsAddDialogOpen(true)}
+            >
+              <PlusIcon className="h-6 w-6" />
+            </Button>
+
+            <AddLocationDialog
+              open={isAddDialogOpen}
+              onOpenChange={setIsAddDialogOpen}
+            />
+          </div>
+        </MapContainer>
+      </div>
     </div>
   );
 }

@@ -29,11 +29,11 @@ export default function Item({
   return (
     <div
       onClick={onClick}
-      className="flex flex-col p-4 border-b border-white/20 cursor-pointer bg-black hover:bg-white/5 rounded-md transition-all hover:shadow-lg hover:scale-[1.015] animate-in fade-in slide-in-from-bottom-1"
+      className="flex flex-col p-4 border-b border-white/20 cursor-pointer bg-black hover:bg-white/5 rounded-md transition-all duration-300 hover:shadow-lg hover:scale-[1.015] animate-in fade-in slide-in-from-bottom-1"
     >
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-row items-center space-x-2">
-          <div className="h-8 w-8 relative rounded-full overflow-hidden">
+      <div className="flex flex-row justify-between items-start gap-2">
+        <div className="flex flex-row items-center space-x-2 flex-1 min-w-0">
+          <div className="h-8 w-8 relative rounded-full overflow-hidden shrink-0">
             <Image
               src={
                 item.image && isValidUrl(item.image)
@@ -47,31 +47,30 @@ export default function Item({
               loading="lazy"
             />
           </div>
-          <div>
-            <p className="font-semibold text-white line-clamp-1 truncate max-w-[140px] sm:max-w-[180px] md:max-w-[220px]">
-              {item.name}
-            </p>
-            <p className="text-sm text-gray-400 line-clamp-1 truncate">
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-white truncate">{item.name}</p>
+            <p className="text-sm text-gray-400 truncate">
               {islostObject ? "Lost" : "Found"}
             </p>
           </div>
         </div>
-        <div>
-          <p className="text-sm text-gray-400 line-clamp-1 truncate max-w-[90px]">
+        <div className="shrink-0">
+          <p className="text-sm text-gray-400 truncate whitespace-nowrap">
             {item.date}
           </p>
         </div>
       </div>
-      <div>
-        <p className="text-sm text-gray-400 line-clamp-2 overflow-hidden">
+      <div className="mt-2">
+        <p className="text-sm text-gray-400 line-clamp-2 overflow-hidden text-ellipsis">
           {item.description}
         </p>
       </div>
-      <div className="flex flex-row justify-end">
+      <div className="flex flex-row justify-end mt-2">
         <Button
           onClick={() => {
             setOpen(true);
           }}
+          className="transition-all duration-200"
         >
           {islostObject ? "I Found This" : "This Is Mine"}
         </Button>
