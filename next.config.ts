@@ -21,6 +21,11 @@ const nextConfig: NextConfig = {
     browserDebugInfoInTerminal: true,
   },
   reactCompiler: true,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
 };
 
 export default nextConfig;

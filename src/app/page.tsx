@@ -22,6 +22,11 @@ async function AuthenticatedContent() {
   const session = await auth.api.getSession({ headers: await headers() });
   const user = session?.user ?? null;
 
+  items.sort((a, b) => {
+    const dateA = new Date(a.date!);
+    const dateB = new Date(b.date!);
+    return dateB.getTime() - dateA.getTime();
+  });
   return (
     <main className="w-full p-12 h-full flex flex-row">
       <div className="flex flex-row gap-10 h-full w-full">
