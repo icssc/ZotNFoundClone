@@ -1,8 +1,16 @@
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
-import { StepProps } from "@/lib/types";
+import { LocationFormData } from "@/lib/types";
 
-export function Step3DateSelection({ formData, setFormData }: StepProps) {
+interface Step3Props {
+  formData: LocationFormData;
+  updateField: <K extends keyof LocationFormData>(
+    field: K,
+    value: LocationFormData[K]
+  ) => void;
+}
+
+export function Step3DateSelection({ formData, updateField }: Step3Props) {
   return (
     <div className="space-y-2 flex flex-col justify-center items-center">
       <Label htmlFor="date" className="text-white">
@@ -12,7 +20,7 @@ export function Step3DateSelection({ formData, setFormData }: StepProps) {
         mode="single"
         selected={formData.date}
         onSelect={(newDate) => {
-          setFormData({ ...formData, date: newDate || new Date() });
+          updateField("date", newDate || new Date());
         }}
         className="rounded-md border shadow text-white"
       />

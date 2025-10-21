@@ -1,9 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Headphones, Shirt, Key, File, CircleDot } from "lucide-react";
-import { StepProps } from "@/lib/types";
+import { LocationFormData } from "@/lib/types";
 
-export function Step2ItemType({ formData, setFormData }: StepProps) {
+interface Step2Props {
+  formData: LocationFormData;
+  updateField: <K extends keyof LocationFormData>(
+    field: K,
+    value: LocationFormData[K]
+  ) => void;
+}
+
+export function Step2ItemType({ formData, updateField }: Step2Props) {
   return (
     <div className="space-y-2 flex flex-col items-center justify-center">
       <Label htmlFor="type" className="text-white">
@@ -14,7 +22,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
         <Button
           variant={formData.type === "electronics" ? "default" : "outline"}
           className={`w-full md:w-32 md:h-32 ${formData.type === "electronics" ? "bg-black" : ""}`}
-          onClick={() => setFormData({ ...formData, type: "electronics" })}
+          onClick={() => updateField("type", "electronics")}
         >
           <Headphones className="w-4 h-4 mr-2" />
           Electronics
@@ -22,7 +30,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
         <Button
           variant={formData.type === "clothing" ? "default" : "outline"}
           className={`w-full md:w-32 md:h-32 ${formData.type === "clothing" ? "bg-black" : ""}`}
-          onClick={() => setFormData({ ...formData, type: "clothing" })}
+          onClick={() => updateField("type", "clothing")}
         >
           <Shirt className="w-4 h-4 mr-2" />
           Clothing
@@ -30,7 +38,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
         <Button
           variant={formData.type === "accessories" ? "default" : "outline"}
           className={`w-full md:w-32 md:h-32 ${formData.type === "accessories" ? "bg-black" : ""}`}
-          onClick={() => setFormData({ ...formData, type: "accessories" })}
+          onClick={() => updateField("type", "accessories")}
         >
           <Key className="w-4 h-4 mr-2" />
           Accessories
@@ -38,7 +46,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
         <Button
           variant={formData.type === "documents" ? "default" : "outline"}
           className={`w-full md:w-32 md:h-32 ${formData.type === "documents" ? "bg-black" : ""}`}
-          onClick={() => setFormData({ ...formData, type: "documents" })}
+          onClick={() => updateField("type", "documents")}
         >
           <File className="w-4 h-4 mr-2" />
           Documents
@@ -46,7 +54,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
         <Button
           variant={formData.type === "other" ? "default" : "outline"}
           className={`w-full md:w-32 md:h-32 ${formData.type === "other" ? "bg-black" : ""}`}
-          onClick={() => setFormData({ ...formData, type: "other" })}
+          onClick={() => updateField("type", "other")}
         >
           <CircleDot className="w-4 h-4 mr-2" />
           Other
@@ -59,7 +67,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
               ? "bg-blue-600 text-white"
               : "bg-transparent text-gray-400 hover:text-white"
           }`}
-          onClick={() => setFormData({ ...formData, isLost: true })}
+          onClick={() => updateField("isLost", true)}
         >
           Lost Item
         </button>
@@ -69,7 +77,7 @@ export function Step2ItemType({ formData, setFormData }: StepProps) {
               ? "bg-blue-600 text-white"
               : "bg-transparent text-gray-400 hover:text-white"
           }`}
-          onClick={() => setFormData({ ...formData, isLost: false })}
+          onClick={() => updateField("isLost", false)}
         >
           Found Item
         </button>

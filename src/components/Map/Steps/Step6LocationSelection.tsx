@@ -1,18 +1,23 @@
 import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import { Label } from "@/components/ui/label";
-import { StepProps } from "@/lib/types";
+import { LocationFormData } from "@/lib/types";
 import { centerPosition, mapBounds } from "@/lib/constants";
 import { iconsMap } from "@/lib/icons";
 import "leaflet/dist/leaflet.css";
 
-function LocationMarker({ formData, setFormData }: StepProps) {
+interface Step6Props {
+  formData: LocationFormData;
+  updateField: <K extends keyof LocationFormData>(
+    field: K,
+    value: LocationFormData[K]
+  ) => void;
+}
+
+function LocationMarker({ formData, updateField }: Step6Props) {
   const map = useMapEvents({
     click(e) {
-      setFormData({
-        ...formData,
-        location: [e.latlng.lat, e.latlng.lng],
-      });
+      updateField("location", [e.latlng.lat, e.latlng.lng]);
     },
   });
 
@@ -28,7 +33,7 @@ function LocationMarker({ formData, setFormData }: StepProps) {
   ) : null;
 }
 
-export function Step6LocationSelection({ formData, setFormData }: StepProps) {
+export function Step6LocationSelection({ formData, updateField }: Step6Props) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
 
   return (
@@ -46,7 +51,7 @@ export function Step6LocationSelection({ formData, setFormData }: StepProps) {
           maxBoundsViscosity={1.0}
         >
           <TileLayer url={accessToken} />
-          <LocationMarker formData={formData} setFormData={setFormData} />
+          <LocationMarker formData={formData} updateField={updateField} />
         </MapContainer>
       </div>
       <p className="text-sm text-gray-400">

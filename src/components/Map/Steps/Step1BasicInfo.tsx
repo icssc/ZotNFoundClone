@@ -1,9 +1,17 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { StepProps } from "@/lib/types";
+import { LocationFormData } from "@/lib/types";
 
-export function Step1BasicInfo({ formData, setFormData }: StepProps) {
+interface Step1Props {
+  formData: LocationFormData;
+  updateField: <K extends keyof LocationFormData>(
+    field: K,
+    value: LocationFormData[K]
+  ) => void;
+}
+
+export function Step1BasicInfo({ formData, updateField }: Step1Props) {
   return (
     <div>
       <div className="space-y-2">
@@ -13,7 +21,7 @@ export function Step1BasicInfo({ formData, setFormData }: StepProps) {
         <Input
           id="name"
           placeholder="Ex: Airpods Pro, ..."
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          onChange={(e) => updateField("name", e.target.value)}
           value={formData.name}
           className="text-white"
         />
@@ -25,9 +33,7 @@ export function Step1BasicInfo({ formData, setFormData }: StepProps) {
         <Textarea
           id="description"
           placeholder="📝 Ex: Lost in ICS31 Lec, ..."
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
+          onChange={(e) => updateField("description", e.target.value)}
           value={formData.description}
           className="text-white"
         />

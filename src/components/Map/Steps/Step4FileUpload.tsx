@@ -1,8 +1,16 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { StepProps } from "@/lib/types";
+import { LocationFormData } from "@/lib/types";
 
-export function Step4FileUpload({ formData, setFormData }: StepProps) {
+interface Step4Props {
+  formData: LocationFormData;
+  updateField: <K extends keyof LocationFormData>(
+    field: K,
+    value: LocationFormData[K]
+  ) => void;
+}
+
+export function Step4FileUpload({ formData, updateField }: Step4Props) {
   return (
     <div className="space-y-2">
       <Label htmlFor="file" className="text-white">
@@ -14,7 +22,7 @@ export function Step4FileUpload({ formData, setFormData }: StepProps) {
         accept="image/*"
         onChange={(e) => {
           const file = e.target.files?.[0] || null;
-          setFormData({ ...formData, file });
+          updateField("file", file);
         }}
         className="py-32 bg-slate-400"
       />
