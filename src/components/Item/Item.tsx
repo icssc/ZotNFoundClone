@@ -29,7 +29,7 @@ export default function Item({
   return (
     <div
       onClick={onClick}
-      className="flex flex-col p-4 border-b border-gray-200 cursor-pointer bg-gray-300 hover:bg-gray-50 duration-200 rounded-md transition-colors"
+      className="flex flex-col p-4 border-b border-white/20 cursor-pointer bg-black hover:bg-white/5 rounded-md transition-all hover:shadow-lg hover:scale-[1.015] animate-in fade-in slide-in-from-bottom-1"
     >
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center space-x-2">
@@ -48,18 +48,24 @@ export default function Item({
             />
           </div>
           <div>
-            <p className="font-semibold">{item.name}</p>
-            <p className="text-sm text-gray-500">
+            <p className="font-semibold text-white line-clamp-1 truncate max-w-[140px] sm:max-w-[180px] md:max-w-[220px]">
+              {item.name}
+            </p>
+            <p className="text-sm text-gray-400 line-clamp-1 truncate">
               {islostObject ? "Lost" : "Found"}
             </p>
           </div>
         </div>
         <div>
-          <p className="text-sm text-gray-500">{item.date}</p>
+          <p className="text-sm text-gray-400 line-clamp-1 truncate max-w-[90px]">
+            {item.date}
+          </p>
         </div>
       </div>
       <div>
-        <p className="text-sm text-gray-500 line-clamp-2">{item.description}</p>
+        <p className="text-sm text-gray-400 line-clamp-2 overflow-hidden">
+          {item.description}
+        </p>
       </div>
       <div className="flex flex-row justify-end">
         <Button
