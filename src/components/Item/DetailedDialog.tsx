@@ -10,7 +10,7 @@ import { User, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
-import { authClient, signInWithGoogle } from "@/lib/auth-client";
+import { signInWithGoogle } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { User as UserType } from "better-auth";
 
@@ -19,10 +19,8 @@ type ContactState = {
   message: string | null;
 };
 
-function DetailedDialog({ item }: { item: Item }) {
+function DetailedDialog({ item, user }: { item: Item, user: UserType | null }) {
   const islostObject = isLostObject(item);
-  const { data: session } = authClient.useSession();
-  const user: UserType | undefined = session?.user;
 
   const [showConfirm, setShowConfirm] = useState(false);
 

@@ -9,9 +9,11 @@ import { Dialog } from "@/components/ui/dialog";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import { LatLngExpression } from "leaflet";
 import { Item as ItemType } from "@/db/schema";
+import { User } from "better-auth";
 
 interface MapProps {
   initialItems: ItemType[];
+  user: User | null;
 }
 
 // https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
@@ -54,7 +56,7 @@ function MapController({
   );
 }
 
-function Map({ initialItems }: MapProps) {
+function Map({ initialItems, user }: MapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
   const [selectedObjectId, setSelectedObjectId] = useState<number>();
   const { selectedLocation, filter } = useSharedContext();
@@ -89,7 +91,7 @@ function Map({ initialItems }: MapProps) {
         open={!!selectedObjectId && !!selectedObject}
         onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
       >
-        {selectedObject && <DetailedDialog item={selectedObject} />}
+        {selectedObject && <DetailedDialog item={selectedObject} user={user} />}
       </Dialog>
     </MapContainer>
   );
