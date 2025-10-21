@@ -26,6 +26,7 @@ function DetailedDialog({ item }: { item: Item}) {
   const islostObject = isLostObject(item);
   const [isCopied, setIsCopied] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
 
   const handleShare = async () => {
     try {
@@ -39,9 +40,28 @@ function DetailedDialog({ item }: { item: Item}) {
     } 
   };
 
-  const handleViewContact = () => {
-    setShowEmail(true);
-    setTimeout(() => setShowEmail(false), 3000); // Reset after 3 seconds
+  const handleViewContact = async () => {
+    if (showEmail) {
+      // If already showing email, copy it to clipboard
+      try {
+        await navigator.clipboard.writeText(item.email);
+        setEmailCopied(true);
+        setTimeout(() => setEmailCopied(false), 2000); // Reset after 2 seconds
+      } catch (error) {
+        console.error('Error copying email:', error);
+      }
+    } else {
+      // Show email first and copy to clipboard
+      try {
+        await navigator.clipboard.writeText(item.email);
+        setEmailCopied(true);
+        setTimeout(() => setEmailCopied(false), 2000); // Reset after 2 seconds
+      } catch (error) {
+        console.error('Error copying email:', error);
+      }
+      setShowEmail(true);
+      setTimeout(() => setShowEmail(false), 3000); // Reset after 3 seconds
+    }
   };
 
   return (
@@ -103,14 +123,29 @@ function DetailedDialog({ item }: { item: Item}) {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-6">
-            <Button 
-              className={`flex items-center gap-2 w-full sm:w-auto ${showEmail ? 'outline border-blue-600 text-blue-600 hover:text-blue' : 'bg-blue-600 hover:bg-blue-700'}`}
-              variant={showEmail ? 'outline' : 'default'}
-              onClick={handleViewContact}
-            >
-              <Mail className="h-4 w-4"/>
-              {showEmail ? item.email : "View Contact"}
-            </Button>
+            <div className="relative">
+              {emailCopied && (
+                <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-blue-600 text-xs px-2 py-1 rounded-md whitespace-nowrap z-10">
+                  Copied!
+                </div>
+              )}
+              <Button 
+                className={`flex items-center gap-2 w-full sm:w-auto ${showEmail ? 'outline border-blue-600 text-blue-600 hover:text-blue' : 'bg-blue-600 hover:bg-blue-700'}`}
+                variant={showEmail ? 'outline' : 'default'}
+                onClick={handleViewContact}
+              >
+                <Mail className="h-4 w-4"/>
+                {showEmail ? (() => {
+                  if (item.email.length <= 20) return item.email;
+                  const atIndex = item.email.indexOf('@');
+                  if (atIndex === -1) return item.email.substring(0, 15) + "...";
+                  const domain = item.email.substring(atIndex);
+                  const username = item.email.substring(0, atIndex);
+                  if (username.length <= 8) return item.email;
+                  return username.substring(0, 8) + "..." + domain;
+                })() : "View Contact"}
+              </Button>
+            </div>
             <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto border-blue-600 text-blue-600 hover:text-blue-700" onClick={handleShare}>
               {isCopied ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
               {isCopied ? "Copied!" : "Share"}
