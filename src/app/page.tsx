@@ -15,7 +15,11 @@ export default async function Home() {
   }
 
   const items = itemsResult.data;
-
+  items.sort((a, b) => {
+    const dateA = new Date(a.date!);
+    const dateB = new Date(b.date!);
+    return dateB.getTime() - dateA.getTime();
+  });
   return (
     <div className="md:h-[85vh] w-full flex flex-col justify-center items-center p-4">
       <main className="w-full p-12 h-full flex flex-row">
