@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { Providers } from "@/components/ContextProvider";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { User } from "@/lib/types";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +29,15 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const data = await auth.api.getSession({ headers: await headers() });
-  const initialUser: string | null = data?.user?.email || null;
-  console.log("Initial user from server:", initialUser);
+  const initialUser: User | null = data?.user
+    ? {
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.name,
+        picture: data.user.image || null,
+      }
+    : null;
+  console.log("Initial user from server:", initialUser?.email);
   return (
     <html lang="en">
       {/* <head>

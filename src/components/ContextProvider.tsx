@@ -1,19 +1,14 @@
 "use client";
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 import { LatLngExpression } from "leaflet";
-import { authClient } from "@/lib/auth-client";
+import { User } from "@/lib/types";
 
 // ---- Shared Context ----
 type SharedContextType = {
   selectedLocation: LatLngExpression | null;
   filter: string;
-  user: string | null;
+  user: User | null;
+  setUser: (user: User | null) => void;
   setSelectedLocation: (location: LatLngExpression | null) => void;
   setFilter: (filter: string) => void;
 };
@@ -26,23 +21,12 @@ function SharedProviders({
   initialUser,
 }: {
   children: ReactNode;
-  initialUser: string | null;
+  initialUser: User | null;
 }) {
   const [selectedLocation, setSelectedLocation] =
     useState<LatLngExpression | null>(null);
   const [filter, setFilter] = useState<string>("");
-  const [user, setUser] = useState<string | null>(initialUser);
-  const { data: sessionAndUserData } = authClient.useSession();
-
-  useEffect(() => {
-    console.log("Session user changed:", sessionAndUserData);
-    console.log("Current user email:", user);
-    const newUser = sessionAndUserData?.user?.email || null;
-    if (newUser !== user) {
-      console.log("Updating user email to:", newUser);
-      setUser(newUser);
-    }
-  }, [sessionAndUserData, user]);
+  const [user, setUser] = useState<User | null>(initialUser);
 
   return (
     <SharedContext.Provider
@@ -50,6 +34,7 @@ function SharedProviders({
         selectedLocation,
         filter,
         user,
+        setUser,
         setSelectedLocation,
         setFilter,
       }}
@@ -73,7 +58,7 @@ export function Providers({
   initialUser,
 }: {
   children: ReactNode;
-  initialUser: string | null;
+  initialUser: User | null;
 }) {
   return (
     <SharedProviders initialUser={initialUser}>{children}</SharedProviders>

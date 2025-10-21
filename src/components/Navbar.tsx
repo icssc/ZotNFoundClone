@@ -11,7 +11,7 @@ import { SearchBar } from "./SearchBar";
 import { useSharedContext } from "./ContextProvider";
 
 export default function Navbar() {
-  const { user } = useSharedContext();
+  const { user, setUser } = useSharedContext();
   const handleSignIn = async () => {
     try {
       const data = await signInWithGoogle();
@@ -26,7 +26,8 @@ export default function Navbar() {
   const handleSignOut = async () => {
     try {
       await authClient.signOut();
-      console.log(`${user} signed out successfully`);
+      console.log(`${user?.email} signed out successfully`);
+      setUser(null);
     } catch (error) {
       console.error("Sign out error:", error);
     }
@@ -77,7 +78,15 @@ export default function Navbar() {
               className="hover:bg-white hover:text-black text-white bg-black transition-colors duration-250"
               onClick={handleSignOut}
             >
-              <UserIcon className="h-4 w-4 mr-2" />
+              {user.picture && (
+                <Image
+                  src={user.picture}
+                  alt="User Profile Picture"
+                  width={16}
+                  height={16}
+                  className="rounded-full mr-2"
+                />
+              )}
               Sign Out
             </Button>
           ) : (
