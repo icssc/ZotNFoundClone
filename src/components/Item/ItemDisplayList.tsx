@@ -18,7 +18,7 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const { setSelectedLocation, filter } = useSharedContext();
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
-
+  const items = initialItems;
   const handleItemClick = (item: ItemType) => {
     setSelectedItem(item);
     if (item.location) {
@@ -27,13 +27,13 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
     }
   };
 
-  const filteredItems = filterItems(initialItems, filter);
+  const filteredItems = filterItems(items, filter);
   return (
     <>
       <div className="flex h-full overflow-y-scroll flex-col p-4 space-y-4">
         {filteredItems.map((item: ItemType, index: number) => (
           <Item
-            key={index}
+            key={item.id ?? index}
             item={item}
             onClick={() => handleItemClick(item)}
             setOpen={setOpen}

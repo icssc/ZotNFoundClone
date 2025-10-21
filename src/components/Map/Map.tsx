@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Rectangle, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { centerPosition, mapBounds } from "@/lib/constants";
@@ -8,6 +8,9 @@ import { useSharedContext } from "@/components/ContextProvider";
 import { Dialog } from "@/components/ui/dialog";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import { LatLngExpression } from "leaflet";
+import { Button } from "@/components/ui/button";
+import { AddLocationDialog } from "./AddLocationDialog";
+import { PlusIcon } from "lucide-react";
 import { Item as ItemType } from "@/db/schema";
 
 interface MapProps {
@@ -58,11 +61,12 @@ function Map({ initialItems }: MapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
   const [selectedObjectId, setSelectedObjectId] = useState<number>();
   const { selectedLocation, filter } = useSharedContext();
-
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const items = initialItems;
   const selectedObject = useMemo(() => {
     if (!selectedObjectId) return null;
-    return initialItems.find((obj) => obj.id === selectedObjectId) || null;
-  }, [selectedObjectId, initialItems]);
+    return items.find((obj) => obj.id === selectedObjectId) || null;
+  }, [selectedObjectId, items]);
 
   return (
     <MapContainer
@@ -77,20 +81,41 @@ function Map({ initialItems }: MapProps) {
     >
       <TileLayer url={accessToken} />
       <MapController selectedLocation={selectedLocation} />
-      {initialItems && initialItems.length > 0 && (
+      {items && items.length > 0 && (
         <ObjectMarkers
-          objects={initialItems}
+          objects={items}
+          setSelectedObjectId={setSelectedObjectId}
+          filter={filter}
+        />
+      )}
+      <TileLayer url={accessToken} />
+      <MapController selectedLocation={selectedLocation} />
+      {items && items.length > 0 && (
+        <ObjectMarkers
+          objects={items}
           setSelectedObjectId={setSelectedObjectId}
           filter={filter}
         />
       )}
       <Dialog
-        // !! makes undefined to a boolean
         open={!!selectedObjectId && !!selectedObject}
         onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
       >
         {selectedObject && <DetailedDialog item={selectedObject} />}
       </Dialog>
+      <div>
+        <Button
+          className="absolute bottom-4 right-4 z-[999] bg-blue-500 text-white p-2 rounded-full w-12 h-12 text-xl"
+          onClick={() => setIsAddDialogOpen(true)}
+        >
+          <PlusIcon className="h-6 w-6" />
+        </Button>
+
+        <AddLocationDialog
+          open={isAddDialogOpen}
+          onOpenChange={setIsAddDialogOpen}
+        />
+      </div>
     </MapContainer>
   );
 }
