@@ -15,8 +15,7 @@ export default function Navbar() {
   const handleSignIn = async () => {
     try {
       const data = await signInWithGoogle();
-      // Handle successful redirect
-      console.log("Redirected successfully:", data);
+      // successful redirect
     } catch (error) {
       // Handle redirect error
       console.error("Redirect error:", error);
@@ -26,7 +25,6 @@ export default function Navbar() {
   const handleSignOut = async () => {
     try {
       await authClient.signOut();
-      console.log(`${user?.email} signed out successfully`);
       setUser(null);
     } catch (error) {
       console.error("Sign out error:", error);
