@@ -1,7 +1,7 @@
 "use client";
 
 import { stringArrayToLatLng } from "@/lib/types";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { useSharedContext } from "../ContextProvider";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";

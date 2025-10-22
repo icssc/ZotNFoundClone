@@ -2,7 +2,6 @@
 import {
   DialogContent,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Mail, Share2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";

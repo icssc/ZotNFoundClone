@@ -63,7 +63,6 @@ function Map({ initialItems }: MapProps) {
   const searchParams = useSearchParams();
   const { selectedLocation, filter } = useSharedContext();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const items = initialItems;
   const selectedObject = useMemo(() => {
     const itemId = searchParams.get('item');
     if (!itemId) return null;
