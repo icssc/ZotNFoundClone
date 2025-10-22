@@ -14,7 +14,7 @@ export default function Navbar() {
   const { user, setUser } = useSharedContext();
   const handleSignIn = async () => {
     try {
-      const data = await signInWithGoogle();
+      await signInWithGoogle();
       // successful redirect
     } catch (error) {
       // Handle redirect error
