@@ -9,6 +9,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import { LatLngExpression } from "leaflet";
 import { Item as ItemType } from "@/db/schema";
+import { useSearchParams } from "next/navigation";
 
 interface MapProps {
   initialItems: ItemType[];
@@ -56,13 +57,14 @@ function MapController({
 
 function Map({ initialItems }: MapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
-  const [selectedObjectId, setSelectedObjectId] = useState<number>();
+  const searchParams = useSearchParams();
   const { selectedLocation, filter } = useSharedContext();
 
   const selectedObject = useMemo(() => {
-    if (!selectedObjectId) return null;
-    return initialItems.find((obj) => obj.id === selectedObjectId) || null;
-  }, [selectedObjectId, initialItems]);
+    const itemId = searchParams.get('item');
+    if (!itemId) return null;
+    return initialItems.find((obj) => obj.id === parseInt(itemId)) || null;
+  }, [searchParams, initialItems]);
 
   return (
     <MapContainer
@@ -80,14 +82,20 @@ function Map({ initialItems }: MapProps) {
       {initialItems && initialItems.length > 0 && (
         <ObjectMarkers
           objects={initialItems}
-          setSelectedObjectId={setSelectedObjectId}
           filter={filter}
         />
       )}
       <Dialog
         // !! makes undefined to a boolean
-        open={!!selectedObjectId && !!selectedObject}
-        onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
+        open={!!selectedObject}
+        onOpenChange={(open) => {
+          if (!open) {
+            // Remove the item parameter from URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete('item');
+            window.history.replaceState({}, '', url.toString());
+          }
+        }}
       >
         {selectedObject && <DetailedDialog item={selectedObject} />}
       </Dialog>
