@@ -12,13 +12,17 @@ interface ItemPageProps {
 
 export default async function ItemPage({ params }: ItemPageProps) {
   const itemId = parseInt(params.id);
-  
+
   if (isNaN(itemId)) {
     notFound();
   }
 
-  const [item] = await db.select().from(items).where(eq(items.id, itemId)).limit(1);
-  
+  const [item] = await db
+    .select()
+    .from(items)
+    .where(eq(items.id, itemId))
+    .limit(1);
+
   if (!item) {
     notFound();
   }

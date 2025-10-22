@@ -64,7 +64,7 @@ function Map({ initialItems }: MapProps) {
   const { selectedLocation, filter } = useSharedContext();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const selectedObject = useMemo(() => {
-    const itemId = searchParams.get('item');
+    const itemId = searchParams.get("item");
     if (!itemId) return null;
     return initialItems.find((obj) => obj.id === parseInt(itemId)) || null;
   }, [searchParams, initialItems]);
@@ -83,10 +83,7 @@ function Map({ initialItems }: MapProps) {
       <TileLayer url={accessToken} />
       <MapController selectedLocation={selectedLocation} />
       {initialItems && initialItems.length > 0 && (
-        <ObjectMarkers
-          objects={initialItems}
-          filter={filter}
-        />
+        <ObjectMarkers objects={initialItems} filter={filter} />
       )}
       <Dialog
         // !! makes undefined to a boolean
@@ -95,8 +92,8 @@ function Map({ initialItems }: MapProps) {
           if (!open) {
             // Remove the item parameter from URL
             const url = new URL(window.location.href);
-            url.searchParams.delete('item');
-            window.history.replaceState({}, '', url.toString());
+            url.searchParams.delete("item");
+            window.history.replaceState({}, "", url.toString());
           }
         }}
       >

@@ -20,7 +20,7 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const searchParams = useSearchParams();
 
   const selectedItem = useMemo(() => {
-    const itemId = searchParams.get('item');
+    const itemId = searchParams.get("item");
     if (!itemId) return null;
     return initialItems.find((item) => item.id === parseInt(itemId)) || null;
   }, [searchParams, initialItems]);
@@ -28,9 +28,9 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const handleItemClick = (item: ItemType) => {
     // Update URL with item parameter
     const url = new URL(window.location.href);
-    url.searchParams.set('item', item.id.toString());
-    window.history.pushState({}, '', url.toString());
-    
+    url.searchParams.set("item", item.id.toString());
+    window.history.pushState({}, "", url.toString());
+
     if (item.location) {
       const location: LatLngExpression = stringArrayToLatLng(item.location);
       setSelectedLocation(location);
@@ -40,8 +40,8 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const handleActionButtonClick = (item: ItemType) => {
     // Update URL with item parameter to show the dialog
     const url = new URL(window.location.href);
-    url.searchParams.set('item', item.id.toString());
-    window.history.pushState({}, '', url.toString());
+    url.searchParams.set("item", item.id.toString());
+    window.history.pushState({}, "", url.toString());
   };
 
   const filteredItems = filterItems(initialItems, filter);
@@ -58,14 +58,14 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
         ))}
       </div>
 
-      <Dialog 
-        open={!!selectedItem} 
+      <Dialog
+        open={!!selectedItem}
         onOpenChange={(open) => {
           if (!open) {
             // Remove the item parameter from URL
             const url = new URL(window.location.href);
-            url.searchParams.delete('item');
-            window.history.replaceState({}, '', url.toString());
+            url.searchParams.delete("item");
+            window.history.replaceState({}, "", url.toString());
           }
         }}
       >

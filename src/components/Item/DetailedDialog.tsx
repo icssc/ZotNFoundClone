@@ -1,8 +1,5 @@
 "use client";
-import {
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Mail, Share2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DialogHeader } from "@/components/ui/dialog";
@@ -21,7 +18,7 @@ function isValidUrl(string: string) {
   }
 }
 
-function DetailedDialog({ item }: { item: Item}) {
+function DetailedDialog({ item }: { item: Item }) {
   const islostObject = isLostObject(item);
   const [isCopied, setIsCopied] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
@@ -31,12 +28,12 @@ function DetailedDialog({ item }: { item: Item}) {
     try {
       const shareUrl = `${window.location.origin}/?item=${item.id}`;
       await navigator.clipboard.writeText(shareUrl);
-      
+
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
     } catch (error) {
-      console.error('Error sharing:', error);
-    } 
+      console.error("Error sharing:", error);
+    }
   };
 
   const handleViewContact = async () => {
@@ -47,7 +44,7 @@ function DetailedDialog({ item }: { item: Item}) {
         setEmailCopied(true);
         setTimeout(() => setEmailCopied(false), 2000); // Reset after 2 seconds
       } catch (error) {
-        console.error('Error copying email:', error);
+        console.error("Error copying email:", error);
       }
     } else {
       // Show email first and copy to clipboard
@@ -56,7 +53,7 @@ function DetailedDialog({ item }: { item: Item}) {
         setEmailCopied(true);
         setTimeout(() => setEmailCopied(false), 2000); // Reset after 2 seconds
       } catch (error) {
-        console.error('Error copying email:', error);
+        console.error("Error copying email:", error);
       }
       setShowEmail(true);
       setTimeout(() => setShowEmail(false), 3000); // Reset after 3 seconds
@@ -84,18 +81,21 @@ function DetailedDialog({ item }: { item: Item}) {
               {item.name}
             </DialogTitle>
             <div className="flex items-center gap-3">
-              <span className={`px-2 py-1 rounded-md text-xs font-medium ${
-                islostObject 
-                  ? "bg-red-100 text-red-800" 
-                  : "bg-green-100 text-green-800"
-              }`}>
+              <span
+                className={`px-2 py-1 rounded-md text-xs font-medium ${
+                  islostObject
+                    ? "bg-red-100 text-red-800"
+                    : "bg-green-100 text-green-800"
+                }`}
+              >
                 {islostObject ? "Lost" : "Found"}
               </span>
               <span className="text-sm text-gray-500">
-                Posted: {new Date(item.date).toLocaleDateString('en-US', {
-                  month: '2-digit',
-                  day: '2-digit',
-                  year: 'numeric'
+                Posted:{" "}
+                {new Date(item.date).toLocaleDateString("en-US", {
+                  month: "2-digit",
+                  day: "2-digit",
+                  year: "numeric",
                 })}
               </span>
             </div>
@@ -105,18 +105,21 @@ function DetailedDialog({ item }: { item: Item}) {
 
           <div className="space-y-3 mt-4">
             <div>
-              <p className="font-semibold text-gray-900 mb-2 text-sm">Description:</p>
+              <p className="font-semibold text-gray-900 mb-2 text-sm">
+                Description:
+              </p>
               <div className="text-xs space-y-1">
-                <p className="text-gray-500">{islostObject ? "Lost on" : "Found on"} {new Date(item.itemDate).toLocaleDateString('en-US', {
-                  month: '2-digit',
-                  day: '2-digit',
-                  year: 'numeric'
-                })}</p>
+                <p className="text-gray-500">
+                  {islostObject ? "Lost on" : "Found on"}{" "}
+                  {new Date(item.itemDate).toLocaleDateString("en-US", {
+                    month: "2-digit",
+                    day: "2-digit",
+                    year: "numeric",
+                  })}
+                </p>
                 {/* TODO: Make location not coordinates */}
                 {/* <p>{item.location || "No location provided"}</p> */}
-                {item.description && (
-                  <p className="mt-2">{item.description}</p>
-                )}
+                {item.description && <p className="mt-2">{item.description}</p>}
               </div>
             </div>
           </div>
@@ -128,25 +131,36 @@ function DetailedDialog({ item }: { item: Item}) {
                   Copied!
                 </div>
               )}
-              <Button 
-                className={`flex items-center gap-2 w-full sm:w-auto ${showEmail ? 'outline border-blue-600 text-blue-600 hover:text-blue' : 'bg-blue-600 hover:bg-blue-700'}`}
-                variant={showEmail ? 'outline' : 'default'}
+              <Button
+                className={`flex items-center gap-2 w-full sm:w-auto ${showEmail ? "outline border-blue-600 text-blue-600 hover:text-blue" : "bg-blue-600 hover:bg-blue-700"}`}
+                variant={showEmail ? "outline" : "default"}
                 onClick={handleViewContact}
               >
-                <Mail className="h-4 w-4"/>
-                {showEmail ? (() => {
-                  if (item.email.length <= 20) return item.email;
-                  const atIndex = item.email.indexOf('@');
-                  if (atIndex === -1) return item.email.substring(0, 15) + "...";
-                  const domain = item.email.substring(atIndex);
-                  const username = item.email.substring(0, atIndex);
-                  if (username.length <= 8) return item.email;
-                  return username.substring(0, 8) + "..." + domain;
-                })() : "View Contact"}
+                <Mail className="h-4 w-4" />
+                {showEmail
+                  ? (() => {
+                      if (item.email.length <= 20) return item.email;
+                      const atIndex = item.email.indexOf("@");
+                      if (atIndex === -1)
+                        return item.email.substring(0, 15) + "...";
+                      const domain = item.email.substring(atIndex);
+                      const username = item.email.substring(0, atIndex);
+                      if (username.length <= 8) return item.email;
+                      return username.substring(0, 8) + "..." + domain;
+                    })()
+                  : "View Contact"}
               </Button>
             </div>
-            <Button variant="outline" className="flex items-center gap-2 w-full sm:w-auto border-blue-600 text-blue-600 hover:text-blue-700" onClick={handleShare}>
-              {isCopied ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 w-full sm:w-auto border-blue-600 text-blue-600 hover:text-blue-700"
+              onClick={handleShare}
+            >
+              {isCopied ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Share2 className="h-4 w-4" />
+              )}
               {isCopied ? "Copied!" : "Share"}
             </Button>
           </div>

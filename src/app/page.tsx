@@ -26,13 +26,25 @@ export default async function Home() {
       <main className="w-full p-12 h-full flex flex-row">
         <div className="flex flex-row gap-10 h-full w-full">
           <div className="w-8/10 h-full">
-          {/* Suspense is used because I got errors without it */}
-            <Suspense fallback={<div className="flex items-center justify-center h-full">Loading map...</div>}>
+            {/* Suspense is used because I got errors without it */}
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center h-full">
+                  Loading map...
+                </div>
+              }
+            >
               <LazyMap initialItems={items} />
             </Suspense>
           </div>
           <div className="w-2/10 bg-gray-100 rounded-lg h-full">
-            <Suspense fallback={<div className="flex items-center justify-center h-full">Loading items...</div>}>
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center h-full">
+                  Loading items...
+                </div>
+              }
+            >
               <ItemDisplayList initialItems={items} />
             </Suspense>
           </div>

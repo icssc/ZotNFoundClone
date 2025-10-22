@@ -31,8 +31,8 @@ function ObjectMarkers({
               click: () => {
                 // Update URL with item parameter
                 const url = new URL(window.location.href);
-                url.searchParams.set('item', object.id.toString());
-                window.history.pushState({}, '', url.toString());
+                url.searchParams.set("item", object.id.toString());
+                window.history.pushState({}, "", url.toString());
               },
             }}
           />
