@@ -50,7 +50,7 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
       <div className="flex h-full overflow-y-scroll flex-col p-4 space-y-4">
         {filteredItems.map((item: ItemType, index: number) => (
           <Item
-            key={index}
+            key={item.id ?? index}
             item={item}
             onClick={() => handleItemClick(item)}
             setOpen={() => handleActionButtonClick(item)}

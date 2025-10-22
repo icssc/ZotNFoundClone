@@ -17,9 +17,14 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    ppr: true,
+    cacheComponents: true,
   },
   reactCompiler: true,
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
 };
 
 export default nextConfig;

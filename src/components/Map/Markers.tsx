@@ -8,11 +8,9 @@ import { filterItems } from "@/lib/utils";
 
 function ObjectMarkers({
   objects,
-  setSelectedObjectId,
   filter,
 }: {
   objects: Item[];
-  setSelectedObjectId: (object: number) => void;
   filter: string;
 }) {
   const filteredObjects = filterItems(objects, filter);
@@ -30,7 +28,12 @@ function ObjectMarkers({
             title={object.name!}
             icon={object.isLost ? iconsMap.others.true : iconsMap.others.false}
             eventHandlers={{
-              click: () => setSelectedObjectId(object.id),
+              click: () => {
+                // Update URL with item parameter
+                const url = new URL(window.location.href);
+                url.searchParams.set('item', object.id.toString());
+                window.history.pushState({}, '', url.toString());
+              },
             }}
           />
         ))}

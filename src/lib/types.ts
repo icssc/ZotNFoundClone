@@ -60,3 +60,20 @@ export function isError<T>(
 ): result is { error: string } {
   return "error" in result;
 }
+
+export interface LocationFormData {
+  name: string;
+  description: string;
+  type: string;
+  date: Date;
+  file: File | null;
+  isLost: boolean;
+  location: [number, number] | null;
+}
+
+export interface StepProps {
+  formData: LocationFormData;
+  setFormData: React.Dispatch<React.SetStateAction<LocationFormData>>;
+}
+
+export type ConfirmationStepProps = Pick<StepProps, "formData">;
