@@ -41,9 +41,9 @@ const nextConfig: NextConfig = {
     removeConsole:
       process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
   },
-  webpack: (config, { nextRuntime }) => {
+  webpack: (config) => {
+    // eslint-disable-next-line
     const { NormalModuleReplacementPlugin } = require("webpack");
-
     config.resolve = config.resolve || {};
     // Only alias the exact 'leaflet' import to the bundled JS entry so that
     // subpath imports like 'leaflet/dist/leaflet.css' continue to resolve
@@ -64,6 +64,7 @@ const nextConfig: NextConfig = {
     return config;
   },
 };
+// eslint-disable-next-line
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
