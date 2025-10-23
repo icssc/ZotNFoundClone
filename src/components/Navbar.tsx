@@ -6,7 +6,7 @@ import { InfoIcon, UserIcon, BellIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookmarkModal } from "@/components/BookmarkModal";
 import Image from "next/image";
-import { authClient, signInWithGoogle } from "@/lib/auth-client";
+import { signInWithGoogle } from "@/lib/auth-client";
 import { SearchBar } from "./SearchBar";
 import { useSharedContext } from "./ContextProvider";
 import { Instrument_Serif } from "next/font/google";
@@ -18,7 +18,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export default function Navbar() {
-  const { user } = useSharedContext();
+  const { user, signOut } = useSharedContext();
   const handleSignIn = async () => {
     try {
       await signInWithGoogle();
@@ -31,7 +31,7 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     try {
-      await authClient.signOut();
+      await signOut();
     } catch (error) {
       console.error("Sign out error:", error);
     }

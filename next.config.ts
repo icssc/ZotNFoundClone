@@ -24,13 +24,22 @@ const nextConfig: NextConfig = {
   experimental: {
     cacheComponents: true,
     browserDebugInfoInTerminal: true,
-    optimizePackageImports: ["leaflet"],
+    optimizePackageImports: [
+      "leaflet",
+      "react-leaflet",
+      "react-leaflet-cluster-4-next",
+      "leaflet.markercluster",
+    ],
   },
   reactCompiler: true,
   logging: {
     fetches: {
       fullUrl: true,
     },
+  },
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
   },
   webpack: (config, { nextRuntime }) => {
     const { NormalModuleReplacementPlugin } = require("webpack");

@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { LatLngExpression } from "leaflet";
 import { User } from "better-auth";
-import { authClient } from "@/lib/auth-client";
+import { authClient, signOut as clientSignOut } from "@/lib/auth-client";
 
 // ---- Shared Context ----
 type SharedContextType = {
@@ -17,6 +17,7 @@ type SharedContextType = {
   user?: User;
   setSelectedLocation: (location: LatLngExpression | null) => void;
   setFilter: (filter: string) => void;
+  signOut: () => Promise<void>;
 };
 
 const SharedContext = createContext<SharedContextType | undefined>(undefined);
@@ -49,6 +50,19 @@ function SharedProviders({
     }
   }, [data?.user]);
 
+  const signOut = async () => {
+    const previousUser = user;
+    // Optimistically clear the user immediately so the UI responds without waiting
+    setUser(undefined);
+    try {
+      await clientSignOut();
+    } catch (error) {
+      console.error("Sign out error:", error);
+      setUser(previousUser);
+      throw error;
+    }
+  };
+
   return (
     <SharedContext.Provider
       value={{
@@ -57,6 +71,7 @@ function SharedProviders({
         user,
         setSelectedLocation,
         setFilter,
+        signOut,
       }}
     >
       {children}

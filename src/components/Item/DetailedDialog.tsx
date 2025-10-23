@@ -112,6 +112,9 @@ function DetailedDialog({ item }: { item: Item }) {
             sizes="(max-width: 640px) 100vw, 448px"
             style={{ objectFit: "contain" }}
             loading="lazy"
+            priority={false}
+            preload={false}
+            fetchPriority="low"
             className="bg-black"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/80 pointer-events-none" />
