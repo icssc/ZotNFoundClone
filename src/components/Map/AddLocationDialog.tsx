@@ -3,11 +3,18 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useReducer, useActionState, startTransition, useEffect } from "react";
+import {
+  useReducer,
+  useActionState,
+  startTransition,
+  useEffect,
+  useRef,
+} from "react";
 import { Step1BasicInfo } from "./Steps/Step1BasicInfo";
 import { LocationFormData } from "@/lib/types";
 import { Step2ItemType } from "./Steps/Step2ItemType";
@@ -87,13 +94,13 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
           <div className="flex items-center" key={step.number}>
             <div className="flex flex-col items-center z-10 relative">
               <div
-                className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full text-white text-xs sm:text-sm
+                className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full text-black text-xs sm:text-sm
                   ${
                     currentStep === step.number
-                      ? "border-2 border-white"
+                      ? "border-2 border-white text-white"
                       : currentStep > step.number
                         ? "bg-white text-black"
-                        : "bg-white/20"
+                        : "bg-white/10 text-white"
                   } mb-1`}
               >
                 {currentStep > step.number ? "✓" : step.number}
@@ -199,12 +206,15 @@ export function AddLocationDialog({
     initialActionState
   );
 
+  const prevIsPendingRef = useRef(false);
   useEffect(() => {
-    if (actionState.success && open) {
+    // Close and reset only immediately after a successful submission completes (pending -> not pending with success true)
+    if (actionState.success && prevIsPendingRef.current && !isPending) {
       onOpenChange(false);
       dispatch({ type: "RESET" });
     }
-  }, [actionState.success, open, onOpenChange]);
+    prevIsPendingRef.current = isPending;
+  }, [actionState.success, isPending, onOpenChange]);
 
   const isStepValid = (): boolean => {
     switch (formState.currentStep) {
@@ -307,6 +317,9 @@ export function AddLocationDialog({
           <DialogTitle className="text-white text-lg sm:text-xl">
             Add New Location
           </DialogTitle>
+          <DialogDescription className="text-slate-300">
+            Follow the steps to add a new lost or found item
+          </DialogDescription>
         </DialogHeader>
 
         <StepIndicator currentStep={formState.currentStep} />

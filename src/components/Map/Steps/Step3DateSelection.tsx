@@ -19,6 +19,7 @@ export function Step3DateSelection({ formData, updateField }: Step3Props) {
       <Calendar
         mode="single"
         selected={formData.date}
+        
         onSelect={(newDate) => {
           updateField("date", newDate || new Date());
         }}

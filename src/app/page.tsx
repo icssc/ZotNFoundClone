@@ -3,7 +3,7 @@ import { LazyMap } from "@/components/Map/LazyMap";
 import { getAllItems } from "@/server/data/item/queries";
 import { isError } from "@/lib/types";
 
-export default async function Home() {
+async function AuthenticatedContent() {
   const itemsResult = await getAllItems();
 
   if (isError(itemsResult)) {
@@ -15,6 +15,7 @@ export default async function Home() {
   }
 
   const items = itemsResult.data;
+
   items.sort((a, b) => {
     const dateA = new Date(a.date!);
     const dateB = new Date(b.date!);
@@ -74,4 +75,8 @@ export default async function Home() {
       </main>
     </div>
   );
+}
+
+export default function Home() {
+  return <AuthenticatedContent />;
 }

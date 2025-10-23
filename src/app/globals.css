@@ -285,3 +285,28 @@
 .marker-cluster span {
   line-height: 30px;
 }
+
+/* Black themed scrollbars for the item list */
+.item-display-list {
+  scrollbar-width: thin;
+  scrollbar-color: #111 #000;
+}
+
+.item-display-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.item-display-list::-webkit-scrollbar-track {
+  background: #000;
+}
+
+.item-display-list::-webkit-scrollbar-thumb {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 8px;
+}
+
+.item-display-list::-webkit-scrollbar-thumb:hover {
+  background: #1e1e1e;
+}
+

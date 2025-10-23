@@ -12,7 +12,7 @@ export function Step5Confirmation({ formData }: Step5Props) {
         Confirm and Submit
       </h3>
       <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
-        <div className="bg-gray-800 p-4 rounded-md space-y-2 md:w-80 md:h-80 w-56 h-56">
+        <div className="bg-gray-600/10 p-4 rounded-md space-y-2 md:w-80 md:h-80 w-56 h-56">
           <Image
             src={formData.file ? URL.createObjectURL(formData.file) : ""}
             alt="Item Image"
@@ -21,7 +21,7 @@ export function Step5Confirmation({ formData }: Step5Props) {
             height={320}
           />
         </div>
-        <div className="bg-gray-800 p-4 rounded-md space-y-2 flex-1 md:w-80 md:h-80 h-56 w-56">
+        <div className="bg-gray-600/10 p-4 rounded-md space-y-2 flex-1 md:w-80 md:h-80 h-56 w-56">
           <h3 className="font-medium text-lg text-white">
             <strong>Item Information:</strong>
           </h3>
