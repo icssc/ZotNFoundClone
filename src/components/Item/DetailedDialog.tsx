@@ -12,18 +12,17 @@ import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
 import { signInWithGoogle } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { User as UserType } from "better-auth";
+import { useSharedContext } from "../ContextProvider";
 
 type ContactState = {
   status: "idle" | "success" | "error";
   message: string | null;
 };
 
-function DetailedDialog({ item, user }: { item: Item; user: UserType | null }) {
+function DetailedDialog({ item }: { item: Item }) {
   const islostObject = isLostObject(item);
-
   const [showConfirm, setShowConfirm] = useState(false);
-
+  const { user } = useSharedContext();
   const contactAction = async (): Promise<ContactState> => {
     if (!user) {
       toast.error("Please sign in first.");

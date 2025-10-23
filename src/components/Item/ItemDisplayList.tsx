@@ -9,14 +9,12 @@ import Item from "@/components/Item/Item";
 import { Item as ItemType } from "@/db/schema";
 import { LatLngExpression } from "leaflet";
 import { filterItems } from "@/lib/utils";
-import { User } from "better-auth";
 
 interface ItemDisplayListProps {
   initialItems: ItemType[];
-  user: User | null;
 }
 
-function ItemDisplayList({ initialItems, user }: ItemDisplayListProps) {
+function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const { setSelectedLocation, filter } = useSharedContext();
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<ItemType | null>(null);
@@ -44,7 +42,7 @@ function ItemDisplayList({ initialItems, user }: ItemDisplayListProps) {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        {selectedItem && <DetailedDialog item={selectedItem} user={user} />}
+        {selectedItem && <DetailedDialog item={selectedItem} />}
       </Dialog>
     </>
   );

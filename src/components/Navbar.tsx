@@ -11,7 +11,7 @@ import { SearchBar } from "./SearchBar";
 import { useSharedContext } from "./ContextProvider";
 
 export default function Navbar() {
-  const { user, setUser } = useSharedContext();
+  const { user } = useSharedContext();
   const handleSignIn = async () => {
     try {
       await signInWithGoogle();
@@ -25,7 +25,6 @@ export default function Navbar() {
   const handleSignOut = async () => {
     try {
       await authClient.signOut();
-      setUser(null);
     } catch (error) {
       console.error("Sign out error:", error);
     }
@@ -41,6 +40,7 @@ export default function Navbar() {
             alt="ZotNFound"
             width={32}
             height={32}
+            loading="eager"
             className="rounded-full"
           />
           <Link href="/" className="text-xl font-bold">
@@ -76,9 +76,9 @@ export default function Navbar() {
               className="hover:bg-white hover:text-black text-white bg-black transition-colors duration-250"
               onClick={handleSignOut}
             >
-              {user.picture && (
+              {user.image && (
                 <Image
-                  src={user.picture}
+                  src={user.image}
                   alt="User Profile Picture"
                   width={16}
                   height={16}
