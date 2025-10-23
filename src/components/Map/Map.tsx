@@ -101,11 +101,11 @@ function Map({ initialItems }: MapProps) {
         open={!!selectedObjectId && !!selectedObject}
         onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
       >
-        {selectedObject && <DetailedDialog item={selectedObject}  />}
+        {selectedObject && <DetailedDialog item={selectedObject} />}
       </Dialog>
       <div>
         <Button
-          className="absolute bottom-4 right-4 z-[999] bg-blue-500 text-white p-2 rounded-full w-12 h-12 text-xl"
+          className="absolute bottom-4 right-4 z-999 bg-blue-500 text-white p-2 rounded-full w-12 h-12 text-xl"
           onClick={() => setIsAddDialogOpen(true)}
         >
           <PlusIcon className="h-6 w-6" />
