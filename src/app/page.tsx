@@ -77,6 +77,7 @@ async function AuthenticatedContent() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+
   return <AuthenticatedContent />;
 }

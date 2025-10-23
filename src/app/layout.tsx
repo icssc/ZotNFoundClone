@@ -4,8 +4,9 @@ import "./globals.css";
 // import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
-import { Providers } from "@/components/ContextProvider";
 import localFont from "next/font/local";
+import { SessionProvider } from "@/components/SessionProvider";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +30,12 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${CustomFont.className} antialiased bg-neutral-900`}
       >
-        <Providers>
-          <Navbar />
-          {children}
-        </Providers>
+        <Suspense fallback={null}>
+          <SessionProvider>
+            <Navbar />
+            {children}
+          </SessionProvider>
+        </Suspense>
         <Toaster position="bottom-center" theme="dark" />
       </body>
     </html>

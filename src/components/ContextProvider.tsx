@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { LatLngExpression } from "leaflet";
 import { User } from "better-auth";
 import { authClient } from "@/lib/auth-client";
@@ -16,12 +22,33 @@ type SharedContextType = {
 const SharedContext = createContext<SharedContextType | undefined>(undefined);
 
 // ---- Shared Provider Component ----
-function SharedProviders({ children }: { children: ReactNode }) {
+function SharedProviders({
+  children,
+  initialUser,
+}: {
+  children: ReactNode;
+  initialUser?: User;
+}) {
   const [selectedLocation, setSelectedLocation] =
     useState<LatLngExpression | null>(null);
   const [filter, setFilter] = useState<string>("");
+
+  // Start with server-provided user
+  const [user, setUser] = useState<User | undefined>(initialUser);
+
+  // Client-side session hook
   const { data } = authClient.useSession();
-  const user = data?.user;
+
+  // Hydrate with client session once available
+  useEffect(() => {
+    if (data?.user) {
+      setUser(data.user);
+    } else if (data?.user === null) {
+      // User signed out on client
+      setUser(undefined);
+    }
+  }, [data?.user]);
+
   return (
     <SharedContext.Provider
       value={{
@@ -46,6 +73,14 @@ export function useSharedContext() {
 }
 
 // ---- Main Provider Component ----
-export function Providers({ children }: { children: ReactNode }) {
-  return <SharedProviders>{children}</SharedProviders>;
+export function Providers({
+  children,
+  initialUser,
+}: {
+  children: ReactNode;
+  initialUser?: User;
+}) {
+  return (
+    <SharedProviders initialUser={initialUser}>{children}</SharedProviders>
+  );
 }

@@ -24,6 +24,7 @@ const nextConfig: NextConfig = {
   experimental: {
     cacheComponents: true,
     browserDebugInfoInTerminal: true,
+    optimizePackageImports: ["leaflet"],
   },
   reactCompiler: true,
   logging: {
@@ -31,6 +32,33 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
+  webpack: (config, { nextRuntime }) => {
+    const { NormalModuleReplacementPlugin } = require("webpack");
+
+    config.resolve = config.resolve || {};
+    // Only alias the exact 'leaflet' import to the bundled JS entry so that
+    // subpath imports like 'leaflet/dist/leaflet.css' continue to resolve
+    // normally. Using 'leaflet$' ensures that imports of 'leaflet/...'
+    // are not rewritten incorrectly.
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      leaflet$: "leaflet/dist/leaflet.js",
+    };
+
+    config.plugins.push(
+      new NormalModuleReplacementPlugin(
+        /leaflet\/dist\/leaflet-src\.js$/,
+        "leaflet/dist/leaflet.js"
+      )
+    );
+
+    return config;
+  },
 };
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
+module.exports = withBundleAnalyzer(nextConfig);
 
 export default nextConfig;
