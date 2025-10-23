@@ -6,18 +6,28 @@ import { InfoIcon, UserIcon, BellIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookmarkModal } from "@/components/BookmarkModal";
 import Image from "next/image";
-import { signInWithGoogle } from "@/lib/auth-client";
+import { authClient, signInWithGoogle } from "@/lib/auth-client";
 import { SearchBar } from "./SearchBar";
+import { useSharedContext } from "./ContextProvider";
 
 export default function Navbar() {
+  const { user, setUser } = useSharedContext();
   const handleSignIn = async () => {
     try {
-      const data = await signInWithGoogle();
-      // Handle successful sign-in
-      console.log("Signed in successfully:", data);
+      await signInWithGoogle();
+      // successful redirect
     } catch (error) {
-      // Handle sign-in error
-      console.error("Sign-in error:", error);
+      // Handle redirect error
+      console.error("Redirect error:", error);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut();
+      setUser(null);
+    } catch (error) {
+      console.error("Sign out error:", error);
     }
   };
 
@@ -59,16 +69,35 @@ export default function Navbar() {
 
           <BookmarkModal />
 
-          {/* Sign In/Profile */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="hover:bg-white hover:text-black text-white bg-black transition-colors duration-250"
-            onClick={handleSignIn}
-          >
-            <UserIcon className="h-4 w-4 mr-2" />
-            Sign In
-          </Button>
+          {user ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="hover:bg-white hover:text-black text-white bg-black transition-colors duration-250"
+              onClick={handleSignOut}
+            >
+              {user.picture && (
+                <Image
+                  src={user.picture}
+                  alt="User Profile Picture"
+                  width={16}
+                  height={16}
+                  className="rounded-full mr-2"
+                />
+              )}
+              Sign Out
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              className="hover:bg-white hover:text-black text-white bg-black transition-colors duration-250"
+              onClick={handleSignIn}
+            >
+              <UserIcon className="h-4 w-4 mr-2" />
+              Sign In
+            </Button>
+          )}
         </div>
       </div>
     </nav>
