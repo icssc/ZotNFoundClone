@@ -17,8 +17,6 @@ const instrumentSerif = Instrument_Serif({
   style: ["italic", "normal"],
 });
 
-
-
 export default function Navbar() {
   const { user } = useSharedContext();
   const handleSignIn = async () => {

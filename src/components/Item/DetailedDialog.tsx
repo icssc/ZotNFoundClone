@@ -98,35 +98,41 @@ function DetailedDialog({ item }: { item: Item }) {
   const isSubmitDisabled = isPending || state.status === "success";
 
   return (
-    <DialogContent className="w-[calc(100%-2rem)] max-w-md bg-black/95 border-white/20 text-white p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
-      <DialogHeader>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="h-10 w-10 sm:h-12 sm:w-12 relative rounded-full overflow-hidden shrink-0">
-            <Image
-              src={
-                item.image && isValidUrl(item.image)
-                  ? item.image
-                  : "/placeholder.jpg"
-              }
-              alt={item.name || "Item Image"}
-              fill
-              sizes="(max-width: 640px) 40px, 48px"
-              style={{ objectFit: "cover" }}
-              loading="lazy"
-            />
-          </div>
-          <div className="flex-1 min-w-0">
-            <DialogTitle className="text-white text-left truncate text-base sm:text-lg">
-              {item.name}
-            </DialogTitle>
-            <DialogDescription className="text-gray-400 text-left text-xs sm:text-sm">
-              {islostObject ? "Lost" : "Found"} item details
-            </DialogDescription>
-          </div>
+    <DialogContent className="w-[calc(100%-2rem)] max-w-md bg-black/95 border-white/20 text-white p-0 max-h-[90vh] overflow-y-auto">
+      <div className="mt-10 px-4 sm:px-6">
+        <div className="relative w-full h-64 sm:h-80 overflow-hidden rounded-md bg-white/10 border border-white/20 backdrop-blur-sm">
+          <Image
+            src={
+              item.image && isValidUrl(item.image)
+                ? item.image
+                : "/placeholder.jpg"
+            }
+            alt={item.name || "Item Image"}
+            fill
+            sizes="(max-width: 640px) 100vw, 448px"
+            style={{ objectFit: "contain" }}
+            loading="lazy"
+            className="bg-black"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/80 pointer-events-none" />
         </div>
-      </DialogHeader>
+      </div>
+      <div className="px-4 sm:px-6">
+        <DialogHeader>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex-1 min-w-0">
+              <DialogTitle className="text-white text-left truncate text-base sm:text-lg">
+                {item.name}
+              </DialogTitle>
+              <DialogDescription className="text-gray-400 text-left text-xs sm:text-sm">
+                {islostObject ? "Lost" : "Found"} item details
+              </DialogDescription>
+            </div>
+          </div>
+        </DialogHeader>
+      </div>
 
-      <div className="space-y-3 sm:space-y-4 py-3 sm:py-4">
+      <div className="space-y-3 sm:space-y-4 py-3 sm:py-4 px-4 sm:px-6">
         <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/5 hover:bg-white/10 transition-all duration-200">
           <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
           <div className="flex-1 min-w-0">
@@ -212,13 +218,26 @@ function DetailedDialog({ item }: { item: Item }) {
         )}
       </div>
 
-      <div className="flex justify-end gap-2 pt-2 sm:pt-3 border-t border-white/10">
-        <Button
-          variant="outline"
-          className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
-        >
-          Contact
-        </Button>
+      <div className="flex justify-end gap-2 pt-2 sm:pt-3 pb-4 sm:pb-6 px-4 sm:px-6 border-t border-white/10">
+        {user && !showConfirm && (
+          <Button
+            variant="outline"
+            className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
+            onClick={handleContactClick}
+            disabled={isPending}
+          >
+            Contact
+          </Button>
+        )}
+        {!user && (
+          <Button
+            variant="outline"
+            className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
+            onClick={handleContactClick}
+          >
+            Contact
+          </Button>
+        )}
       </div>
     </DialogContent>
   );
