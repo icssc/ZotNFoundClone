@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { AddLocationDialog } from "./AddLocationDialog";
 import { PlusIcon } from "lucide-react";
 import { Item as ItemType } from "@/db/schema";
+import { useSearchParams } from "next/navigation";
 
 interface MapProps {
   initialItems: ItemType[];
@@ -59,14 +60,14 @@ function MapController({
 
 function Map({ initialItems }: MapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
-  const [selectedObjectId, setSelectedObjectId] = useState<number>();
+  const searchParams = useSearchParams();
   const { selectedLocation, filter } = useSharedContext();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const items = initialItems;
   const selectedObject = useMemo(() => {
-    if (!selectedObjectId) return null;
-    return items.find((obj) => obj.id === selectedObjectId) || null;
-  }, [selectedObjectId, items]);
+    const itemId = searchParams.get("item");
+    if (!itemId) return null;
+    return initialItems.find((obj) => obj.id === parseInt(itemId)) || null;
+  }, [searchParams, initialItems]);
 
   return (
     <MapContainer
@@ -81,25 +82,20 @@ function Map({ initialItems }: MapProps) {
     >
       <TileLayer url={accessToken} />
       <MapController selectedLocation={selectedLocation} />
-      {items && items.length > 0 && (
-        <ObjectMarkers
-          objects={items}
-          setSelectedObjectId={setSelectedObjectId}
-          filter={filter}
-        />
-      )}
-      <TileLayer url={accessToken} />
-      <MapController selectedLocation={selectedLocation} />
-      {items && items.length > 0 && (
-        <ObjectMarkers
-          objects={items}
-          setSelectedObjectId={setSelectedObjectId}
-          filter={filter}
-        />
+      {initialItems && initialItems.length > 0 && (
+        <ObjectMarkers objects={initialItems} filter={filter} />
       )}
       <Dialog
-        open={!!selectedObjectId && !!selectedObject}
-        onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
+        // !! makes undefined to a boolean
+        open={!!selectedObject}
+        onOpenChange={(open) => {
+          if (!open) {
+            // Remove the item parameter from URL
+            const url = new URL(window.location.href);
+            url.searchParams.delete("item");
+            window.history.replaceState({}, "", url.toString());
+          }
+        }}
       >
         {selectedObject && <DetailedDialog item={selectedObject} />}
       </Dialog>

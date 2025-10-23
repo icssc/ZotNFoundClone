@@ -2,6 +2,7 @@ import ItemDisplayList from "@/components/Item/ItemDisplayList";
 import { LazyMap } from "@/components/Map/LazyMap";
 import { getAllItems } from "@/server/data/item/queries";
 import { isError } from "@/lib/types";
+import { Suspense } from "react";
 
 export default async function Home() {
   const itemsResult = await getAllItems();
@@ -25,10 +26,27 @@ export default async function Home() {
       <main className="w-full p-12 h-full flex flex-row">
         <div className="flex flex-row gap-10 h-full w-full">
           <div className="w-8/10 h-full">
-            <LazyMap initialItems={items} />
+            {/* Suspense is used because I got errors without it */}
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center h-full">
+                  Loading map...
+                </div>
+              }
+            >
+              <LazyMap initialItems={items} />
+            </Suspense>
           </div>
           <div className="w-2/10 bg-gray-100 rounded-lg h-full">
-            <ItemDisplayList initialItems={items} />
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center h-full">
+                  Loading items...
+                </div>
+              }
+            >
+              <ItemDisplayList initialItems={items} />
+            </Suspense>
           </div>
         </div>
       </main>
