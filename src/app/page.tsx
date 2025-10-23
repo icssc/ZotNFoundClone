@@ -2,8 +2,12 @@ import ItemDisplayList from "@/components/Item/ItemDisplayList";
 import { LazyMap } from "@/components/Map/LazyMap";
 import { getAllItems } from "@/server/data/item/queries";
 import { isError } from "@/lib/types";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default async function Home() {
+async function AuthenticatedContent() {
   const itemsResult = await getAllItems();
 
   if (isError(itemsResult)) {
@@ -15,23 +19,49 @@ export default async function Home() {
   }
 
   const items = itemsResult.data;
+  const session = await auth.api.getSession({ headers: await headers() });
+  const user = session?.user ?? null;
+
   items.sort((a, b) => {
     const dateA = new Date(a.date!);
     const dateB = new Date(b.date!);
     return dateB.getTime() - dateA.getTime();
   });
   return (
-    <div className="md:h-[85vh] w-full flex flex-col justify-center items-center p-4">
-      <main className="w-full p-12 h-full flex flex-row">
-        <div className="flex flex-row gap-10 h-full w-full">
-          <div className="w-8/10 h-full">
-            <LazyMap initialItems={items} />
-          </div>
-          <div className="w-2/10 bg-gray-100 rounded-lg h-full">
-            <ItemDisplayList initialItems={items} />
-          </div>
+    <main className="w-full p-12 h-full flex flex-row">
+      <div className="flex flex-row gap-10 h-full w-full">
+        <div className="w-8/10 h-full">
+          <LazyMap initialItems={items} user={user} />
         </div>
-      </main>
+        <div className="w-2/10 bg-gray-100 rounded-lg h-full">
+          <ItemDisplayList initialItems={items} user={user} />
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <main className="w-full p-12 h-full flex flex-row">
+      <div className="flex flex-row gap-10 h-full w-full">
+        <div className="w-8/10 h-full">
+          <Skeleton className="h-full rounded-4xl" />
+        </div>
+        <div className="w-2/10 bg-gray-100 rounded-lg h-full">
+          <Skeleton className="h-full rounded-lg" />
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <div className="md:h-[85vh] w-full flex flex-col justify-center items-center p-4">
+      <Suspense fallback={<LoadingFallback />}>
+        <AuthenticatedContent />
+      </Suspense>
     </div>
   );
 }
