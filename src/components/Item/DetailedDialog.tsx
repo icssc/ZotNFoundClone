@@ -8,15 +8,7 @@ import { Item } from "@/db/schema";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
-
-function isValidUrl(string: string) {
-  try {
-    new URL(string);
-    return true;
-  } catch {
-    return false;
-  }
-}
+import { z } from "zod";
 
 function DetailedDialog({ item }: { item: Item }) {
   const islostObject = isLostObject(item);
@@ -66,7 +58,7 @@ function DetailedDialog({ item }: { item: Item }) {
         {/* Image - Top on mobile, Left on desktop */}
         <div className="w-full max-w-sm sm:w-64 h-80 sm:h-64 relative mx-auto sm:mx-8">
           <Image
-            src={isValidUrl(item.image) ? item.image : "/placeholder.jpg"}
+            src={z.url().safeParse(item.image).success ? item.image : "/placeholder.jpg"}
             alt={item.name || "Item Image"}
             fill
             className="object-cover rounded-lg"
