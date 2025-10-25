@@ -29,46 +29,58 @@ export default function Item({
   return (
     <div
       onClick={onClick}
-      className="flex flex-col p-4 border-b border-gray-200 cursor-pointer bg-gray-300 hover:bg-gray-50 duration-200 rounded-md transition-colors"
+      className="flex flex-col overflow-hidden border-b border-white/20 cursor-pointer bg-black hover:bg-white/5 rounded-md transition-all duration-300 hover:shadow-lg hover:scale-[1.015] animate-in fade-in slide-in-from-bottom-1 my-3"
     >
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-row items-center space-x-2">
-          <div className="h-8 w-8 relative rounded-full overflow-hidden">
-            <Image
-              src={
-                item.image && isValidUrl(item.image)
-                  ? item.image
-                  : "/placeholder.jpg"
-              }
-              alt={item.name || "Item Image"}
-              fill
-              sizes="32px"
-              style={{ objectFit: "cover" }}
-              loading="lazy"
-            />
-          </div>
-          <div>
-            <p className="font-semibold">{item.name}</p>
-            <p className="text-sm text-gray-500">
-              {islostObject ? "Lost" : "Found"}
-            </p>
+      <div className="relative h-48 w-full overflow-hidden">
+        <Image
+          src={
+            item.image && isValidUrl(item.image)
+              ? item.image
+              : "/placeholder.jpg"
+          }
+          alt={item.name || "Item Image"}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 55vw, 45vw"
+          style={{ objectFit: "cover" }}
+          loading="lazy"
+          preload={false}
+          fetchPriority="low"
+          priority={false}
+          quality="75"
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <div className="flex flex-row justify-between items-end gap-2">
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-white truncate text-lg">
+                {item.name}
+              </p>
+              <p className="text-sm text-gray-300 truncate">
+                {islostObject ? "Lost" : "Found"}
+              </p>
+            </div>
+            <div className="shrink-0">
+              <p className="text-sm text-gray-300 truncate whitespace-nowrap">
+                {item.date}
+              </p>
+            </div>
           </div>
         </div>
-        <div>
-          <p className="text-sm text-gray-500">{item.date}</p>
+      </div>
+      <div className="p-4">
+        <p className="text-sm text-gray-400 line-clamp-2 overflow-hidden text-ellipsis mb-3">
+          {item.description}
+        </p>
+        <div className="flex flex-row justify-end">
+          <Button
+            onClick={() => {
+              setOpen(true);
+            }}
+            className="transition-all duration-200"
+          >
+            {islostObject ? "I Found This" : "This Is Mine"}
+          </Button>
         </div>
-      </div>
-      <div>
-        <p className="text-sm text-gray-500 line-clamp-2">{item.description}</p>
-      </div>
-      <div className="flex flex-row justify-end">
-        <Button
-          onClick={() => {
-            setOpen(true);
-          }}
-        >
-          {islostObject ? "I Found This" : "This Is Mine"}
-        </Button>
       </div>
     </div>
   );

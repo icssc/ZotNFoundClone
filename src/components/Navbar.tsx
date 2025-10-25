@@ -6,12 +6,19 @@ import { InfoIcon, UserIcon, BellIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookmarkModal } from "@/components/BookmarkModal";
 import Image from "next/image";
-import { authClient, signInWithGoogle } from "@/lib/auth-client";
+import { signInWithGoogle } from "@/lib/auth-client";
 import { SearchBar } from "./SearchBar";
 import { useSharedContext } from "./ContextProvider";
+import { Instrument_Serif } from "next/font/google";
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["italic", "normal"],
+});
 
 export default function Navbar() {
-  const { user } = useSharedContext();
+  const { user, signOut } = useSharedContext();
   const handleSignIn = async () => {
     try {
       await signInWithGoogle();
@@ -24,7 +31,7 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     try {
-      await authClient.signOut();
+      await signOut();
     } catch (error) {
       console.error("Sign out error:", error);
     }
@@ -38,16 +45,20 @@ export default function Navbar() {
           <Image
             src="/logo.png"
             alt="ZotNFound"
-            width={32}
-            height={32}
+            width={42}
+            height={42}
             loading="eager"
             className="rounded-full"
           />
-          <Link href="/" className="text-xl font-bold">
+          <Link
+            href="/"
+            className={`text-3xl font-bold italic tracking-wide ${instrumentSerif.className}`}
+          >
             ZotNFound
           </Link>
         </div>
-        <div className="flex-1 px-4 max-w-xl">
+        {/* Center Search (desktop only) */}
+        <div className="hidden md:flex flex-1 px-4 max-w-xl">
           <SearchBar />
         </div>
         {/* Desktop Navigation */}
@@ -66,9 +77,7 @@ export default function Navbar() {
             <BellIcon className="h-4 w-4" />
             <span>Updates</span>
           </Link>
-
           <BookmarkModal />
-
           {user ? (
             <Button
               variant="outline"
@@ -99,6 +108,59 @@ export default function Navbar() {
             </Button>
           )}
         </div>
+      </div>
+      {/* Mobile Actions Row */}
+      <div className="md:hidden mt-3 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/about"
+            className="p-1 rounded hover:text-gray-300 flex items-center"
+            aria-label="About"
+          >
+            <InfoIcon className="h-5 w-5" />
+          </Link>
+          <Link
+            href="/updates"
+            className="p-1 rounded hover:text-gray-300 flex items-center"
+            aria-label="Updates"
+          >
+            <BellIcon className="h-5 w-5" />
+          </Link>
+          <BookmarkModal />
+        </div>
+        {user ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="hover:bg-white hover:text-black text-white bg-black transition-colors duration-250"
+            onClick={handleSignOut}
+          >
+            {user.image && (
+              <Image
+                src={user.image}
+                alt="User Profile Picture"
+                width={16}
+                height={16}
+                className="rounded-full mr-2"
+              />
+            )}
+            Sign Out
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            size="sm"
+            className="hover:bg-white hover:text-black text-white bg-black transition-colors duration-250"
+            onClick={handleSignIn}
+          >
+            <UserIcon className="h-4 w-4 mr-2" />
+            Sign In
+          </Button>
+        )}
+      </div>
+      {/* Mobile Search */}
+      <div className="md:hidden mt-3">
+        <SearchBar />
       </div>
     </nav>
   );

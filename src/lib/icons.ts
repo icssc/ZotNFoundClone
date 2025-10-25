@@ -1,25 +1,25 @@
 import "leaflet.markercluster";
-import L from "leaflet";
+import { icon, point, divIcon } from "leaflet";
 
-const resolvedIcon = L.icon({
+const resolvedIcon = icon({
   iconUrl: "/logos/resolved.png",
   iconSize: [40, 40],
   iconAnchor: [20, 30],
 });
 
-const othersLost = L.icon({
+const othersLost = icon({
   iconUrl: "/logos/others_lost.png",
   iconSize: [50, 50],
   iconAnchor: [25, 40],
 });
 
-const othersFound = L.icon({
+const othersFound = icon({
   iconUrl: "/logos/others_found.png",
   iconSize: [50, 50],
   iconAnchor: [25, 40],
 });
 
-export const othersDragBlack = L.icon({
+export const othersDragBlack = icon({
   iconUrl: "/logos/others_black.svg",
   iconSize: [40, 40],
   iconAnchor: [25, 25],
@@ -90,7 +90,7 @@ export const createClusterCustomIcon = (cluster: any) => {
     large: 60,
   };
 
-  return L.divIcon({
+  return divIcon({
     html: `<div style="
       background-color: ${colors.background} !important;
       border: 2px solid ${colors.border};
@@ -106,6 +106,6 @@ export const createClusterCustomIcon = (cluster: any) => {
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     ">${count}</div>`,
     className: `custom-cluster-icon dark-mode`,
-    iconSize: L.point(sizeMap.medium, sizeMap.medium, true),
+    iconSize: point(sizeMap.medium, sizeMap.medium, true),
   });
 };

@@ -10,9 +10,19 @@ import { User, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
+import Image from "next/image";
 import { signInWithGoogle } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useSharedContext } from "../ContextProvider";
+
+function isValidUrl(string: string) {
+  try {
+    new URL(string);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 type ContactState = {
   status: "idle" | "success" | "error";
@@ -88,49 +98,88 @@ function DetailedDialog({ item }: { item: Item }) {
   const isSubmitDisabled = isPending || state.status === "success";
 
   return (
-    <DialogContent className="sm:max-w-md">
-      <DialogHeader>
-        <DialogTitle>{item.name}</DialogTitle>
-        <DialogDescription>
-          {islostObject ? "Lost" : "Found"} item details
-        </DialogDescription>
-      </DialogHeader>
+    <DialogContent className="w-[calc(100%-2rem)] max-w-md bg-black/95 border-white/20 text-white p-0 max-h-[90vh] overflow-y-auto">
+      <div className="mt-10 px-4 sm:px-6">
+        <div className="relative w-full h-64 sm:h-80 overflow-hidden rounded-md bg-white/10 border border-white/20 backdrop-blur-sm">
+          <Image
+            src={
+              item.image && isValidUrl(item.image)
+                ? item.image
+                : "/placeholder.jpg"
+            }
+            alt={item.name || "Item Image"}
+            fill
+            sizes="(max-width: 640px) 100vw, 448px"
+            style={{ objectFit: "contain" }}
+            loading="lazy"
+            priority={false}
+            preload={false}
+            fetchPriority="low"
+            className="bg-black"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/80 pointer-events-none" />
+        </div>
+      </div>
+      <div className="px-4 sm:px-6">
+        <DialogHeader>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex-1 min-w-0">
+              <DialogTitle className="text-white text-left truncate text-base sm:text-lg">
+                {item.name}
+              </DialogTitle>
+              <DialogDescription className="text-gray-400 text-left text-xs sm:text-sm">
+                {islostObject ? "Lost" : "Found"} item details
+              </DialogDescription>
+            </div>
+          </div>
+        </DialogHeader>
+      </div>
 
-      <div className="space-y-4 py-4">
-        <div className="flex items-start space-x-3">
-          <User className="h-5 w-5 text-gray-500 mt-0.5" />
-          <div>
-            <p className="font-medium">Owner Email</p>
-            <p className="text-sm text-gray-500">{item.email}</p>
+      <div className="space-y-3 sm:space-y-4 py-3 sm:py-4 px-4 sm:px-6">
+        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/5 hover:bg-white/10 transition-all duration-200">
+          <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-white text-sm sm:text-base">
+              Contact
+            </p>
+            <p className="text-xs sm:text-sm text-gray-400 truncate">
+              {item.email}
+            </p>
           </div>
         </div>
 
-        <div className="flex items-start space-x-3">
-          <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
-          <div>
-            <p className="font-medium">Date</p>
-            <p className="text-sm text-gray-500">{item.date}</p>
-            <p className="text-sm text-gray-500">
+        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/5 hover:bg-white/10 transition-all duration-200">
+          <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-white text-sm sm:text-base">
+              Date & Status
+            </p>
+            <p className="text-xs sm:text-sm text-gray-400">{item.date}</p>
+            <p className="text-xs sm:text-sm text-gray-400">
               Status: {islostObject ? "Lost" : "Found"}
             </p>
           </div>
         </div>
 
-        <div className="flex items-start space-x-3">
-          <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
-          <div>
-            <p className="font-medium">Location</p>
-            <p className="text-sm text-gray-500">
-              {Array.isArray(item.location)
-                ? item.location.join(", ")
-                : item.location || "No location provided"}
+        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/5 hover:bg-white/10 transition-all duration-200">
+          <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-white text-sm sm:text-base">
+              Location
+            </p>
+            <p className="text-xs sm:text-sm text-gray-400 line-clamp-2">
+              {item.location || "No location provided"}
             </p>
           </div>
         </div>
 
-        <div className="pt-2">
-          <p className="font-medium">Description</p>
-          <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+        <div className="pt-2 p-2 sm:p-3 rounded-md bg-white/5">
+          <p className="font-medium text-white mb-2 text-sm sm:text-base">
+            Description
+          </p>
+          <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
+            {item.description}
+          </p>
         </div>
 
         {!user && (
@@ -172,10 +221,11 @@ function DetailedDialog({ item }: { item: Item }) {
         )}
       </div>
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 pt-2 sm:pt-3 pb-4 sm:pb-6 px-4 sm:px-6 border-t border-white/10">
         {user && !showConfirm && (
           <Button
             variant="outline"
+            className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
             onClick={handleContactClick}
             disabled={isPending}
           >
@@ -183,7 +233,11 @@ function DetailedDialog({ item }: { item: Item }) {
           </Button>
         )}
         {!user && (
-          <Button variant="outline" onClick={handleContactClick}>
+          <Button
+            variant="outline"
+            className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
+            onClick={handleContactClick}
+          >
             Contact
           </Button>
         )}
