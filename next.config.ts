@@ -21,8 +21,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  cacheComponents: true,
   experimental: {
-    cacheComponents: true,
     browserDebugInfoInTerminal: true,
     optimizePackageImports: [
       "leaflet",
@@ -41,34 +41,11 @@ const nextConfig: NextConfig = {
     removeConsole:
       process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
   },
-  webpack: (config) => {
-    // eslint-disable-next-line
-    const { NormalModuleReplacementPlugin } = require("webpack");
-    config.resolve = config.resolve || {};
-    // Only alias the exact 'leaflet' import to the bundled JS entry so that
-    // subpath imports like 'leaflet/dist/leaflet.css' continue to resolve
-    // normally. Using 'leaflet$' ensures that imports of 'leaflet/...'
-    // are not rewritten incorrectly.
-    config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-      leaflet$: "leaflet/dist/leaflet.js",
-    };
-
-    config.plugins.push(
-      new NormalModuleReplacementPlugin(
-        /leaflet\/dist\/leaflet-src\.js$/,
-        "leaflet/dist/leaflet.js"
-      )
-    );
-
-    return config;
+  turbopack: {
+    resolveAlias: {
+      leaflet: "leaflet/dist/leaflet.js",
+    },
   },
 };
-// eslint-disable-next-line
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true",
-});
-
-module.exports = withBundleAnalyzer(nextConfig);
 
 export default nextConfig;
