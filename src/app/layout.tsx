@@ -6,7 +6,6 @@ import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
 import { Providers } from "@/components/ContextProvider";
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
