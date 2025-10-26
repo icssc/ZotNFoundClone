@@ -69,7 +69,11 @@ export async function createItem(
 
     let imageUrl = "";
     if (file) {
-      imageUrl = await uploadImageToS3(file);
+      try {
+        imageUrl = await uploadImageToS3(file);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     }
 
     const itemData: NewItem = {
