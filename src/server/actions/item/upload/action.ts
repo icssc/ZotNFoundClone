@@ -3,40 +3,29 @@
 import {
   S3Client,
   PutObjectCommand,
-  PutObjectCommandInput
+  PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
+import { Resource } from "sst/resource";
 
 // server uploads to s3 and returns public url
-export default async function uploadImageToS3(base64Data: string): Promise<string> {
-    const s3Client = new S3Client({
-        region: "us-east-1", // not sure what this should be
-    });  
-    const type = "image/png";
-    const key = `uploads/${Date.now()}-${randomUUID()}.${type.split("/")[1]}`;
+export default async function uploadImageToS3(
+  fileData: ArrayBuffer
+): Promise<string> {
+  const s3Client = new S3Client({});
+  const type = "image/webp";
+  const key = `uploads/${Date.now()}-${randomUUID()}.${type.split("/")[1]}`;
 
-    // const uploadParams: PutObjectCommandInput = {
-    //     ACL: "public-read",
-    //     Bucket: "zotnfound-rebecca-backend-bucketbucketf19722a9-byo4gmbw2dew", // replace with Bucket.bucket.bucketName
-    //     Key: key,
-    //     Body: base64Data,
-    //     ContentType: type,
-    // };
+  const uploadParams: PutObjectCommandInput = {
+    Bucket: Resource.ItemImages.name,
+    Key: key,
+    Body: Buffer.from(fileData),
+    ContentType: type,
+  };
 
-    const uploadParams: PutObjectCommandInput = {
-        ACL: "public-read",
-        Bucket: "zotnfound-dang-backend-bucketbucketf19722a9-jcjpp0t0r8mh", // replace with Bucket.bucket.bucketName
-        Key: key,
-        Body: base64Data,
-        ContentType: type,
-    };
-    
-    const uploadCommand = new PutObjectCommand(uploadParams);
-    await s3Client.send(uploadCommand);
+  const uploadCommand = new PutObjectCommand(uploadParams);
+  await s3Client.send(uploadCommand);
 
-    const url = `https://zotnfound-dang-backend-bucketbucketf19722a9-jcjpp0t0r8mh.s3.amazonaws.com/${key}`;
-    // const url = `https://zotnfound-rebecca-backend-bucketbucketf19722a9-byo4gmbw2dew.s3.amazonaws.com/${key}`;
-
-    // const url = `https://${Bucket.bucket.bucketName}.s3.amazonaws.com/${key}`;
-    return url;
+  const url = `https://${Resource.ItemImages.name}.s3.amazonaws.com/${key}`;
+  return url;
 }

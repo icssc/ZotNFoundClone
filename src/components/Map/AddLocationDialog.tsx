@@ -68,59 +68,52 @@ export function AddLocationDialog({
 
     setIsSubmitting(true);
 
-     const options = {
+    const options = {
       maxSizeMB: 1,
       maxWidthOrHeight: 1920,
       useWebWorker: true,
-      fileType: "image/jpeg",
+      fileType: "image/webp",
       preserveExif: false,
     };
-    const compressedFile = await imageCompression(
-      formData.file,
-      options
-    );
+    const compressedFile = await imageCompression(formData.file, options);
 
     const reader = new FileReader();
-    reader.readAsDataURL(compressedFile);
-    const base64Data = await new Promise<string>((resolve) => {
+    reader.readAsArrayBuffer(compressedFile);
+    const arrayBuffer = await new Promise<ArrayBuffer>((resolve) => {
       reader.onloadend = () => {
-        resolve(reader.result as string);
+        resolve(reader.result as ArrayBuffer);
       };
     });
 
-    const imgUrl: string = await uploadImageToS3(base64Data);
-
-    console.log("Image uploaded to S3 with URL:", imgUrl);
-    
-      const newItem: NewItem = {
-        name: formData.name,
-        description: formData.description,
-        type: formData.type,
-        date: format(formData.date, "yyyy-MM-dd"),
-        itemdate: format(formData.date, "yyyy-MM-dd"),
-        image: imgUrl,
-        islost: formData.isLost,
-        location: formData.location?.map(String) ?? [],
-        isresolved: false,
-        ishelped: false,
-        email: "priyanshpokemon@gmail.com",
-      };
-      createItemMutation.mutate(newItem);
-
-      onOpenChange(false);
-      setCurrentStep(1);
-      setFormData({
-        name: "",
-        description: "",
-        type: "",
-        date: new Date(),
-        file: null,
-        isLost: true,
-        location: null,
-      });
-      setIsSubmitting(false);
-
+    const imgUrl: string = await uploadImageToS3(arrayBuffer);
+    const newItem: NewItem = {
+      name: formData.name,
+      description: formData.description,
+      type: formData.type,
+      date: format(formData.date, "yyyy-MM-dd"),
+      itemdate: format(formData.date, "yyyy-MM-dd"),
+      image: imgUrl,
+      islost: formData.isLost,
+      location: formData.location?.map(String) ?? [],
+      isresolved: false,
+      ishelped: false,
+      email: "priyanshpokemon@gmail.com",
     };
+    createItemMutation.mutate(newItem);
+
+    onOpenChange(false);
+    setCurrentStep(1);
+    setFormData({
+      name: "",
+      description: "",
+      type: "",
+      date: new Date(),
+      file: null,
+      isLost: true,
+      location: null,
+    });
+    setIsSubmitting(false);
+  };
 
   const handleContinue = () => {
     if (currentStep < 6) {
