@@ -12,10 +12,10 @@ export default $config({
   },
   async run() {
     const bucket = new sst.aws.Bucket("ItemImages", {
-      access: "public"
+      access: "public",
     });
     new sst.aws.Nextjs("ZotNFound", {
-      link: [bucket]
+      link: [bucket],
     });
   },
 });

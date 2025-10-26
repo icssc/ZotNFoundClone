@@ -5,17 +5,17 @@
 
 declare module "sst" {
   export interface Resource {
-    "ItemImages": {
-      "name": string
-      "type": "sst.aws.Bucket"
-    }
-    "ZotNFound": {
-      "type": "sst.aws.Nextjs"
-      "url": string
-    }
+    ItemImages: {
+      name: string;
+      type: "sst.aws.Bucket";
+    };
+    ZotNFound: {
+      type: "sst.aws.Nextjs";
+      url: string;
+    };
   }
 }
 /// <reference path="sst-env.d.ts" />
 
-import "sst"
-export {}
+import "sst";
+export {};
