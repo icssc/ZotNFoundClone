@@ -23,14 +23,18 @@ export function Step4FileUpload({ updateField }: Step4Props) {
         onChange={async (e) => {
           let file = e.target.files?.[0] || null;
           if (file) {
-            const options = {
-              maxSizeMB: 1,
-              maxWidthOrHeight: 1920,
-              useWebWorker: true,
-              fileType: "image/webp",
-              preserveExif: false,
-            };
-            file = await imageCompression(file, options);
+            try {
+              const options = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1920,
+                useWebWorker: true,
+                fileType: "image/webp",
+                preserveExif: false,
+              };
+              file = await imageCompression(file, options);
+            } catch (error) {
+              console.error("Error compressing image:", error);
+            }
           }
           updateField("file", file);
         }}
