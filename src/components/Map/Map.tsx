@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { AddLocationDialog } from "./AddLocationDialog";
 import { PlusIcon } from "lucide-react";
 import { Item as ItemType } from "@/db/schema";
+import { useSearchParams } from "next/navigation";
 
 interface MapProps {
   initialItems: ItemType[];
@@ -59,14 +60,9 @@ function MapController({
 
 function Map({ initialItems }: MapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
-  const [selectedObjectId, setSelectedObjectId] = useState<number>();
   const { selectedLocation, filter } = useSharedContext();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const items = initialItems;
-  const selectedObject = useMemo(() => {
-    if (!selectedObjectId) return null;
-    return items.find((obj) => obj.id === selectedObjectId) || null;
-  }, [selectedObjectId, items]);
+
 
   return (
     <MapContainer
@@ -81,28 +77,9 @@ function Map({ initialItems }: MapProps) {
     >
       <TileLayer url={accessToken} />
       <MapController selectedLocation={selectedLocation} />
-      {items && items.length > 0 && (
-        <ObjectMarkers
-          objects={items}
-          setSelectedObjectId={setSelectedObjectId}
-          filter={filter}
-        />
+      {initialItems && initialItems.length > 0 && (
+        <ObjectMarkers objects={initialItems} filter={filter} />
       )}
-      <TileLayer url={accessToken} />
-      <MapController selectedLocation={selectedLocation} />
-      {items && items.length > 0 && (
-        <ObjectMarkers
-          objects={items}
-          setSelectedObjectId={setSelectedObjectId}
-          filter={filter}
-        />
-      )}
-      <Dialog
-        open={!!selectedObjectId && !!selectedObject}
-        onOpenChange={(open) => !open && setSelectedObjectId(undefined)}
-      >
-        {selectedObject && <DetailedDialog item={selectedObject} />}
-      </Dialog>
       <div>
         <Button
           className="absolute bottom-4 right-4 z-999 bg-blue-500 text-white p-2 rounded-full w-12 h-12 text-xl"

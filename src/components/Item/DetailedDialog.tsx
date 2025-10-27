@@ -1,32 +1,55 @@
 "use client";
-import { useActionState, useState } from "react";
+
+import { useState } from "react";
 import {
   DialogContent,
   DialogTitle,
-  DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { User, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
+import Image from "next/image";
+import { Separator } from "@/components/ui/separator";
+import { Mail, Share2, Check } from "lucide-react";
+import { z } from "zod";
+
 import { signInWithGoogle } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useSharedContext } from "../ContextProvider";
 
-type ContactState = {
-  status: "idle" | "success" | "error";
-  message: string | null;
-};
-
 function DetailedDialog({ item }: { item: Item }) {
   const islostObject = isLostObject(item);
-  const [showConfirm, setShowConfirm] = useState(false);
+
+  // Minimal UI state
+  const [isCopied, setIsCopied] = useState(false);
   const { user } = useSharedContext();
-  const contactAction = async (): Promise<ContactState> => {
+
+  const handleShare = async () => {
+    try {
+      const shareUrl = `${window.location.origin}/?item=${item.id}`;
+      await navigator.clipboard.writeText(shareUrl);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000); // reset after 2s
+    } catch (error) {
+      console.error("Error sharing:", error);
+      toast.error("Unable to copy link to clipboard.");
+    }
+  };
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch {
+      toast.error("Failed to sign in. Please try again.");
+    }
+  };
+
+  const handleContact = async () => {
     if (!user) {
-      toast.error("Please sign in first.");
-      return { status: "error", message: "Not authenticated." };
+      // If not signed in, nudge to sign in.
+      toast.info("Sign in with your UCI email to contact the owner.");
+      return;
     }
 
     try {
@@ -50,143 +73,117 @@ function DetailedDialog({ item }: { item: Item }) {
 
       if (res.ok) {
         toast.success("Owner notified successfully!");
-        return { status: "success", message: "Owner notified." };
+        return;
       }
 
       const json = await res.json().catch(() => null);
       const errorMessage = json?.error || "Failed to send notification.";
       toast.error(errorMessage);
-      return { status: "error", message: errorMessage };
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Network error. Please try again.");
-      return { status: "error", message: "Network error." };
     }
   };
-
-  const initialState: ContactState = { status: "idle", message: null };
-  const [state, formAction, isPending] = useActionState(
-    contactAction,
-    initialState
-  );
-
-  const handleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-    } catch {
-      toast.error("Failed to sign in. Please try again and check your Wi-fi.");
-    }
-  };
-
-  const handleContactClick = () => {
-    if (!user) {
-      toast.info("Sign in with your UCI email to contact the owner.");
-    } else {
-      setShowConfirm(true);
-    }
-  };
-
-  const isSubmitDisabled = isPending || state.status === "success";
 
   return (
-    <DialogContent className="sm:max-w-md">
-      <DialogHeader>
-        <DialogTitle>{item.name}</DialogTitle>
-        <DialogDescription>
-          {islostObject ? "Lost" : "Found"} item details
-        </DialogDescription>
-      </DialogHeader>
-
-      <div className="space-y-4 py-4">
-        <div className="flex items-start space-x-3">
-          <User className="h-5 w-5 text-gray-500 mt-0.5" />
-          <div>
-            <p className="font-medium">Owner Email</p>
-            <p className="text-sm text-gray-500">{item.email}</p>
-          </div>
+    <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+      <div className="flex flex-col sm:flex-row gap-4 my-8">
+        {/* Image - Top on mobile, Left on desktop */}
+        <div className="w-full max-w-sm sm:w-64 h-80 sm:h-64 relative mx-auto sm:mx-8">
+          <Image
+            src={
+              z.url().safeParse(item.image).success
+                ? item.image
+                : "/placeholder.jpg"
+            }
+            alt={item.name || "Item Image"}
+            fill
+            className="object-cover rounded-lg"
+            sizes="(max-width: 640px) 100vw, 256px"
+          />
         </div>
 
-        <div className="flex items-start space-x-3">
-          <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />
-          <div>
-            <p className="font-medium">Date</p>
-            <p className="text-sm text-gray-500">{item.date}</p>
-            <p className="text-sm text-gray-500">
-              Status: {islostObject ? "Lost" : "Found"}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-start space-x-3">
-          <MapPin className="h-5 w-5 text-gray-500 mt-0.5" />
-          <div>
-            <p className="font-medium">Location</p>
-            <p className="text-sm text-gray-500">
-              {Array.isArray(item.location)
-                ? item.location.join(", ")
-                : item.location || "No location provided"}
-            </p>
-          </div>
-        </div>
-
-        <div className="pt-2">
-          <p className="font-medium">Description</p>
-          <p className="text-sm text-gray-600 mt-1">{item.description}</p>
-        </div>
-
-        {!user && (
-          <div className="flex flex-col gap-3 pt-2 text-sm">
-            <p className="text-gray-400">
-              Sign in with your UCI email to contact the owner.
-            </p>
-            <Button variant="default" onClick={handleSignIn}>
-              Sign In
-            </Button>
-          </div>
-        )}
-
-        {user && showConfirm && (
-          <form action={formAction} className="space-y-3 pt-2 text-sm">
-            <p>Notify the owner and CC your email ({user.email})?</p>
-            <div className="flex gap-2">
-              <Button
-                type="submit"
-                variant="default"
-                disabled={isSubmitDisabled}
+        {/* Content - Bottom on mobile, Right on desktop */}
+        <div className="min-w-76 flex flex-col justify-between px-4 sm:px-0">
+          <DialogHeader className="text-left pb-4">
+            <DialogTitle className="text-2xl font-bold text-gray-900">
+              {item.name}
+            </DialogTitle>
+            <div className="flex items-center gap-3">
+              <span
+                className={`px-2 py-1 rounded-md text-xs font-medium ${
+                  islostObject
+                    ? "bg-red-100 text-red-800"
+                    : "bg-green-100 text-green-800"
+                }`}
               >
-                {isPending
-                  ? "Sending..."
-                  : state.status === "success"
-                    ? "Sent"
-                    : "Send"}
-              </Button>
+                {islostObject ? "Lost" : "Found"}
+              </span>
+              <span className="text-sm text-gray-500">
+                Posted:{" "}
+                {new Date(item.date).toLocaleDateString("en-US", {
+                  month: "2-digit",
+                  day: "2-digit",
+                  year: "numeric",
+                })}
+              </span>
+            </div>
+          </DialogHeader>
+
+          <Separator />
+
+          <div className="space-y-3 mt-4">
+            <div>
+              <p className="font-semibold text-gray-900 mb-2 text-sm">
+                Description:
+              </p>
+              <div className="text-xs space-y-1">
+                <p className="text-gray-500">
+                  {islostObject ? "Lost on" : "Found on"}{" "}
+                  {new Date(item.itemDate).toLocaleDateString("en-US", {
+                    month: "2-digit",
+                    day: "2-digit",
+                    year: "numeric",
+                  })}
+                </p>
+                {item.description && <p className="mt-2">{item.description}</p>}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 mt-6">
+            {/* Contact button: when signed out, it should match Sign In button background.
+                When signed in, make it outline (so it visually differs). */}
+            <div className="relative">
               <Button
-                type="button"
-                variant="ghost"
-                disabled={isPending}
-                onClick={() => setShowConfirm(false)}
+                onClick={handleContact}
+                className={`flex items-center gap-2 w-full sm:w-40 ${
+                  !user
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "border-blue-600 text-blue-600 hover:text-blue-700"
+                }`}
+                variant={user ? "outline" : "default"}
               >
-                Cancel
+                <Mail className="h-4 w-4" />
+                Contact
               </Button>
             </div>
-          </form>
-        )}
-      </div>
 
-      <div className="flex justify-end gap-2">
-        {user && !showConfirm && (
-          <Button
-            variant="outline"
-            onClick={handleContactClick}
-            disabled={isPending}
-          >
-            Contact
-          </Button>
-        )}
-        {!user && (
-          <Button variant="outline" onClick={handleContactClick}>
-            Contact
-          </Button>
-        )}
+            {/* Copy Link button next to Contact */}
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 w-full sm:w-40 border-blue-600 text-blue-600 hover:text-blue-700"
+              onClick={handleShare}
+            >
+              {isCopied ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Share2 className="h-4 w-4" />
+              )}
+              {isCopied ? "Copied!" : "Copy Link"}
+            </Button>
+          </div>
+        </div>
       </div>
     </DialogContent>
   );
