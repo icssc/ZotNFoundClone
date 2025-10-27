@@ -28,7 +28,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${CustomFont.className} antialiased bg-neutral-900`}
+        className={`${geistSans.variable} ${CustomFont.className} antialiased bg-neutral-950`}
       >
         <Suspense fallback={null}>
           <SessionProvider>

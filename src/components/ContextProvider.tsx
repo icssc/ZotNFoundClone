@@ -43,8 +43,7 @@ function SharedProviders({
   // If the client session has been resolved (data is defined), prefer it
   // (including the signed-out case where data.user may be null).
   // Otherwise fall back to the local optimistic user state.
-  const user: User | undefined =
-    data !== undefined ? (data?.user ?? undefined) : localUser;
+  const user: User | undefined = data?.user ?? localUser;
 
   const signOut = async () => {
     const previousLocal = localUser;
