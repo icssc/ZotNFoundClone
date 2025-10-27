@@ -14,5 +14,5 @@ const MapComponent = dynamic(() => import("@/components/Map/Map"), {
 });
 
 export const LazyMap = ({ initialItems }: LazyMapProps) => {
-  return <MapComponent initialItems={initialItems} />;
+  return <MapComponent initialItems={initialItems}  />;
 };

@@ -22,7 +22,13 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const selectedItem = useMemo(() => {
     const itemId = searchParams.get("item");
     if (!itemId) return null;
-    return initialItems.find((item) => item.id === parseInt(itemId)) || null;
+    const item =
+      initialItems.find((item) => item.id === parseInt(itemId)) || null;
+    if (item && item.location) {
+      const location: LatLngExpression = stringArrayToLatLng(item.location);
+      setSelectedLocation(location);
+    }
+    return item;
   }, [searchParams, initialItems]);
 
   const handleItemClick = (item: ItemType) => {

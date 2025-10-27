@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -307,6 +308,9 @@ export function AddLocationDialog({
           <DialogTitle className="text-white text-lg sm:text-xl">
             Add New Location
           </DialogTitle>
+          <DialogDescription className="text-slate-300">
+            Follow the steps to add a new lost or found item
+          </DialogDescription>
         </DialogHeader>
 
         <StepIndicator currentStep={formState.currentStep} />

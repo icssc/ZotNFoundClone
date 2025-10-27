@@ -3,7 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 // import Script from "next/script";
 import Navbar from "@/components/Navbar";
+import { Toaster } from "sonner";
 import { Providers } from "@/components/ContextProvider";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,19 +22,13 @@ export const metadata: Metadata = {
   description: "Helping UCI students locate and recover lost belongings",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="en">
-      {/* <head>
-        <Script
-          crossOrigin="anonymous"
-          src="//unpkg.com/react-scan/dist/auto.global.js"
-        />
-      </head> */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-900`}
       >
@@ -40,6 +36,7 @@ export default function RootLayout({
           <Navbar />
           {children}
         </Providers>
+        <Toaster position="bottom-center" theme="dark" />
       </body>
     </html>
   );

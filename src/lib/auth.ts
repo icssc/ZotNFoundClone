@@ -4,6 +4,12 @@ import { db } from "@/db"; // your drizzle instance
 import * as authSchema from "@/db/auth-schema";
 
 export const auth = betterAuth({
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 60 * 24,
+    },
+  },
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: authSchema,

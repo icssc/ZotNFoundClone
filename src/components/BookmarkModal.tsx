@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -23,6 +24,9 @@ export function BookmarkModal() {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Saved Searches</DialogTitle>
+          <DialogDescription>
+            View and manage your saved search keywords and alerts
+          </DialogDescription>
         </DialogHeader>
         <ScrollArea className="h-[30vh] rounded-md border p-4">
           {keywords.length === 0 && (

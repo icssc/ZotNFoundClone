@@ -1,54 +1,87 @@
 "use client";
-import { DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Mail, Share2, Check } from "lucide-react";
+
+import { useState } from "react";
+import {
+  DialogContent,
+  DialogTitle,
+  DialogHeader,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { DialogHeader } from "@/components/ui/dialog";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { Mail, Share2, Check } from "lucide-react";
 import { z } from "zod";
+
+import { signInWithGoogle } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useSharedContext } from "../ContextProvider";
 
 function DetailedDialog({ item }: { item: Item }) {
   const islostObject = isLostObject(item);
+
+  // Minimal UI state
   const [isCopied, setIsCopied] = useState(false);
-  const [showEmail, setShowEmail] = useState(false);
-  const [emailCopied, setEmailCopied] = useState(false);
+  const { user } = useSharedContext();
 
   const handleShare = async () => {
     try {
       const shareUrl = `${window.location.origin}/?item=${item.id}`;
       await navigator.clipboard.writeText(shareUrl);
-
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000); // Reset after 2 seconds
+      setTimeout(() => setIsCopied(false), 2000); // reset after 2s
     } catch (error) {
       console.error("Error sharing:", error);
+      toast.error("Unable to copy link to clipboard.");
     }
   };
 
-  const handleViewContact = async () => {
-    if (showEmail) {
-      // If already showing email, copy it to clipboard
-      try {
-        await navigator.clipboard.writeText(item.email);
-        setEmailCopied(true);
-        setTimeout(() => setEmailCopied(false), 2000); // Reset after 2 seconds
-      } catch (error) {
-        console.error("Error copying email:", error);
+  const handleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch {
+      toast.error("Failed to sign in. Please try again.");
+    }
+  };
+
+  const handleContact = async () => {
+    if (!user) {
+      // If not signed in, nudge to sign in.
+      toast.info("Sign in with your UCI email to contact the owner.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/resend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          item: {
+            id: item.id,
+            name: item.name,
+            type: item.type,
+            email: item.email,
+            image: item.image,
+            description: item.description,
+            itemDate: item.itemDate,
+          },
+          finderName: user.name || "Anonymous",
+          finderEmail: user.email,
+        }),
+      });
+
+      if (res.ok) {
+        toast.success("Owner notified successfully!");
+        return;
       }
-    } else {
-      // Show email first and copy to clipboard
-      try {
-        await navigator.clipboard.writeText(item.email);
-        setEmailCopied(true);
-        setTimeout(() => setEmailCopied(false), 2000); // Reset after 2 seconds
-      } catch (error) {
-        console.error("Error copying email:", error);
-      }
-      setShowEmail(true);
-      setTimeout(() => setShowEmail(false), 3000); // Reset after 3 seconds
+
+      const json = await res.json().catch(() => null);
+      const errorMessage = json?.error || "Failed to send notification.";
+      toast.error(errorMessage);
+    } catch (err) {
+      console.error(err);
+      toast.error("Network error. Please try again.");
     }
   };
 
@@ -58,7 +91,11 @@ function DetailedDialog({ item }: { item: Item }) {
         {/* Image - Top on mobile, Left on desktop */}
         <div className="w-full max-w-sm sm:w-64 h-80 sm:h-64 relative mx-auto sm:mx-8">
           <Image
-            src={z.url().safeParse(item.image).success ? item.image : "/placeholder.jpg"}
+            src={
+              z.url().safeParse(item.image).success
+                ? item.image
+                : "/placeholder.jpg"
+            }
             alt={item.name || "Item Image"}
             fill
             className="object-cover rounded-lg"
@@ -109,43 +146,33 @@ function DetailedDialog({ item }: { item: Item }) {
                     year: "numeric",
                   })}
                 </p>
-                {/* TODO: Make location not coordinates */}
-                {/* <p>{item.location || "No location provided"}</p> */}
                 {item.description && <p className="mt-2">{item.description}</p>}
               </div>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 mt-6">
+            {/* Contact button: when signed out, it should match Sign In button background.
+                When signed in, make it outline (so it visually differs). */}
             <div className="relative">
-              {emailCopied && (
-                <div className="absolute -top-7 left-1/2 transform -translate-x-1/2 text-blue-600 text-xs px-2 py-1 rounded-md whitespace-nowrap z-10">
-                  Copied!
-                </div>
-              )}
               <Button
-                className={`flex items-center gap-2 w-full sm:w-auto ${showEmail ? "outline border-blue-600 text-blue-600 hover:text-blue" : "bg-blue-600 hover:bg-blue-700"}`}
-                variant={showEmail ? "outline" : "default"}
-                onClick={handleViewContact}
+                onClick={handleContact}
+                className={`flex items-center gap-2 w-full sm:w-40 ${
+                  !user
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "border-blue-600 text-blue-600 hover:text-blue-700"
+                }`}
+                variant={user ? "outline" : "default"}
               >
                 <Mail className="h-4 w-4" />
-                {showEmail
-                  ? (() => {
-                      if (item.email.length <= 20) return item.email;
-                      const atIndex = item.email.indexOf("@");
-                      if (atIndex === -1)
-                        return item.email.substring(0, 15) + "...";
-                      const domain = item.email.substring(atIndex);
-                      const username = item.email.substring(0, atIndex);
-                      if (username.length <= 8) return item.email;
-                      return username.substring(0, 8) + "..." + domain;
-                    })()
-                  : "View Contact"}
+                Contact
               </Button>
             </div>
+
+            {/* Copy Link button next to Contact */}
             <Button
               variant="outline"
-              className="flex items-center gap-2 w-full sm:w-auto border-blue-600 text-blue-600 hover:text-blue-700"
+              className="flex items-center gap-2 w-full sm:w-40 border-blue-600 text-blue-600 hover:text-blue-700"
               onClick={handleShare}
             >
               {isCopied ? (
@@ -153,7 +180,7 @@ function DetailedDialog({ item }: { item: Item }) {
               ) : (
                 <Share2 className="h-4 w-4" />
               )}
-              {isCopied ? "Copied!" : "Share"}
+              {isCopied ? "Copied!" : "Copy Link"}
             </Button>
           </div>
         </div>

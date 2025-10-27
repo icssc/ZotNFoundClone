@@ -60,14 +60,9 @@ function MapController({
 
 function Map({ initialItems }: MapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
-  const searchParams = useSearchParams();
   const { selectedLocation, filter } = useSharedContext();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const selectedObject = useMemo(() => {
-    const itemId = searchParams.get("item");
-    if (!itemId) return null;
-    return initialItems.find((obj) => obj.id === parseInt(itemId)) || null;
-  }, [searchParams, initialItems]);
+
 
   return (
     <MapContainer
@@ -85,23 +80,9 @@ function Map({ initialItems }: MapProps) {
       {initialItems && initialItems.length > 0 && (
         <ObjectMarkers objects={initialItems} filter={filter} />
       )}
-      <Dialog
-        // !! makes undefined to a boolean
-        open={!!selectedObject}
-        onOpenChange={(open) => {
-          if (!open) {
-            // Remove the item parameter from URL
-            const url = new URL(window.location.href);
-            url.searchParams.delete("item");
-            window.history.replaceState({}, "", url.toString());
-          }
-        }}
-      >
-        {selectedObject && <DetailedDialog item={selectedObject} />}
-      </Dialog>
       <div>
         <Button
-          className="absolute bottom-4 right-4 z-[999] bg-blue-500 text-white p-2 rounded-full w-12 h-12 text-xl"
+          className="absolute bottom-4 right-4 z-999 bg-blue-500 text-white p-2 rounded-full w-12 h-12 text-xl"
           onClick={() => setIsAddDialogOpen(true)}
         >
           <PlusIcon className="h-6 w-6" />
