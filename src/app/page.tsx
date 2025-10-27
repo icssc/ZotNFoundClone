@@ -2,7 +2,6 @@ import ItemDisplayList from "@/components/Item/ItemDisplayList";
 import { LazyMap } from "@/components/Map/LazyMap";
 import { getAllItems } from "@/server/data/item/queries";
 import { isError } from "@/lib/types";
-
 async function AuthenticatedContent() {
   const itemsResult = await getAllItems();
 

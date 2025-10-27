@@ -1,4 +1,5 @@
 "use client";
+
 import { useActionState, useState } from "react";
 import {
   DialogContent,
@@ -6,7 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { User, Calendar, MapPin } from "lucide-react";
+import { User, Calendar, MapPin, Share2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
@@ -14,15 +15,7 @@ import Image from "next/image";
 import { signInWithGoogle } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useSharedContext } from "../ContextProvider";
-
-function isValidUrl(string: string) {
-  try {
-    new URL(string);
-    return true;
-  } catch {
-    return false;
-  }
-}
+import { z } from "zod";
 
 type ContactState = {
   status: "idle" | "success" | "error";
@@ -31,8 +24,10 @@ type ContactState = {
 
 function DetailedDialog({ item }: { item: Item }) {
   const islostObject = isLostObject(item);
-  const [showConfirm, setShowConfirm] = useState(false);
   const { user } = useSharedContext();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [copied, setCopied] = useState(false);
+
   const contactAction = async (): Promise<ContactState> => {
     if (!user) {
       toast.error("Please sign in first.");
@@ -83,7 +78,7 @@ function DetailedDialog({ item }: { item: Item }) {
     try {
       await signInWithGoogle();
     } catch {
-      toast.error("Failed to sign in. Please try again and check your Wi-fi.");
+      toast.error("Failed to sign in. Please try again.");
     }
   };
 
@@ -95,15 +90,27 @@ function DetailedDialog({ item }: { item: Item }) {
     }
   };
 
+  const handleCopy = async () => {
+    try {
+      const shareUrl = `${window.location.origin}/?item=${item.id}`;
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      toast.error("Unable to copy link.");
+    }
+  };
+
   const isSubmitDisabled = isPending || state.status === "success";
 
   return (
-    <DialogContent className="w-[calc(100%-2rem)] max-w-md bg-black/95 border-white/20 text-white p-0 max-h-[90vh] overflow-y-auto">
-      <div className="mt-10 px-4 sm:px-6">
-        <div className="relative w-full h-64 sm:h-80 overflow-hidden rounded-md bg-white/10 border border-white/20 backdrop-blur-sm">
+    <DialogContent className="w-[calc(100%-2rem)] max-w-md bg-black/95 border-white/20 text-white p-0 pb-3 flex flex-col max-h-[calc(100vh-4rem)] overflow-y-auto">
+      {/* Image */}
+      <div className="pt-10 px-4 sm:px-6">
+        <div className="relative w-full h-56 sm:h-72 overflow-hidden rounded-md bg-white/10 border border-white/20 backdrop-blur-sm">
           <Image
             src={
-              item.image && isValidUrl(item.image)
+              z.url().safeParse(item.image).success
                 ? item.image
                 : "/placeholder.jpg"
             }
@@ -111,15 +118,13 @@ function DetailedDialog({ item }: { item: Item }) {
             fill
             sizes="(max-width: 640px) 100vw, 448px"
             style={{ objectFit: "contain" }}
-            loading="lazy"
-            priority={false}
-            preload={false}
-            fetchPriority="low"
             className="bg-black"
+            loading="lazy"
           />
           <div className="absolute inset-0 bg-linear-to-b from-transparent via-black/10 to-black/80 pointer-events-none" />
         </div>
       </div>
+
       <div className="px-4 sm:px-6">
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
@@ -134,8 +139,7 @@ function DetailedDialog({ item }: { item: Item }) {
           </div>
         </DialogHeader>
       </div>
-
-      <div className="space-y-3 sm:space-y-4 py-3 sm:py-4 px-4 sm:px-6">
+      <div className="space-y-3 sm:space-y-4 px-4 sm:px-6">
         <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
           <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
           <div className="flex-1 min-w-0">
@@ -188,9 +192,28 @@ function DetailedDialog({ item }: { item: Item }) {
               Sign in with your UCI email to contact the owner directly from
               ZotNFound.
             </p>
-            <Button variant="default" onClick={handleSignIn}>
-              Sign In
-            </Button>
+            <div className="flex gap-2 w-full flex-col">
+              <Button
+                variant="default"
+                className="bg-white/5 hover:bg-white/10 tex-white w-full"
+                onClick={handleSignIn}
+              >
+                Sign In
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleCopy}
+                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white"
+              >
+                {copied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Share2 className="h-4 w-4" />
+                )}
+                <span>{copied ? "Copied!" : "Copy Link"}</span>
+              </Button>
+            </div>
           </div>
         )}
 
@@ -222,15 +245,29 @@ function DetailedDialog({ item }: { item: Item }) {
         )}
       </div>
 
+      {/* Footer */}
       {user && !showConfirm && (
-        <div className="flex justify-end gap-2 pt-2 sm:pt-3 pb-4 sm:pb-6 px-4 sm:px-6 border-t border-white/10">
+        <div className="flex justify-end gap-2 px-4 sm:px-6">
+          <Button
+            type="button"
+            onClick={handleCopy}
+            className="flex items-center gap-2 border-white/20 text-white bg-white/5 hover:bg-white/10 text-sm px-3 py-1.5"
+          >
+            {copied ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Share2 className="h-4 w-4" />
+            )}
+            <span>{copied ? "Copied!" : "Copy Link"}</span>
+          </Button>
+
           <Button
             variant="outline"
             className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
             onClick={handleContactClick}
-            disabled={isPending}
+            disabled={isPending || state.status === "success"}
           >
-            Contact
+            {state.status === "success" ? "Sent" : "Contact"}
           </Button>
         </div>
       )}
