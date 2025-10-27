@@ -26,13 +26,15 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
     return item;
   }
   const selectedItem = getSelectedItem();
-  
+
   useEffect(() => {
-    if (selectedItem ) {
-      const location: LatLngExpression = stringArrayToLatLng(selectedItem.location);
-      setSelectedLocation(location)
+    if (selectedItem) {
+      const location: LatLngExpression = stringArrayToLatLng(
+        selectedItem.location
+      );
+      setSelectedLocation(location);
     }
-  }, [selectedItem, setSelectedLocation])
+  }, [selectedItem, setSelectedLocation]);
 
   const handleItemClick = (item: ItemType) => {
     if (item.location) {
