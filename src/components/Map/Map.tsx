@@ -97,7 +97,7 @@ function Map({ initialItems }: MapProps) {
           className="w-full h-full z-0 shadow-2xl transition-all duration-300 border-black"
           center={centerPosition as [number, number]}
           zoom={17}
-          minZoom={16}
+          minZoom={15} // was 16
           maxBounds={mapBounds}
           zoomControl={false}
           attributionControl={false}
