@@ -34,31 +34,30 @@ function SharedProviders({
     useState<LatLngExpression | null>(null);
   const [filter, setFilter] = useState<string>("");
 
-  // Start with server-provided user
-  const [user, setUser] = useState<User | undefined>(initialUser);
+  const [localUser, setLocalUser] = useState<User | undefined>(initialUser);
 
   // Client-side session hook
   const { data } = authClient.useSession();
 
-  // Hydrate with client session once available
-  useEffect(() => {
-    if (data?.user) {
-      setUser(data.user);
-    } else if (data?.user === null) {
-      // User signed out on client
-      setUser(undefined);
-    }
-  }, [data?.user]);
+  // Derive the effective user without calling setState inside an effect.
+  // If the client session has been resolved (data is defined), prefer it
+  // (including the signed-out case where data.user may be null).
+  // Otherwise fall back to the local optimistic user state.
+  const user: User | undefined =
+    data !== undefined ? (data?.user ?? undefined) : localUser;
 
   const signOut = async () => {
-    const previousUser = user;
-    // Optimistically clear the user immediately so the UI responds without waiting
-    setUser(undefined);
+    const previousLocal = localUser;
+    // Optimistically clear the local user so the UI can respond immediately
+    // when there is no resolved client session yet. If a client session is
+    // present, the session hook (data) will ultimately control the displayed user.
+    setLocalUser(undefined);
     try {
       await clientSignOut();
     } catch (error) {
       console.error("Sign out error:", error);
-      setUser(previousUser);
+      // Restore local optimistic state on error
+      setLocalUser(previousLocal);
       throw error;
     }
   };

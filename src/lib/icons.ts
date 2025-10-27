@@ -36,7 +36,6 @@ export const iconsMap = {
   },
 };
 // L.MarkerCluster doesn't seem to work, even though we are importing leaflet.markercluster
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const createClusterCustomIcon = (cluster: any) => {
   const count = cluster.getChildCount();
   let size;
