@@ -98,10 +98,7 @@ function Map({ initialItems }: MapProps) {
           <TileLayer url={accessToken} />
           <MapController selectedLocation={selectedLocation} />
           {items && items.length > 0 && (
-            <ObjectMarkers
-              objects={items}
-              filter={filter}
-            />
+            <ObjectMarkers objects={items} filter={filter} />
           )}
           <div>
             <Button
