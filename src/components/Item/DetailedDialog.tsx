@@ -185,7 +185,8 @@ function DetailedDialog({ item }: { item: Item }) {
         {!user && (
           <div className="flex flex-col gap-3 pt-2 text-sm">
             <p className="text-gray-400">
-              Sign in with your UCI email to contact the owner directly from ZotNFound.
+              Sign in with your UCI email to contact the owner directly from
+              ZotNFound.
             </p>
             <Button variant="default" onClick={handleSignIn}>
               Sign In
