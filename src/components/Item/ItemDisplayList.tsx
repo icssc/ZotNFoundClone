@@ -9,6 +9,7 @@ import { Item as ItemType } from "@/db/schema";
 import { LatLngExpression } from "leaflet";
 import { filterItems } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 interface ItemDisplayListProps {
   initialItems: ItemType[];
@@ -25,6 +26,13 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
     return item;
   }
   const selectedItem = getSelectedItem();
+  
+  useEffect(() => {
+    if (selectedItem ) {
+      const location: LatLngExpression = stringArrayToLatLng(selectedItem.location);
+      setSelectedLocation(location)
+    }
+  }, [selectedItem, setSelectedLocation])
 
   const handleItemClick = (item: ItemType) => {
     if (item.location) {
