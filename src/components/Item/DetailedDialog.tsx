@@ -117,7 +117,7 @@ function DetailedDialog({ item }: { item: Item }) {
             fetchPriority="low"
             className="bg-black"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/80 pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-black/10 to-black/80 pointer-events-none" />
         </div>
       </div>
       <div className="px-4 sm:px-6">
@@ -127,7 +127,7 @@ function DetailedDialog({ item }: { item: Item }) {
               <DialogTitle className="text-white text-left truncate text-base sm:text-lg">
                 {item.name}
               </DialogTitle>
-              <DialogDescription className="text-gray-400 text-left text-xs sm:text-sm">
+              <DialogDescription className="text-gray-400 text-left text-xs sm:text-sm italic underline">
                 {islostObject ? "Lost" : "Found"} item details
               </DialogDescription>
             </div>
@@ -136,7 +136,7 @@ function DetailedDialog({ item }: { item: Item }) {
       </div>
 
       <div className="space-y-3 sm:space-y-4 py-3 sm:py-4 px-4 sm:px-6">
-        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/5 hover:bg-white/10 transition-all duration-200">
+        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
           <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium text-white text-sm sm:text-base">
@@ -148,7 +148,7 @@ function DetailedDialog({ item }: { item: Item }) {
           </div>
         </div>
 
-        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/5 hover:bg-white/10 transition-all duration-200">
+        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
           <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium text-white text-sm sm:text-base">
@@ -161,7 +161,7 @@ function DetailedDialog({ item }: { item: Item }) {
           </div>
         </div>
 
-        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/5 hover:bg-white/10 transition-all duration-200">
+        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
           <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
           <div className="flex-1 min-w-0">
             <p className="font-medium text-white text-sm sm:text-base">
@@ -173,7 +173,7 @@ function DetailedDialog({ item }: { item: Item }) {
           </div>
         </div>
 
-        <div className="pt-2 p-2 sm:p-3 rounded-md bg-white/5">
+        <div className="pt-2 p-2 sm:p-3 rounded-md bg-white/2 hover:bg-white/5">
           <p className="font-medium text-white mb-2 text-sm sm:text-base">
             Description
           </p>
@@ -185,7 +185,7 @@ function DetailedDialog({ item }: { item: Item }) {
         {!user && (
           <div className="flex flex-col gap-3 pt-2 text-sm">
             <p className="text-gray-400">
-              Sign in with your UCI email to contact the owner.
+              Sign in with your UCI email to contact the owner directly from ZotNFound.
             </p>
             <Button variant="default" onClick={handleSignIn}>
               Sign In
@@ -221,8 +221,8 @@ function DetailedDialog({ item }: { item: Item }) {
         )}
       </div>
 
-      <div className="flex justify-end gap-2 pt-2 sm:pt-3 pb-4 sm:pb-6 px-4 sm:px-6 border-t border-white/10">
-        {user && !showConfirm && (
+      {user && !showConfirm && (
+        <div className="flex justify-end gap-2 pt-2 sm:pt-3 pb-4 sm:pb-6 px-4 sm:px-6 border-t border-white/10">
           <Button
             variant="outline"
             className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
@@ -231,17 +231,8 @@ function DetailedDialog({ item }: { item: Item }) {
           >
             Contact
           </Button>
-        )}
-        {!user && (
-          <Button
-            variant="outline"
-            className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
-            onClick={handleContactClick}
-          >
-            Contact
-          </Button>
-        )}
-      </div>
+        </div>
+      )}
     </DialogContent>
   );
 }
