@@ -5,15 +5,12 @@ These are the requirements to run and develop ZotNFound:
 ### Development Environment
 
 - **Bun** (preferred) or **Node.js** (>=20.x)
-  - Bun can run Next.js projects and is compatible with most npm packages.
-  - If using Node.js, ensure you have npm or yarn installed.
-- **Next.js** (15.3.1-canary.15)
-- **TypeScript** (>=5.8.3)
-- **PostgreSQL** (for local development, required by `pg` and `drizzle-orm`)
-- **TailwindCSS** (>=4)
-- **Prettier** (>=3.6.2)
-- **ESLint** (>=9)
-- **dotenv** (for environment variable management)
+- **Next.js**
+- **TypeScript**
+- **PostgreSQL**
+- **TailwindCSS**
+- **Prettier**
+- **ESLint**
 
 ### API Keys & Environment Variables
 
