@@ -12,53 +12,33 @@ interface Step2Props {
 }
 
 export function Step2ItemType({ formData, updateField }: Step2Props) {
+  const itemTypes = [
+    { value: "electronics", label: "Electronics", Icon: Headphones },
+    { value: "clothing", label: "Clothing", Icon: Shirt },
+    { value: "accessories", label: "Accessories", Icon: Key },
+    { value: "documents", label: "Documents", Icon: File },
+    { value: "other", label: "Other", Icon: CircleDot },
+  ];
   return (
     <div className="space-y-2 flex flex-col items-center justify-center">
       <Label htmlFor="type" className="text-white">
         🔍 Select Item Type:
       </Label>
 
-      <div className="flex flex-col md:flex-row md:flex-wrap gap-2 items-center justify-center w-full">
-        <Button
-          variant={formData.type === "electronics" ? "default" : "outline"}
-          className={`w-full md:w-32 md:h-32 ${formData.type === "electronics" ? "bg-black" : ""}`}
-          onClick={() => updateField("type", "electronics")}
-        >
-          <Headphones className="w-4 h-4 mr-2" />
-          Electronics
-        </Button>
-        <Button
-          variant={formData.type === "clothing" ? "default" : "outline"}
-          className={`w-full md:w-32 md:h-32 ${formData.type === "clothing" ? "bg-black" : ""}`}
-          onClick={() => updateField("type", "clothing")}
-        >
-          <Shirt className="w-4 h-4 mr-2" />
-          Clothing
-        </Button>
-        <Button
-          variant={formData.type === "accessories" ? "default" : "outline"}
-          className={`w-full md:w-32 md:h-32 ${formData.type === "accessories" ? "bg-black" : ""}`}
-          onClick={() => updateField("type", "accessories")}
-        >
-          <Key className="w-4 h-4 mr-2" />
-          Accessories
-        </Button>
-        <Button
-          variant={formData.type === "documents" ? "default" : "outline"}
-          className={`w-full md:w-32 md:h-32 ${formData.type === "documents" ? "bg-black" : ""}`}
-          onClick={() => updateField("type", "documents")}
-        >
-          <File className="w-4 h-4 mr-2" />
-          Documents
-        </Button>
-        <Button
-          variant={formData.type === "other" ? "default" : "outline"}
-          className={`w-full md:w-32 md:h-32 ${formData.type === "other" ? "bg-black" : ""}`}
-          onClick={() => updateField("type", "other")}
-        >
-          <CircleDot className="w-4 h-4 mr-2" />
-          Other
-        </Button>
+      <div className="flex flex-col text-black md:flex-row md:flex-wrap gap-2 items-center justify-center w-full">
+        {itemTypes.map((item) => (
+          <Button
+            key={item.value}
+            variant={formData.type === item.value ? "default" : "outline"}
+            className={`w-full md:w-32 md:h-32 ${formData.type === item.value ? "bg-black" : "hover:bg-gray-400"} `}
+            onClick={() =>
+              updateField("type", item.value as LocationFormData["type"])
+            }
+          >
+            <item.Icon className="w-4 h-4 mr-2" />
+            {item.label}
+          </Button>
+        ))}
       </div>
       <div className="flex items-center justify-center bg-slate-800 rounded-lg p-1 w-full max-w-xs mx-auto">
         <button

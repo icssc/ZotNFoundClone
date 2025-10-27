@@ -12,7 +12,7 @@ interface Step3Props {
 
 export function Step3DateSelection({ formData, updateField }: Step3Props) {
   return (
-    <div className="space-y-2 flex flex-col justify-center items-center">
+    <div className="space-y-2 md:px-15 flex flex-col justify-center items-center">
       <Label htmlFor="date" className="text-white">
         📅 When was it lost/found?
       </Label>

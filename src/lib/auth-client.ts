@@ -1,7 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 export const authClient = createAuthClient({
-  //  TODO: Change this to your server URL
-  baseURL: "http://localhost:3000",
+  // Use relative base URL (same origin) so signOut/signIn work in deployed environments
+  baseURL: "",
 });
 
 export const { signOut, signUp } = authClient;

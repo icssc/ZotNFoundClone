@@ -1,7 +1,6 @@
 "use client";
 
 import { stringArrayToLatLng } from "@/lib/types";
-import { useMemo } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { useSharedContext } from "../ContextProvider";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
@@ -10,6 +9,7 @@ import { Item as ItemType } from "@/db/schema";
 import { LatLngExpression } from "leaflet";
 import { filterItems } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 interface ItemDisplayListProps {
   initialItems: ItemType[];
@@ -18,25 +18,25 @@ interface ItemDisplayListProps {
 function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const { setSelectedLocation, filter } = useSharedContext();
   const searchParams = useSearchParams();
-
-  const selectedItem = useMemo(() => {
+  function getSelectedItem() {
     const itemId = searchParams.get("item");
     if (!itemId) return null;
     const item =
       initialItems.find((item) => item.id === parseInt(itemId)) || null;
-    if (item && item.location) {
-      const location: LatLngExpression = stringArrayToLatLng(item.location);
+    return item;
+  }
+  const selectedItem = getSelectedItem();
+
+  useEffect(() => {
+    if (selectedItem) {
+      const location: LatLngExpression = stringArrayToLatLng(
+        selectedItem.location
+      );
       setSelectedLocation(location);
     }
-    return item;
-  }, [searchParams, initialItems]);
+  }, [selectedItem, setSelectedLocation]);
 
   const handleItemClick = (item: ItemType) => {
-    // Update URL with item parameter
-    const url = new URL(window.location.href);
-    url.searchParams.set("item", item.id.toString());
-    window.history.pushState({}, "", url.toString());
-
     if (item.location) {
       const location: LatLngExpression = stringArrayToLatLng(item.location);
       setSelectedLocation(location);
@@ -53,14 +53,18 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const filteredItems = filterItems(initialItems, filter);
   return (
     <>
-      <div className="flex h-full overflow-y-scroll flex-col p-4 space-y-4">
+      <div className="item-display-list flex h-full overflow-y-auto flex-col p-4 space-y-3 bg-black/95 rounded-md animate-in fade-in duration-300 transition-all">
         {filteredItems.map((item: ItemType, index: number) => (
-          <Item
+          <div
             key={item.id ?? index}
-            item={item}
-            onClick={() => handleItemClick(item)}
-            setOpen={() => handleActionButtonClick(item)}
-          />
+            className="group animate-in fade-in slide-in-from-bottom-1 duration-200 will-change-transform transition-all"
+          >
+            <Item
+              item={item}
+              onClick={() => handleItemClick(item)}
+              setOpen={() => handleActionButtonClick(item)}
+            />
+          </div>
         ))}
       </div>
 
