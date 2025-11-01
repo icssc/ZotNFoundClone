@@ -4,6 +4,9 @@ import { db } from "@/db";
 import { items, NewItem } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import uploadImageToS3 from "@/server/actions/item/upload/action";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export interface CreateItemState {
   success: boolean;
@@ -63,12 +66,21 @@ export async function createItem(
       };
     }
 
-    const { name, description, type, date, isLost, location } = validation.data;
+    const { name, description, type, date, isLost, file, location } =
+      validation.data;
 
-    // TODO: Handle actual file upload to S3 or similar storage
-    const imageUrl =
-      "https://zotnfound-dang-backend-bucketbucketf19722a9-jcjpp0t0r8mh.s3.amazonaws.com/uploads/1747113328595-4b8b2932-5ba4-4440-a256-66a1f9b4a7bc.jpeg";
+    let imageUrl = "";
+    if (file) {
+      try {
+        imageUrl = await uploadImageToS3(file);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    }
 
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
     const itemData: NewItem = {
       name,
       description,
@@ -80,8 +92,7 @@ export async function createItem(
       location,
       isResolved: false,
       isHelped: false,
-      // TODO: Get email from authenticated user session
-      email: "priyanshpokemon@gmail.com",
+      email: session?.user?.email || "unknown",
     };
 
     await db.insert(items).values(itemData).returning();
