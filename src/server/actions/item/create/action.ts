@@ -5,6 +5,8 @@ import { items, NewItem } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import uploadImageToS3 from "@/server/actions/item/upload/action";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export interface CreateItemState {
   success: boolean;
@@ -76,6 +78,9 @@ export async function createItem(
       }
     }
 
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
     const itemData: NewItem = {
       name,
       description,
@@ -87,8 +92,7 @@ export async function createItem(
       location,
       isResolved: false,
       isHelped: false,
-      // TODO: Get email from authenticated user session
-      email: "priyanshpokemon@gmail.com",
+      email: session?.user?.email || "unknown",
     };
 
     await db.insert(items).values(itemData).returning();
