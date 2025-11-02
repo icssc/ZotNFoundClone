@@ -2,7 +2,6 @@ import ItemDisplayList from "@/components/Item/ItemDisplayList";
 import { LazyMap } from "@/components/Map/LazyMap";
 import { getAllItems } from "@/server/data/item/queries";
 import { isError } from "@/lib/types";
-
 async function AuthenticatedContent() {
   const itemsResult = await getAllItems();
 
@@ -21,24 +20,62 @@ async function AuthenticatedContent() {
     const dateB = new Date(b.date!);
     return dateB.getTime() - dateA.getTime();
   });
+
   return (
-    <main className="w-full p-12 h-full flex flex-row">
-      <div className="flex flex-row gap-10 h-full w-full">
-        <div className="w-8/10 h-full">
+    <div className="w-full h-[90vh] flex flex-col items-center px-3 sm:px-4 lg:px-6 py-3">
+      <main
+        className="
+          w-full
+          h-[90vh]
+          flex
+          flex-col
+          gap-4
+          lg:flex-row
+          animate-in
+          fade-in
+          duration-500
+          transition-all
+        "
+      >
+        {/* Map Section */}
+        <div
+          className="
+          w-full
+          h-[55vh]
+          lg:h-full
+          lg:flex-1
+          animate-in
+          slide-in-from-left
+          duration-700
+          transition-all
+          ease-out
+        "
+        >
           <LazyMap initialItems={items} />
         </div>
-        <div className="w-2/10 bg-gray-100 rounded-lg h-full">
+
+        {/* Item List Section */}
+        <div
+          className="
+          w-full
+          h-[40vh]
+          lg:h-full
+          lg:w-[420px]
+          xl:w-[480px]
+          animate-in
+          slide-in-from-right
+          duration-700
+          transition-all
+          ease-out
+        "
+        >
           <ItemDisplayList initialItems={items} />
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
 
-export default function Home() {
-  return (
-    <div className="md:h-[85vh] w-full flex flex-col justify-center items-center p-4">
-      <AuthenticatedContent />
-    </div>
-  );
+export default async function Home() {
+  return <AuthenticatedContent />;
 }

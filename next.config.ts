@@ -21,14 +21,29 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  cacheComponents: true,
   experimental: {
-    cacheComponents: true,
     browserDebugInfoInTerminal: true,
+    optimizePackageImports: [
+      "leaflet",
+      "react-leaflet",
+      "react-leaflet-cluster-4-next",
+      "leaflet.markercluster",
+    ],
   },
   reactCompiler: true,
   logging: {
     fetches: {
       fullUrl: true,
+    },
+  },
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
+  },
+  turbopack: {
+    resolveAlias: {
+      leaflet: "leaflet/dist/leaflet.js",
     },
   },
 };

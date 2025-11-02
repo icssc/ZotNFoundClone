@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 // import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
-import { Providers } from "@/components/ContextProvider";
+import localFont from "next/font/local";
+import { SessionProvider } from "@/components/SessionProvider";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -20,7 +17,9 @@ export const metadata: Metadata = {
   title: "ZotNFound",
   description: "Helping UCI students locate and recover lost belongings",
 };
-
+const CustomFont = localFont({
+  src: "../fonts/proximanova_regular.ttf",
+});
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -29,12 +28,14 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-900`}
+        className={`${geistSans.variable} ${CustomFont.className} antialiased bg-neutral-950`}
       >
-        <Providers>
-          <Navbar />
-          {children}
-        </Providers>
+        <Suspense fallback={null}>
+          <SessionProvider>
+            <Navbar />
+            {children}
+          </SessionProvider>
+        </Suspense>
         <Toaster position="bottom-center" theme="dark" />
       </body>
     </html>

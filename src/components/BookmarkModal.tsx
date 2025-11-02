@@ -16,9 +16,9 @@ export function BookmarkModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="hover:text-gray-300 flex items-center gap-1">
-          <BookmarkIcon className="h-4 w-4" />
-          <span>Bookmarks</span>
+        <div className="p-1 rounded hover:text-gray-300 flex items-center">
+          <BookmarkIcon className="h-5 w-5" />
+          <span className="hidden md:block">Bookmarks</span>
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
