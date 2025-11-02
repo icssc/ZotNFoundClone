@@ -11,7 +11,7 @@ interface LazyMapProps {
 const MapComponent = dynamic(() => import("@/components/Map/Map"), {
   ssr: false,
   loading: () => (
-    <Skeleton className="h-full w-full rounded-lg transition-all duration-300 animate-pulse" />
+    <Skeleton className="h-full w-full rounded-lg transition-all duration-300 bg-[#1f1f1f] opacity-95 animate-[pulse_5s_ease-in-out_infinite]" />
   ),
 });
 

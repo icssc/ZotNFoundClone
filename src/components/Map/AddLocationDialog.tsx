@@ -166,7 +166,7 @@ function DialogActions({
             variant="outline"
             onClick={onBack}
             disabled={isPending}
-            className="w-auto bg-black hover:bg-white/10 border-white/30 text-white transition-all duration-200"
+            className="w-auto bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200"
           >
             Back
           </Button>
@@ -174,7 +174,7 @@ function DialogActions({
       </div>
       <div className="flex flex-row space-x-2">
         <Button
-          className="bg-red-500/90 hover:bg-red-600 border border-red-400 text-white w-auto transition-all duration-200"
+          className="bg-red-500/90 hover:bg-red-700 border border-red-400 text-white w-auto transition-all duration-200"
           onClick={onCancel}
           disabled={isPending}
         >
@@ -183,7 +183,7 @@ function DialogActions({
         <Button
           disabled={!isStepValid || isPending}
           onClick={onContinue}
-          className="w-auto bg-white hover:bg-gray-200 text-black transition-all duration-200"
+          className="w-auto bg-white hover:bg-white/70 text-black transition-all duration-200"
         >
           {currentStep === 6
             ? isPending

@@ -54,7 +54,7 @@ export function Step2ItemType({ formData, updateField }: Step2Props) {
         <button
           className={`flex-1 md:py-2 md:px-4 py-1 px-2 rounded-md transition-all ${
             !formData.isLost
-              ? "bg-blue-600 text-white"
+              ? "bg-green-600 text-white"
               : "bg-transparent text-gray-400 hover:text-white"
           }`}
           onClick={() => updateField("isLost", false)}

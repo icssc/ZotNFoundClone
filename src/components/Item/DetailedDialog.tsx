@@ -132,9 +132,6 @@ function DetailedDialog({ item }: { item: Item }) {
               <DialogTitle className="text-white text-left truncate text-base sm:text-lg">
                 {item.name}
               </DialogTitle>
-              <DialogDescription className="text-gray-400 text-left text-xs sm:text-sm italic underline">
-                {islostObject ? "Lost" : "Found"} item details
-              </DialogDescription>
             </div>
           </div>
         </DialogHeader>
