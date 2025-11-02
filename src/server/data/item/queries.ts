@@ -22,10 +22,12 @@ export async function getItem(id: number): Promise<ActionResult<Item>> {
     const [result] = await db
       .select()
       .from(items)
-      .where(and(
-        eq(items.id, id),
-        or(eq(items.is_deleted, false), isNull(items.is_deleted))
-      ))
+      .where(
+        and(
+          eq(items.id, id),
+          or(eq(items.is_deleted, false), isNull(items.is_deleted))
+        )
+      )
       .limit(1);
 
     if (!result) {

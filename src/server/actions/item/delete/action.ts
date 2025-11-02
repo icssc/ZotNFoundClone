@@ -30,7 +30,9 @@ export default async function deleteItem(
       .where(and(eq(items.id, itemId), eq(items.email, userEmail)));
 
     if (!existingItem) {
-      return { error: "Item not found or you don't have permission to delete it." };
+      return {
+        error: "Item not found or you don't have permission to delete it.",
+      };
     }
 
     if (existingItem.is_deleted) {

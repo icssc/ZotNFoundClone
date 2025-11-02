@@ -118,7 +118,7 @@ function DetailedDialog({ item }: { item: Item }) {
     setIsDeleting(true);
     try {
       const result = await deleteItem({ itemId: item.id });
-      
+
       if ("error" in result) {
         toast.error(result.error);
       } else {
@@ -280,7 +280,8 @@ function DetailedDialog({ item }: { item: Item }) {
         {isOwner && showDeleteConfirm && (
           <div className="space-y-3 pt-2 text-sm border-t border-white/20 mt-4 pt-4">
             <p className="text-red-400 font-medium">
-              Are you sure you want to delete this item? This action cannot be undone.
+              Are you sure you want to delete this item? This action cannot be
+              undone.
             </p>
             <div className="flex gap-2">
               <Button
