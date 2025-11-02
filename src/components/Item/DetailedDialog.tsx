@@ -1,55 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import {
   DialogContent,
   DialogTitle,
+  DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
+import { User, Calendar, MapPin, Share2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
 import Image from "next/image";
-import { Separator } from "@/components/ui/separator";
-import { Mail, Share2, Check } from "lucide-react";
-import { z } from "zod";
-
 import { signInWithGoogle } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useSharedContext } from "../ContextProvider";
+import { z } from "zod";
+
+type ContactState = {
+  status: "idle" | "success" | "error";
+  message: string | null;
+};
 
 function DetailedDialog({ item }: { item: Item }) {
   const islostObject = isLostObject(item);
-
-  // Minimal UI state
-  const [isCopied, setIsCopied] = useState(false);
   const { user } = useSharedContext();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const handleShare = async () => {
-    try {
-      const shareUrl = `${window.location.origin}/?item=${item.id}`;
-      await navigator.clipboard.writeText(shareUrl);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000); // reset after 2s
-    } catch (error) {
-      console.error("Error sharing:", error);
-      toast.error("Unable to copy link to clipboard.");
-    }
-  };
-
-  const handleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-    } catch {
-      toast.error("Failed to sign in. Please try again.");
-    }
-  };
-
-  const handleContact = async () => {
+  const contactAction = async (): Promise<ContactState> => {
     if (!user) {
-      // If not signed in, nudge to sign in.
-      toast.info("Sign in with your UCI email to contact the owner.");
-      return;
+      toast.error("Please sign in first.");
+      return { status: "error", message: "Not authenticated." };
     }
 
     try {
@@ -73,23 +55,59 @@ function DetailedDialog({ item }: { item: Item }) {
 
       if (res.ok) {
         toast.success("Owner notified successfully!");
-        return;
+        return { status: "success", message: "Owner notified." };
       }
 
       const json = await res.json().catch(() => null);
       const errorMessage = json?.error || "Failed to send notification.";
       toast.error(errorMessage);
-    } catch (err) {
-      console.error(err);
+      return { status: "error", message: errorMessage };
+    } catch {
       toast.error("Network error. Please try again.");
+      return { status: "error", message: "Network error." };
     }
   };
 
+  const initialState: ContactState = { status: "idle", message: null };
+  const [state, formAction, isPending] = useActionState(
+    contactAction,
+    initialState
+  );
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch {
+      toast.error("Failed to sign in. Please try again.");
+    }
+  };
+
+  const handleContactClick = () => {
+    if (!user) {
+      toast.info("Sign in with your UCI email to contact the owner.");
+    } else {
+      setShowConfirm(true);
+    }
+  };
+
+  const handleCopy = async () => {
+    try {
+      const shareUrl = `${window.location.origin}/?item=${item.id}`;
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      toast.error("Unable to copy link.");
+    }
+  };
+
+  const isSubmitDisabled = isPending || state.status === "success";
+
   return (
-    <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto p-0">
-      <div className="flex flex-col sm:flex-row gap-4 my-8">
-        {/* Image - Top on mobile, Left on desktop */}
-        <div className="w-full max-w-sm sm:w-64 h-80 sm:h-64 relative mx-auto sm:mx-8">
+    <DialogContent className="w-[calc(100%-2rem)] max-w-md bg-black/95 border-white/20 text-white p-0 pb-3 flex flex-col max-h-[calc(100vh-4rem)] overflow-y-auto">
+      {/* Image */}
+      <div className="pt-10 px-4 sm:px-6">
+        <div className="relative w-full h-56 sm:h-72 overflow-hidden rounded-md bg-white/10 border border-white/20 backdrop-blur-sm">
           <Image
             src={
               z.url().safeParse(item.image).success
@@ -98,93 +116,158 @@ function DetailedDialog({ item }: { item: Item }) {
             }
             alt={item.name || "Item Image"}
             fill
-            className="object-cover rounded-lg"
-            sizes="(max-width: 640px) 100vw, 256px"
+            sizes="(max-width: 640px) 100vw, 448px"
+            style={{ objectFit: "contain" }}
+            className="bg-black"
+            loading="lazy"
           />
-        </div>
-
-        {/* Content - Bottom on mobile, Right on desktop */}
-        <div className="min-w-76 flex flex-col justify-between px-4 sm:px-0">
-          <DialogHeader className="text-left pb-4">
-            <DialogTitle className="text-2xl font-bold text-gray-900">
-              {item.name}
-            </DialogTitle>
-            <div className="flex items-center gap-3">
-              <span
-                className={`px-2 py-1 rounded-md text-xs font-medium ${
-                  islostObject
-                    ? "bg-red-100 text-red-800"
-                    : "bg-green-100 text-green-800"
-                }`}
-              >
-                {islostObject ? "Lost" : "Found"}
-              </span>
-              <span className="text-sm text-gray-500">
-                Posted:{" "}
-                {new Date(item.date).toLocaleDateString("en-US", {
-                  month: "2-digit",
-                  day: "2-digit",
-                  year: "numeric",
-                })}
-              </span>
-            </div>
-          </DialogHeader>
-
-          <Separator />
-
-          <div className="space-y-3 mt-4">
-            <div>
-              <p className="font-semibold text-gray-900 mb-2 text-sm">
-                Description:
-              </p>
-              <div className="text-xs space-y-1">
-                <p className="text-gray-500">
-                  {islostObject ? "Lost on" : "Found on"}{" "}
-                  {new Date(item.itemDate).toLocaleDateString("en-US", {
-                    month: "2-digit",
-                    day: "2-digit",
-                    year: "numeric",
-                  })}
-                </p>
-                {item.description && <p className="mt-2">{item.description}</p>}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-3 mt-6">
-            {/* Contact button: when signed out, it should match Sign In button background.
-                When signed in, make it outline (so it visually differs). */}
-            <div className="relative">
-              <Button
-                onClick={handleContact}
-                className={`flex items-center gap-2 w-full sm:w-40 ${
-                  !user
-                    ? "bg-blue-600 hover:bg-blue-700 text-white"
-                    : "border-blue-600 text-blue-600 hover:text-blue-700"
-                }`}
-                variant={user ? "outline" : "default"}
-              >
-                <Mail className="h-4 w-4" />
-                Contact
-              </Button>
-            </div>
-
-            {/* Copy Link button next to Contact */}
-            <Button
-              variant="outline"
-              className="flex items-center gap-2 w-full sm:w-40 border-blue-600 text-blue-600 hover:text-blue-700"
-              onClick={handleShare}
-            >
-              {isCopied ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                <Share2 className="h-4 w-4" />
-              )}
-              {isCopied ? "Copied!" : "Copy Link"}
-            </Button>
-          </div>
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-black/10 to-black/80 pointer-events-none" />
         </div>
       </div>
+
+      <div className="px-4 sm:px-6">
+        <DialogHeader>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex-1 min-w-0">
+              <DialogTitle className="text-white text-left truncate text-base sm:text-lg">
+                {item.name}
+              </DialogTitle>
+            </div>
+          </div>
+        </DialogHeader>
+      </div>
+      <div className="space-y-3 sm:space-y-4 px-4 sm:px-6">
+        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
+          <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-white text-sm sm:text-base">
+              Contact
+            </p>
+            <p className="text-xs sm:text-sm text-gray-400 truncate">
+              {item.email}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
+          <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-white text-sm sm:text-base">
+              Date & Status
+            </p>
+            <p className="text-xs sm:text-sm text-gray-400">{item.date}</p>
+            <p className="text-xs sm:text-sm text-gray-400">
+              Status: {islostObject ? "Lost" : "Found"}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
+          <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-white text-sm sm:text-base">
+              Location
+            </p>
+            <p className="text-xs sm:text-sm text-gray-400 line-clamp-2">
+              {item.location || "No location provided"}
+            </p>
+          </div>
+        </div>
+
+        <div className="pt-2 p-2 sm:p-3 rounded-md bg-white/2 hover:bg-white/5">
+          <p className="font-medium text-white mb-2 text-sm sm:text-base">
+            Description
+          </p>
+          <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
+            {item.description}
+          </p>
+        </div>
+
+        {!user && (
+          <div className="flex flex-col gap-3 pt-2 text-sm">
+            <p className="text-gray-400">
+              Sign in with your UCI email to contact the owner directly from
+              ZotNFound.
+            </p>
+            <div className="flex gap-2 w-full flex-col">
+              <Button
+                variant="default"
+                className="bg-white/5 hover:bg-white/10 tex-white w-full"
+                onClick={handleSignIn}
+              >
+                Sign In
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleCopy}
+                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white"
+              >
+                {copied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Share2 className="h-4 w-4" />
+                )}
+                <span>{copied ? "Copied!" : "Copy Link"}</span>
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {user && showConfirm && (
+          <form action={formAction} className="space-y-3 pt-2 text-sm">
+            <p>Notify the owner and CC your email ({user.email})?</p>
+            <div className="flex gap-2">
+              <Button
+                type="submit"
+                variant="default"
+                disabled={isSubmitDisabled}
+              >
+                {isPending
+                  ? "Sending..."
+                  : state.status === "success"
+                    ? "Sent"
+                    : "Send"}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                disabled={isPending}
+                onClick={() => setShowConfirm(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
+
+      {/* Footer */}
+      {user && !showConfirm && (
+        <div className="flex justify-end gap-2 px-4 sm:px-6">
+          <Button
+            type="button"
+            onClick={handleCopy}
+            className="flex items-center gap-2 border-white/20 text-white bg-white/5 hover:bg-white/10 text-sm px-3 py-1.5"
+          >
+            {copied ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Share2 className="h-4 w-4" />
+            )}
+            <span>{copied ? "Copied!" : "Copy Link"}</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
+            onClick={handleContactClick}
+            disabled={isPending || state.status === "success"}
+          >
+            {state.status === "success" ? "Sent" : "Contact"}
+          </Button>
+        </div>
+      )}
     </DialogContent>
   );
 }

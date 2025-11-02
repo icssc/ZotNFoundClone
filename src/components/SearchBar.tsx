@@ -12,7 +12,7 @@ export function SearchBar() {
         <Search className="h-4 w-4 text-muted-foreground" />
       </span>
       <Input
-        className="pl-9"
+        className="pl-9 border-zinc-800"
         placeholder="Search items..."
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
