@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
     ],
   },
   cacheComponents: true,
-  
+
   experimental: {
     inlineCss: true,
     browserDebugInfoInTerminal: true,
