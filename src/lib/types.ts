@@ -1,5 +1,5 @@
 import { Item } from "@/db/schema";
-import { LatLngExpression, PointTuple } from "leaflet";
+import type { LatLngExpression, PointTuple } from "leaflet";
 
 // User type definition
 export type User = {

@@ -6,7 +6,7 @@ import { useSharedContext } from "../ContextProvider";
 import { DetailedDialog } from "@/components/Item/DetailedDialog";
 import Item from "@/components/Item/Item";
 import { Item as ItemType } from "@/db/schema";
-import { LatLngExpression } from "leaflet";
+import type { LatLngExpression } from "leaflet";
 import { filterItems } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
