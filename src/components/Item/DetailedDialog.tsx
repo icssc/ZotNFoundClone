@@ -7,7 +7,7 @@ import {
   DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { User, Calendar, MapPin, Share2, Check } from "lucide-react";
+import { User, Calendar, MapPin, Share2, Check, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
@@ -16,6 +16,8 @@ import { signInWithGoogle } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useSharedContext } from "../ContextProvider";
 import { z } from "zod";
+import deleteItem from "@/server/actions/item/delete/action";
+import { useRouter } from "next/navigation";
 
 type ContactState = {
   status: "idle" | "success" | "error";
@@ -27,6 +29,12 @@ function DetailedDialog({ item }: { item: Item }) {
   const { user } = useSharedContext();
   const [showConfirm, setShowConfirm] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
+
+  // Check if the current user owns this item
+  const isOwner = user?.email === item.email;
 
   const contactAction = async (): Promise<ContactState> => {
     if (!user) {
@@ -98,6 +106,34 @@ function DetailedDialog({ item }: { item: Item }) {
       setTimeout(() => setCopied(false), 1800);
     } catch {
       toast.error("Unable to copy link.");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!user) {
+      toast.error("You must be signed in to delete an item.");
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      const result = await deleteItem({ itemId: item.id });
+      
+      if ("error" in result) {
+        toast.error(result.error);
+      } else {
+        toast.success("Item deleted successfully");
+        // Close the dialog and refresh the page
+        const url = new URL(window.location.href);
+        url.searchParams.delete("item");
+        window.history.replaceState({}, "", url.toString());
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error("Failed to delete item. Please try again.");
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -240,32 +276,73 @@ function DetailedDialog({ item }: { item: Item }) {
             </div>
           </form>
         )}
+
+        {isOwner && showDeleteConfirm && (
+          <div className="space-y-3 pt-2 text-sm border-t border-white/20 mt-4 pt-4">
+            <p className="text-red-400 font-medium">
+              Are you sure you want to delete this item? This action cannot be undone.
+            </p>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="destructive"
+                disabled={isDeleting}
+                onClick={handleDelete}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                disabled={isDeleting}
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Footer */}
-      {user && !showConfirm && (
-        <div className="flex justify-end gap-2 px-4 sm:px-6">
-          <Button
-            type="button"
-            onClick={handleCopy}
-            className="flex items-center gap-2 border-white/20 text-white bg-white/5 hover:bg-white/10 text-sm px-3 py-1.5"
-          >
-            {copied ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Share2 className="h-4 w-4" />
-            )}
-            <span>{copied ? "Copied!" : "Copy Link"}</span>
-          </Button>
+      {user && !showConfirm && !showDeleteConfirm && (
+        <div className="flex justify-between items-center gap-2 px-4 sm:px-6 border-t border-white/20 pt-3 mt-2">
+          {isOwner && (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setShowDeleteConfirm(true)}
+              disabled={isDeleting}
+              className="flex items-center gap-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 text-sm px-3 py-1.5"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span>Delete</span>
+            </Button>
+          )}
+          <div className="flex justify-end gap-2 ml-auto">
+            <Button
+              type="button"
+              onClick={handleCopy}
+              className="flex items-center gap-2 border-white/20 text-white bg-white/5 hover:bg-white/10 text-sm px-3 py-1.5"
+            >
+              {copied ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Share2 className="h-4 w-4" />
+              )}
+              <span>{copied ? "Copied!" : "Copy Link"}</span>
+            </Button>
 
-          <Button
-            variant="outline"
-            className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
-            onClick={handleContactClick}
-            disabled={isPending || state.status === "success"}
-          >
-            {state.status === "success" ? "Sent" : "Contact"}
-          </Button>
+            <Button
+              variant="outline"
+              className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
+              onClick={handleContactClick}
+              disabled={isPending || state.status === "success"}
+            >
+              {state.status === "success" ? "Sent" : "Contact"}
+            </Button>
+          </div>
         </div>
       )}
     </DialogContent>
