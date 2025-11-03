@@ -110,11 +110,6 @@ function DetailedDialog({ item }: { item: Item }) {
   };
 
   const handleDelete = async () => {
-    if (!user) {
-      toast.error("You must be signed in to delete an item.");
-      return;
-    }
-
     setIsDeleting(true);
     try {
       const result = await deleteItem({ itemId: item.id });
