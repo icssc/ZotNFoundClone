@@ -6,7 +6,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { LatLngExpression } from "leaflet";
+import type { LatLngExpression } from "leaflet";
 import { User } from "better-auth";
 import { authClient, signOut as clientSignOut } from "@/lib/auth-client";
 

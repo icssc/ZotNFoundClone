@@ -46,6 +46,20 @@ export async function createItem(
   formData: FormData
 ): Promise<CreateItemState> {
   try {
+    // Get the current session to get the user's email
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user?.email) {
+      return {
+        success: false,
+        error: "You must be signed in to create an item.",
+      };
+    }
+
+    const userEmail = session.user.email;
+
     const rawData = {
       name: formData.get("name"),
       description: formData.get("description"),
@@ -92,7 +106,7 @@ export async function createItem(
       location,
       isResolved: false,
       isHelped: false,
-      email: session?.user?.email || "unknown",
+      email: userEmail,
     };
 
     await db.insert(items).values(itemData).returning();
