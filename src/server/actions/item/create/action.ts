@@ -92,9 +92,6 @@ export async function createItem(
       }
     }
 
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
     const itemData: NewItem = {
       name,
       description,
