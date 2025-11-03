@@ -6,10 +6,11 @@ import { InfoIcon, UserIcon, BellIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookmarkModal } from "@/components/BookmarkModal";
 import Image from "next/image";
-import { signInWithGoogle } from "@/lib/auth-client";
 import { SearchBar } from "./SearchBar";
 import { useSharedContext } from "./ContextProvider";
 import { Instrument_Serif } from "next/font/google";
+import { handleSignIn } from "@/lib/auth-client";
+
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument",
   subsets: ["latin"],
@@ -19,15 +20,6 @@ const instrumentSerif = Instrument_Serif({
 
 export default function Navbar() {
   const { user, signOut } = useSharedContext();
-  const handleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-      // successful redirect
-    } catch (error) {
-      // Handle redirect error
-      console.error("Redirect error:", error);
-    }
-  };
 
   const handleSignOut = async () => {
     try {

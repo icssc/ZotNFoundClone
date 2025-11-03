@@ -196,10 +196,7 @@ function DialogActions({
   );
 }
 
-export function AddItemDialog({
-  open,
-  onOpenChange,
-}: AddItemDialogProps) {
+export function AddItemDialog({ open, onOpenChange }: AddItemDialogProps) {
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [actionState, formAction, isPending] = useActionState(
     createItem,
