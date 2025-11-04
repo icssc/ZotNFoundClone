@@ -309,3 +309,12 @@
 .item-display-list::-webkit-scrollbar-thumb:hover {
   background: #1e1e1e;
 }
+
+/* Hide scrollbars cross-browser */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

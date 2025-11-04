@@ -7,6 +7,10 @@ import { Toaster } from "sonner";
 import localFont from "next/font/local";
 import { SessionProvider } from "@/components/SessionProvider";
 import { Suspense } from "react";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { cn } from '@/lib/utils';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,8 +30,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
+    <html lang="en" className="dark">
+      <body 
         className={`${geistSans.variable} ${CustomFont.className} antialiased bg-neutral-950`}
       >
         <Suspense fallback={null}>

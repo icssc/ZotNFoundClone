@@ -1,22 +1,26 @@
 import AboutHeader from "./AboutHeader";
-import StatisticsCards from "./StatisticCards";
 import ExploreCarousel from "./ExploreCarousel";
 import OriginSection from "./OriginSection";
+import StatisticCards from "./StatisticCards";
 
-export default function About() {
+export default function AboutPage() {
   return (
-    <div className="text-center min-h-screen space-y-8 bg-slate-100">
-      <div className="mx-4 md:mx-32 py-8 space-y-8">
+    <div className="w-full min-h-[calc(100vh-64px)] px-3 sm:px-4 lg:px-6 py-10">
+      <section id="header" className="max-w-6xl mx-auto">
         <AboutHeader />
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-4xl font-bold">
-            We are <span className="text-blue-500">ZotnFound</span>
-          </h1>
-          <StatisticsCards />
-        </div>
+      </section>
+
+      <section id="explore" className="max-w-6xl mx-auto mt-16">
         <ExploreCarousel />
+      </section>
+
+      <section id="origin" className="max-w-5xl mx-auto mt-16">
         <OriginSection />
-      </div>
+      </section>
+
+      <section id="stats" className="max-w-6xl mx-auto mt-16">
+        <StatisticCards />
+      </section>
     </div>
   );
 }

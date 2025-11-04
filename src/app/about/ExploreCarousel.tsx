@@ -1,61 +1,68 @@
 import Image from "next/image";
 
-interface CarouselItem {
-  title: string;
-  description: string;
-  image: string;
-  alt: string;
-}
-
-const carousel: CarouselItem[] = [
+const features = [
   {
-    title: "Get Started - It's Simple & Easy",
+    title: "Map-Based Search",
     description:
-      "Log in with your UCI email and start listing lost & found items!",
-    image: "/get_started.png",
-    alt: "Getting Started Image",
+      "Find lost and found posts visually with location-aware filtering.",
+    icon: "/logos/locate_dark.svg",
   },
   {
-    title: "Navigate Around the Map",
+    title: "Quick Posting",
     description:
-      "Effortlessly navigate UCI's interactive map to efficiently search for lost and found items.",
-    image: "/navigate_around.png",
-    alt: "Navigate Around Map Image",
+      "Create a post in seconds with essentials: item, location, time.",
+    icon: "/file.svg",
   },
   {
-    title: "Search for Lost & Found Items",
+    title: "Smart Subscriptions",
     description:
-      "Utilize the easy-to-use filter and search bar to look up specific items.",
-    image: "/search_for.png",
-    alt: "Search for Lost & Found Items Image",
+      "Subscribe for updates by item type, keywords, or your campus zones.",
+    icon: "/logos/subscribe_white.svg",
+  },
+  {
+    title: "Bookmarks",
+    description:
+      "Track items you care about and get notified when status changes.",
+    icon: "/logos/bookmark-white.svg",
   },
 ];
 
 export default function ExploreCarousel() {
   return (
-    <div className="max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold text-center mb-6">
-        Explore how ZotnFound works
-      </h1>
-      <div className="flex flex-wrap justify-center gap-6">
-        {carousel.map((item, idx) => (
-          <div
-            key={idx}
-            className="flex-1 min-w-[300px] max-w-[350px] px-4 py-4 rounded-md shadow-lg transition-transform duration-300 hover:scale-105 bg-white flex flex-col items-center" //added min and max widths to fix centering issue on medium screens
+    <div>
+      <h2 className="text-2xl md:text-3xl font-semibold mb-6">Explore Features</h2>
+      <div
+        className="
+          flex gap-4 overflow-x-auto pb-2
+          snap-x snap-mandatory
+          no-scrollbar
+          [scrollbar-width:none] [-ms-overflow-style:none]
+        "
+      >
+        {/* Removed styled-jsx: now using global .no-scrollbar */}
+        {features.map((f, i) => (
+          <article
+            key={f.title}
+            className="
+              snap-center shrink-0 w-[280px] md:w-[320px]
+              rounded-xl border border-border bg-card text-card-foreground
+              p-4 animate-in fade-in slide-in-from-bottom
+              duration-500 hover:translate-y-[-4px] animate-smooth
+            "
+            style={{ animationDelay: `${i * 120}ms` }}
           >
-            <Image
-              src={item.image}
-              width={0}
-              height={0}
-              sizes="100vw"
-              className="w-full h-auto rounded-md"
-              alt={item.alt}
-            />
-            <div className="text-center max-w-full mt-2">
-              <p className="text-lg font-semibold">{item.title}</p>
-              <p className="text-md mt-1">{item.description}</p>
+            <div className="flex items-center gap-3 mb-3">
+              <Image
+                src={f.icon}
+                alt=""
+                width={28}
+                height={28}
+                className="opacity-90"
+              />
+              <h3 className="text-lg font-medium">{f.title}</h3>
             </div>
-          </div>
+            <p className="text-sm text-muted-foreground">{f.description}</p>
+          </article>
         ))}
       </div>
     </div>
