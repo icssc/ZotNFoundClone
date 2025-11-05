@@ -1,6 +1,8 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { LocationFormData } from "@/lib/types";
+import imageCompression from "browser-image-compression";
+import React from "react";
 
 interface Step4Props {
   updateField: <K extends keyof LocationFormData>(
@@ -10,9 +12,22 @@ interface Step4Props {
 }
 
 export function Step4FileUpload({ updateField }: Step4Props) {
-  const handleFileChange = (file: File | null, dropZone: HTMLElement) => {
-    updateField("file", file);
-    updatePreview(file, dropZone);
+  const compressImage = async (file: File | null) => {
+    if (!file) return null;
+    try {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+        fileType: "image/webp",
+        preserveExif: false,
+      } as const;
+      const compressed = await imageCompression(file, options);
+      return compressed;
+    } catch {
+      // On failure, fall back to original file
+      return file;
+    }
   };
 
   const updatePreview = (file: File | null, dropZone: HTMLElement) => {
@@ -38,7 +53,7 @@ export function Step4FileUpload({ updateField }: Step4Props) {
         preview.className =
           "preview-img absolute inset-0 w-full h-full object-contain rounded-lg pointer-events-none p-2";
         const inputEl = dropZone.querySelector("input[type=file]");
-        if (inputEl) {
+        if (inputEl && inputEl.parentElement === dropZone) {
           dropZone.insertBefore(preview, inputEl);
         } else {
           dropZone.appendChild(preview);
@@ -52,20 +67,26 @@ export function Step4FileUpload({ updateField }: Step4Props) {
     reader.readAsDataURL(file);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleFileChange = async (file: File | null, dropZone: HTMLElement) => {
+    const compressed = await compressImage(file);
+    updateField("file", compressed);
+    updatePreview(compressed, dropZone);
+  };
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer?.files?.[0] || null;
     const dropZone = e.currentTarget as HTMLElement;
-    handleFileChange(file, dropZone);
+    await handleFileChange(file, dropZone);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     const dropZone = e.currentTarget.closest(
       ".drop-zone"
     ) as HTMLElement | null;
     if (dropZone) {
-      handleFileChange(file, dropZone);
+      await handleFileChange(file, dropZone);
     }
   };
 
@@ -77,7 +98,7 @@ export function Step4FileUpload({ updateField }: Step4Props) {
 
       <div className="relative">
         <div
-          className="group drop-zone relative flex items-center justify-center rounded-lg border-2 border-dashed border-slate-600 bg-slate-800 bg-opacity-30 p-6 transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-lg hover:border-sky-400 hover:bg-linear-to-br hover:from-sky-600/6 hover:to-indigo-600/6 min-h-[200px]"
+          className="group drop-zone relative flex items-center justify-center rounded-lg border-2 border-dashed border-slate-600 bg-slate-800/30 p-6 transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-lg hover:border-sky-400 hover:bg-linear-to-br hover:from-sky-600/10 hover:to-indigo-600/10 min-h-[200px] overflow-hidden"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
         >
@@ -90,7 +111,7 @@ export function Step4FileUpload({ updateField }: Step4Props) {
               </span>
             </p>
             <p className="mt-2 text-xs text-slate-400 group-hover:text-sky-200 transition-colors">
-              PNG, JPG, GIF — up to 10MB
+              PNG, JPG, GIF — up to 10MB (auto-compressed to WebP)
             </p>
           </div>
 
@@ -105,8 +126,8 @@ export function Step4FileUpload({ updateField }: Step4Props) {
         </div>
 
         <p className="mt-2 text-xs text-slate-400">
-          Tip: Click or drag-and-drop to upload. The preview will appear while
-          you can still replace the file.
+          Tip: Click or drag-and-drop to upload. Preview shows after
+          compression.
         </p>
       </div>
     </div>

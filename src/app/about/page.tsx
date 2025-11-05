@@ -10,7 +10,7 @@ export default function About() {
         <AboutHeader />
         <div className="max-w-5xl mx-auto">
           <h1 className="text-4xl font-bold">
-            We are <span className="text-blue-500">ZotnFound</span>
+            We are <span className="text-blue-500">ZotNFound</span>
           </h1>
           <StatisticsCards />
         </div>

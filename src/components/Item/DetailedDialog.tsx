@@ -12,12 +12,12 @@ import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
 import Image from "next/image";
-import { signInWithGoogle } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useSharedContext } from "../ContextProvider";
 import { z } from "zod";
 import deleteItem from "@/server/actions/item/delete/action";
 import { useRouter } from "next/navigation";
+import { handleSignIn } from "@/lib/auth-client";
 
 type ContactState = {
   status: "idle" | "success" | "error";
@@ -81,14 +81,6 @@ function DetailedDialog({ item }: { item: Item }) {
     contactAction,
     initialState
   );
-
-  const handleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-    } catch {
-      toast.error("Failed to sign in. Please try again.");
-    }
-  };
 
   const handleContactClick = () => {
     if (!user) {

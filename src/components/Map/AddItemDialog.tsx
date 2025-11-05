@@ -28,7 +28,7 @@ import {
   CreateItemState,
 } from "@/server/actions/item/create/action";
 
-interface AddLocationDialogProps {
+interface AddItemDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -196,10 +196,7 @@ function DialogActions({
   );
 }
 
-export function AddLocationDialog({
-  open,
-  onOpenChange,
-}: AddLocationDialogProps) {
+export function AddItemDialog({ open, onOpenChange }: AddItemDialogProps) {
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [actionState, formAction, isPending] = useActionState(
     createItem,
@@ -315,7 +312,7 @@ export function AddLocationDialog({
       >
         <DialogHeader className="pb-2 sm:pb-4">
           <DialogTitle className="text-white text-lg sm:text-xl">
-            Add New Location
+            Add a New Item
           </DialogTitle>
           <DialogDescription className="text-slate-300">
             Follow the steps to add a new lost or found item

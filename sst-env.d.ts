@@ -4,7 +4,11 @@
 
 declare module "sst" {
   export interface Resource {
-    ZotNFoundClone: {
+    ItemImages: {
+      name: string;
+      type: "sst.aws.Bucket";
+    };
+    ZotNFound: {
       type: "sst.aws.Nextjs";
       url: string;
     };

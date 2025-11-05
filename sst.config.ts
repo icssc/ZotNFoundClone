@@ -7,14 +7,14 @@ export default $config({
       removal: input?.stage === "production" ? "retain" : "remove",
       protect: ["production"].includes(input?.stage),
       home: "aws",
-      providers: {
-        aws: {
-          region: "us-east-1",
-        },
-      },
     };
   },
   async run() {
-    new sst.aws.Nextjs("ZotNFoundClone");
+    const bucket = new sst.aws.Bucket("ItemImages", {
+      access: "public",
+    });
+    new sst.aws.Nextjs("ZotNFound", {
+      link: [bucket],
+    });
   },
 });

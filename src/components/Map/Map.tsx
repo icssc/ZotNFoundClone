@@ -7,7 +7,8 @@ import ObjectMarkers from "./Markers";
 import { useSharedContext } from "@/components/ContextProvider";
 import { LatLngExpression } from "leaflet";
 import { Button } from "@/components/ui/button";
-import { AddLocationDialog } from "./AddLocationDialog";
+import { AddItemDialog } from "./AddItemDialog";
+import { SignInDialog } from "./SignInDialog";
 import { PlusIcon } from "lucide-react";
 import { Item as ItemType } from "@/db/schema";
 
@@ -57,8 +58,9 @@ function MapController({
 
 function Map({ initialItems }: MapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
-  const { selectedLocation, filter } = useSharedContext();
+  const { user, selectedLocation, filter } = useSharedContext();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isSignInDialogOpen, setIsSignInDialogOpen] = useState(false);
   const items = initialItems;
   return (
     <div className="relative w-full h-full bg-black animate-in fade-in duration-300 transition-all">
@@ -103,14 +105,24 @@ function Map({ initialItems }: MapProps) {
           <div>
             <Button
               className="absolute bottom-4 right-4 z-1000 bg-black hover:bg-white/10 border border-white/30 text-white p-2 rounded-full w-12 h-12 text-xl transition-all duration-300 hover:scale-110 hover:shadow-xl"
-              onClick={() => setIsAddDialogOpen(true)}
+              onClick={() => {
+                if (user) {
+                  setIsAddDialogOpen(true);
+                } else {
+                  setIsSignInDialogOpen(true);
+                }
+              }}
             >
               <PlusIcon className="h-6 w-6" />
             </Button>
 
-            <AddLocationDialog
+            <AddItemDialog
               open={isAddDialogOpen}
               onOpenChange={setIsAddDialogOpen}
+            />
+            <SignInDialog
+              open={isSignInDialogOpen}
+              onOpenChange={setIsSignInDialogOpen}
             />
           </div>
         </MapContainer>
