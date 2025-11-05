@@ -1,5 +1,4 @@
 "use server";
-
 import {
   S3Client,
   PutObjectCommand,
@@ -7,8 +6,18 @@ import {
 } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
 import { Resource } from "sst/resource";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export default async function uploadImageToS3(file: File): Promise<string> {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session?.user?.email) {
+    throw new Error("You must be signed in to upload an image.");
+  }
+
   const s3Client = new S3Client({});
   const type = "image/webp";
   const key = `uploads/${Date.now()}-${randomUUID()}.${type.split("/")[1]}`;
