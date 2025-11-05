@@ -29,7 +29,7 @@ export default async function RootLayout({
       {/*<Script
         fetchPriority="high"
         crossOrigin="anonymous"
-        src="//unpkg.com/react-scan/dist/auto.global.js"
+        src="https://unpkg.com/react-scan/dist/auto.global.js"
       />*/}
       <body
         className={`${geistSans.variable} ${CustomFont.className} antialiased bg-neutral-950`}
