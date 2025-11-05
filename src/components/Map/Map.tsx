@@ -1,10 +1,5 @@
 "use client";
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import mapboxgl, {
   Map as MapboxMap,
   GeoJSONSource,
@@ -250,7 +245,7 @@ export default function Map({ initialItems }: MapProps) {
         paint: {
           "text-color": "#000",
         },
-      });React
+      });
     }
 
     if (!map.getLayer("unclustered-point")) {
