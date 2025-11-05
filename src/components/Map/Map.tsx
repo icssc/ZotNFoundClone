@@ -1,73 +1,105 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import { MapContainer, Rectangle, TileLayer, useMap } from "react-leaflet";
+import { useEffect, useRef, useState } from "react";
+import {
+  map as createMap,
+  tileLayer,
+  rectangle,
+  type LatLngExpression,
+  type Map as LeafletMap,
+  type Rectangle as LeafletRectangle,
+} from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster";
 import { centerPosition, mapBounds } from "@/lib/constants";
-import ObjectMarkers from "./Markers";
 import { useSharedContext } from "@/components/ContextProvider";
-import { LatLngExpression } from "leaflet";
 import { Button } from "@/components/ui/button";
 import { AddItemDialog } from "./AddItemDialog";
 import { SignInDialog } from "./SignInDialog";
 import { PlusIcon } from "lucide-react";
 import { Item as ItemType } from "@/db/schema";
+import Markers from "./Markers";
 
 interface MapProps {
   initialItems: ItemType[];
 }
 
-// https://github.com/allartk/leaflet.offline Caching the map tiles would be quite nice as well!
-
-function MapController({
-  selectedLocation,
-}: {
-  selectedLocation: LatLngExpression | null;
-}) {
-  const map = useMap();
-  const bounds = mapBounds;
-  const transparentColor = { color: "#000", opacity: 0, fillOpacity: 0 };
-
-  const outerHandlers = useMemo(
-    () => ({
-      click() {
-        map.fitBounds(bounds);
-      },
-    }),
-    [bounds, map]
-  );
-
-  useEffect(() => {
-    if (map) {
-      map.setMaxBounds(bounds);
-      if (selectedLocation) {
-        map.flyTo(selectedLocation, 18);
-      } else {
-        map.fitBounds(bounds);
-      }
-    }
-  }, [map, selectedLocation, bounds]);
-
-  return (
-    <Rectangle
-      bounds={bounds}
-      eventHandlers={outerHandlers}
-      pathOptions={transparentColor}
-    />
-  );
-}
-
-function Map({ initialItems }: MapProps) {
+export default function Map({ initialItems }: MapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
   const { user, selectedLocation, filter } = useSharedContext();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isSignInDialogOpen, setIsSignInDialogOpen] = useState(false);
+
+  const mapRef = useRef<LeafletMap | null>(null);
+  const boundsRectRef = useRef<LeafletRectangle | null>(null);
+  const [isMapMounted, setIsMapMounted] = useState(false);
+
+  useEffect(() => {
+    if (!mapRef.current) {
+      const el = document.getElementById("leaflet-map-root");
+      if (!el) return;
+
+      const map = createMap(el, {
+        center: centerPosition as [number, number],
+        zoom: 17,
+        minZoom: 15,
+        maxBounds: mapBounds,
+        zoomControl: false,
+        attributionControl: false,
+        maxBoundsViscosity: 1.0,
+      });
+
+      mapRef.current = map;
+
+      // Add base tile layer (Mapbox or other provider)
+      tileLayer(accessToken).addTo(map);
+
+      // Add an invisible rectangle to allow clicking anywhere to refit bounds
+      const transparentStyle = { color: "#000", opacity: 0, fillOpacity: 0 };
+      const rect = rectangle(mapBounds, transparentStyle);
+      rect.on("click", () => {
+        map.fitBounds(mapBounds);
+      });
+      rect.addTo(map);
+      boundsRectRef.current = rect;
+
+      // Fit bounds initially
+      map.fitBounds(mapBounds);
+
+      // Defer readiness flag to next frame to avoid synchronous render cascade
+      requestAnimationFrame(() => setIsMapMounted(true)); // Set map as mounted
+    }
+
+    return () => {
+      if (boundsRectRef.current) {
+        boundsRectRef.current.remove();
+        boundsRectRef.current = null;
+      }
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+      setIsMapMounted(false); // Reset map mounted state
+    };
+  }, [accessToken]); // only re-run if tile URL changes
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (selectedLocation) {
+      map.flyTo(selectedLocation as LatLngExpression, 18);
+    } else {
+      map.fitBounds(mapBounds);
+    }
+  }, [selectedLocation]);
+
   const items = initialItems;
+
   return (
     <div className="relative w-full h-full bg-black animate-in fade-in duration-300 transition-all">
-      {/* White border frame with black spacing */}
+      {/* White border frame */}
       <div className="absolute inset-0 border border-white pointer-events-none" />
 
-      {/* Inner content with padding to create black space between border and map */}
+      {/* Inner container with padding (creates spacing between border and map) */}
       <div className="relative w-full h-full p-1.5">
         {/* Corner accents */}
         <div className="pointer-events-none absolute z-10 -top-px -left-px h-10 w-10">
@@ -87,48 +119,40 @@ function Map({ initialItems }: MapProps) {
           <div className="absolute -bottom-px -right-px w-8 h-[3px] bg-white" />
         </div>
 
-        <MapContainer
+        {/* Leaflet mount point */}
+        <div
+          id="leaflet-map-root"
           className="w-full h-full z-0 shadow-2xl transition-all duration-300 border-black"
-          center={centerPosition as [number, number]}
-          zoom={17}
-          minZoom={15} // was 16
-          maxBounds={mapBounds}
-          zoomControl={false}
-          attributionControl={false}
-          maxBoundsViscosity={1.0}
-        >
-          <TileLayer url={accessToken} />
-          <MapController selectedLocation={selectedLocation} />
-          {items && items.length > 0 && (
-            <ObjectMarkers objects={items} filter={filter} />
-          )}
-          <div>
-            <Button
-              className="absolute bottom-4 right-4 z-1000 bg-black hover:bg-white/10 border border-white/30 text-white p-2 rounded-full w-12 h-12 text-xl transition-all duration-300 hover:scale-110 hover:shadow-xl"
-              onClick={() => {
-                if (user) {
-                  setIsAddDialogOpen(true);
-                } else {
-                  setIsSignInDialogOpen(true);
-                }
-              }}
-            >
-              <PlusIcon className="h-6 w-6" />
-            </Button>
+        />
 
-            <AddItemDialog
-              open={isAddDialogOpen}
-              onOpenChange={setIsAddDialogOpen}
-            />
-            <SignInDialog
-              open={isSignInDialogOpen}
-              onOpenChange={setIsSignInDialogOpen}
-            />
-          </div>
-        </MapContainer>
+        {/* Render markers when map is ready */}
+        {isMapMounted && items.length > 0 && (
+          <Markers objects={items} filter={filter} mapRef={mapRef} />
+        )}
+
+        {/* Floating add button */}
+        <Button
+          className="absolute bottom-4 right-4 z-1000 bg-black hover:bg-white/10 border border-white/30 text-white p-2 rounded-full w-12 h-12 text-xl transition-all duration-300 hover:scale-110 hover:shadow-xl"
+          onClick={() => {
+            if (user) {
+              setIsAddDialogOpen(true);
+            } else {
+              setIsSignInDialogOpen(true);
+            }
+          }}
+        >
+          <PlusIcon className="h-6 w-6" />
+        </Button>
+
+        <AddItemDialog
+          open={isAddDialogOpen}
+          onOpenChange={setIsAddDialogOpen}
+        />
+        <SignInDialog
+          open={isSignInDialogOpen}
+          onOpenChange={setIsSignInDialogOpen}
+        />
       </div>
     </div>
   );
 }
-
-export default Map;

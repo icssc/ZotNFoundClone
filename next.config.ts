@@ -28,9 +28,8 @@ const nextConfig: NextConfig = {
     browserDebugInfoInTerminal: true,
     optimizePackageImports: [
       "leaflet",
-      "react-leaflet",
-      "react-leaflet-cluster-4-next",
       "leaflet.markercluster",
+      "react-day-picker",
     ],
   },
   reactCompiler: true,

@@ -7,7 +7,6 @@ import { Toaster } from "sonner";
 import localFont from "next/font/local";
 import { SessionProvider } from "@/components/SessionProvider";
 import { Suspense } from "react";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,6 +26,11 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/*<Script
+        fetchPriority="high"
+        crossOrigin="anonymous"
+        src="//unpkg.com/react-scan/dist/auto.global.js"
+      />*/}
       <body
         className={`${geistSans.variable} ${CustomFont.className} antialiased bg-neutral-950`}
       >
