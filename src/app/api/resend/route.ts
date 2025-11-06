@@ -24,6 +24,13 @@ export async function POST(req: NextRequest) {
 
   const body = parsed.data as FoundPayload;
 
+  if (body.item.email === body.finderEmail) {
+    return NextResponse.json(
+      { error: "Cannot contact yourself" },
+      { status: 400 }
+    );
+  }
+
   try {
     const result = await sendItemFoundEmail({
       item: {
