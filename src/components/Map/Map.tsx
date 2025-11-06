@@ -49,7 +49,9 @@ export default function Map({ initialItems }: MapProps) {
       });
 
       mapRef.current = map;
-
+      map.addEventListener("resize", () => {
+        map.invalidateSize();
+      });
       // Add base tile layer (Mapbox or other provider)
       tileLayer(accessToken).addTo(map);
 
