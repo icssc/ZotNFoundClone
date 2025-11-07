@@ -93,7 +93,7 @@ export default function Navbar() {
             <Button
               variant="outline"
               size="sm"
-              className="hover:bg-white hover:text-black text-white bg-black transition-colors duration-250"
+              className="hover:bg-white hover:text-black cursor-pointer text-white bg-black transition-colors duration-250"
               onClick={handleSignOut}
             >
               {user.image && (
@@ -111,7 +111,7 @@ export default function Navbar() {
             <Button
               variant="outline"
               size="sm"
-              className="hover:bg-white hover:text-black text-white bg-black transition-colors duration-250"
+              className="hover:bg-white hover:text-black cursor-pointer text-white bg-black transition-colors duration-250"
               onClick={handleSignIn}
             >
               <UserIcon className="h-4 w-4 mr-2" />
