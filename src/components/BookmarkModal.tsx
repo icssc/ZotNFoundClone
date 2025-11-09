@@ -28,6 +28,7 @@ export function BookmarkModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [newKeyword, setNewKeyword] = useState("");
   const [isAdding, setIsAdding] = useState(false);
+  const [open, setOpen] = useState(false);
   const [removingKeywords, setRemovingKeywords] = useState<Set<string>>(
     new Set()
   );
@@ -149,8 +150,8 @@ export function BookmarkModal() {
 
   const handleSearchKeyword = (keyword: string) => {
     setFilter(keyword);
-    // Close the dialog by finding the trigger and clicking it, or we could use state
-    // For now, we'll just set the filter and let the user close manually
+    setOpen(false);
+    toast.success(`Searching for "${keyword}"`);
   };
 
   const handleSignIn = async () => {
@@ -162,7 +163,7 @@ export function BookmarkModal() {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="p-1 rounded hover:text-gray-300 flex items-center cursor-pointer">
           <BookmarkIcon className="h-5 w-5" />
@@ -212,13 +213,20 @@ export function BookmarkModal() {
                     key={searchTerm}
                     className="flex justify-between items-center p-3 hover:bg-white/5 rounded-md transition-colors"
                   >
-                    <span className="flex-1 font-medium">{searchTerm}</span>
+                    <button
+                      onClick={() => handleSearchKeyword(searchTerm)}
+                      className="flex-1 font-medium text-left hover:text-blue-400 transition-colors cursor-pointer"
+                      title={`Click to search for "${searchTerm}"`}
+                    >
+                      {searchTerm}
+                    </button>
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleSearchKeyword(searchTerm)}
-                        className="h-8"
+                        className="h-8 hover:bg-blue-500/10 hover:border-blue-500/50 hover:text-blue-400"
+                        title={`Search for "${searchTerm}"`}
                       >
                         <Search className="w-4 h-4" />
                       </Button>
