@@ -29,47 +29,56 @@ export default function Map({ initialItems }: MapProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isSignInDialogOpen, setIsSignInDialogOpen] = useState(false);
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const boundsRectRef = useRef<LeafletRectangle | null>(null);
   const [isMapMounted, setIsMapMounted] = useState(false);
 
+  // Initialize map
   useEffect(() => {
-    if (!mapRef.current) {
-      const el = document.getElementById("leaflet-map-root");
-      if (!el) return;
+    if (mapRef.current || !containerRef.current) return;
 
-      const map = createMap(el, {
-        center: centerPosition as [number, number],
-        zoom: 17,
-        minZoom: 15,
-        maxBounds: mapBounds,
-        zoomControl: false,
-        attributionControl: false,
-        maxBoundsViscosity: 1.0,
-      });
+    const el = containerRef.current;
+    const { width, height } = el.getBoundingClientRect();
 
-      mapRef.current = map;
-      map.addEventListener("resize", () => {
-        map.invalidateSize();
-      });
-      // Add base tile layer (Mapbox or other provider)
-      tileLayer(accessToken).addTo(map);
-
-      // Add an invisible rectangle to allow clicking anywhere to refit bounds
-      const transparentStyle = { color: "#000", opacity: 0, fillOpacity: 0 };
-      const rect = rectangle(mapBounds, transparentStyle);
-      rect.on("click", () => {
-        map.fitBounds(mapBounds);
-      });
-      rect.addTo(map);
-      boundsRectRef.current = rect;
-
-      // Fit bounds initially
-      map.fitBounds(mapBounds);
-
-      // Defer readiness flag to next frame to avoid synchronous render cascade
-      requestAnimationFrame(() => setIsMapMounted(true)); // Set map as mounted
+    // Wait for container to have size
+    if (width === 0 || height === 0) {
+      const timer = setTimeout(() => {
+        // Retry on next tick
+        setIsMapMounted(false);
+      }, 10);
+      return () => clearTimeout(timer);
     }
+
+    const map = createMap(el, {
+      center: centerPosition as [number, number],
+      zoom: 17,
+      minZoom: 15,
+      maxBounds: mapBounds,
+      zoomControl: false,
+      attributionControl: false,
+      maxBoundsViscosity: 1.0,
+    });
+
+    mapRef.current = map;
+
+    tileLayer(accessToken).addTo(map);
+
+    const rect = rectangle(mapBounds, {
+      color: "#000",
+      opacity: 0,
+      fillOpacity: 0,
+    });
+    rect.on("click", () => map.fitBounds(mapBounds));
+    rect.addTo(map);
+    boundsRectRef.current = rect;
+
+    // Ensure proper sizing after Leaflet is ready
+    map.whenReady(() => {
+      map.invalidateSize(true);
+      map.fitBounds(mapBounds);
+      setIsMapMounted(true);
+    });
 
     return () => {
       if (boundsRectRef.current) {
@@ -80,13 +89,28 @@ export default function Map({ initialItems }: MapProps) {
         mapRef.current.remove();
         mapRef.current = null;
       }
-      setIsMapMounted(false); // Reset map mounted state
+      setIsMapMounted(false);
     };
-  }, [accessToken]); // only re-run if tile URL changes
+  }, [accessToken]);
 
+  // Handle container resize
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || !mapRef.current) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      mapRef.current?.invalidateSize();
+    });
+
+    resizeObserver.observe(el);
+    return () => resizeObserver.disconnect();
+  }, [isMapMounted]);
+
+  // Handle selected location changes
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
+
     if (selectedLocation) {
       map.flyTo(selectedLocation as LatLngExpression, 18);
     } else {
@@ -98,10 +122,8 @@ export default function Map({ initialItems }: MapProps) {
 
   return (
     <div className="relative w-full h-full bg-black animate-in fade-in duration-300 transition-all">
-      {/* White border frame */}
       <div className="absolute inset-0 border border-white pointer-events-none" />
 
-      {/* Inner container with padding (creates spacing between border and map) */}
       <div className="relative w-full h-full p-1.5">
         {/* Corner accents */}
         <div className="pointer-events-none absolute z-10 -top-px -left-px h-10 w-10">
@@ -121,20 +143,18 @@ export default function Map({ initialItems }: MapProps) {
           <div className="absolute -bottom-px -right-px w-8 h-[3px] bg-white" />
         </div>
 
-        {/* Leaflet mount point */}
         <div
-          id="leaflet-map-root"
+          ref={containerRef}
+          id="map"
           className="w-full h-full z-0 shadow-2xl transition-all duration-300 border-black"
         />
 
-        {/* Render markers when map is ready */}
         {isMapMounted && items.length > 0 && (
           <Markers objects={items} filter={filter} mapRef={mapRef} />
         )}
 
-        {/* Floating add button */}
         <Button
-          className="absolute bottom-4 right-4 z-1000 bg-black hover:bg-white/10 border border-white/30 text-white p-2 rounded-full w-12 h-12 text-xl transition-all duration-300 hover:scale-110 hover:shadow-xl"
+          className="absolute bottom-4 right-4 z-10 bg-black hover:bg-white/10 border border-white/30 text-white p-2 rounded-full w-12 h-12 text-xl transition-all duration-300 hover:scale-110 hover:shadow-xl"
           onClick={() => {
             if (user) {
               setIsAddDialogOpen(true);
