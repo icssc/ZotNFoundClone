@@ -170,12 +170,12 @@ export function BookmarkModal() {
           <span className="hidden md:block">Bookmarks</span>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-black/95 border-white/20 text-white">
         {user ? (
           <>
             <DialogHeader>
-              <DialogTitle>Saved Searches</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-white">Saved Searches</DialogTitle>
+              <DialogDescription className="text-gray-400">
                 View and manage your saved search keywords and alerts
               </DialogDescription>
             </DialogHeader>
@@ -187,23 +187,23 @@ export function BookmarkModal() {
                 placeholder="Add a search keyword..."
                 value={newKeyword}
                 onChange={(e) => setNewKeyword(e.target.value)}
-                className="flex-1"
+                className="flex-1 bg-black/50 border-white/20 text-white placeholder:text-gray-500 focus:border-white/40"
                 disabled={isAdding}
               />
               <Button
                 type="submit"
                 disabled={isAdding || !newKeyword.trim()}
-                className="shrink-0"
+                className="shrink-0 bg-white/10 hover:bg-white/20 text-white border border-white/20"
               >
                 <Plus className="h-4 w-4" />
               </Button>
             </form>
 
-            <ScrollArea className="h-[30vh] rounded-md border p-4">
+            <ScrollArea className="h-[30vh] rounded-md border border-white/20 bg-black/30 p-4">
               {isLoading ? (
                 <p className="text-gray-400">Loading your bookmarks...</p>
               ) : keywords.length === 0 ? (
-                <p>
+                <p className="text-gray-400">
                   No saved searches. Add a keyword above to get alerts when new
                   items match your searches!
                 </p>
@@ -211,11 +211,11 @@ export function BookmarkModal() {
                 keywords.map((searchTerm) => (
                   <div
                     key={searchTerm}
-                    className="flex justify-between items-center p-3 hover:bg-white/5 rounded-md transition-colors"
+                    className="flex justify-between items-center p-3 hover:bg-white/5 rounded-md transition-colors border border-transparent hover:border-white/10"
                   >
                     <button
                       onClick={() => handleSearchKeyword(searchTerm)}
-                      className="flex-1 font-medium text-left hover:text-blue-400 transition-colors cursor-pointer"
+                      className="flex-1 font-medium text-left text-white hover:text-blue-400 transition-colors cursor-pointer"
                       title={`Click to search for "${searchTerm}"`}
                     >
                       {searchTerm}
@@ -225,7 +225,7 @@ export function BookmarkModal() {
                         variant="outline"
                         size="sm"
                         onClick={() => handleSearchKeyword(searchTerm)}
-                        className="h-8 hover:bg-blue-500/10 hover:border-blue-500/50 hover:text-blue-400"
+                        className="h-8 bg-black/50 border-white/20 text-white hover:bg-blue-500/20 hover:border-blue-500/50 hover:text-blue-400"
                         title={`Search for "${searchTerm}"`}
                       >
                         <Search className="w-4 h-4" />
@@ -235,7 +235,7 @@ export function BookmarkModal() {
                         size="sm"
                         onClick={() => handleRemoveKeyword(searchTerm)}
                         disabled={removingKeywords.has(searchTerm)}
-                        className="h-8 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                        className="h-8 bg-black/50 border-white/20 text-red-400 hover:text-red-300 hover:bg-red-500/20 hover:border-red-500/50 disabled:opacity-50"
                       >
                         {removingKeywords.has(searchTerm) ? (
                           <X className="w-4 h-4 animate-spin" />
@@ -252,8 +252,8 @@ export function BookmarkModal() {
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Sign In Required</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-white">Sign In Required</DialogTitle>
+              <DialogDescription className="text-gray-400">
                 Sign in to save search keywords and receive alerts
               </DialogDescription>
             </DialogHeader>
@@ -264,7 +264,7 @@ export function BookmarkModal() {
               </p>
               <Button
                 onClick={handleSignIn}
-                className="bg-white/5 hover:bg-white/10 text-gray-700 border border-gray-500 hover:border-gray-400 hover:text-gray-400 hover:bg-gray-500/10 cursor-pointer"
+                className="bg-white/10 hover:bg-white/20 text-white border border-white/20 hover:border-white/30 cursor-pointer transition-colors"
               >
                 <UserIcon className="h-4 w-4 mr-2" />
                 Sign In
