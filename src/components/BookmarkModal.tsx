@@ -6,6 +6,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSharedContext } from "./ContextProvider";
 import { signInWithGoogle } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { useState, useEffect } from "react";
+import { getUserKeywords } from "@/server/actions/search/get-user-keywords/action";
+import { isError } from "@/lib/types";
 
 import {
   Dialog,
@@ -18,7 +21,26 @@ import {
 
 export function BookmarkModal() {
   const { user } = useSharedContext();
-  const keywords: string[] = ["test", "iphone", "wallet", "keychain"];
+  const [keywords, setKeywords] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchKeywords = async () => {
+      if (user?.email) {
+        setIsLoading(true);
+        const result = await getUserKeywords();
+        if (isError(result)) {
+          toast.error(result.error);
+          setKeywords([]);
+        } else {
+          setKeywords(result.data);
+        }
+        setIsLoading(false);
+      }
+    };
+
+    fetchKeywords();
+  }, [user?.email]);
 
   const handleSignIn = async () => {
     try {
@@ -46,29 +68,32 @@ export function BookmarkModal() {
               </DialogDescription>
             </DialogHeader>
             <ScrollArea className="h-[30vh] rounded-md border p-4">
-              {keywords.length === 0 && (
+              {isLoading ? (
+                <p className="text-gray-400">Loading your bookmarks...</p>
+              ) : keywords.length === 0 ? (
                 <p>
                   No saved searches. Use the search bar to save search keywords
                   and get alerts!
                 </p>
-              )}
-              {keywords.map((searchTerm) => (
-                <div
-                  key={searchTerm}
-                  className="flex justify-between items-center p-3"
-                >
-                  {searchTerm}
-                  <div>
-                    <Button className="mr-2">
-                      <Bell className="w-4 h-4 mr-2 " />
-                      Remove Alerts
-                    </Button>
-                    <Button>
-                      <Search className="w-4 h-4" />
-                    </Button>
+              ) : (
+                keywords.map((searchTerm) => (
+                  <div
+                    key={searchTerm}
+                    className="flex justify-between items-center p-3"
+                  >
+                    {searchTerm}
+                    <div>
+                      <Button className="mr-2">
+                        <Bell className="w-4 h-4 mr-2 " />
+                        Remove Alerts
+                      </Button>
+                      <Button>
+                        <Search className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </ScrollArea>
           </>
         ) : (

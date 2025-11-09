@@ -12,3 +12,22 @@ export async function getAllSearches(): Promise<ActionResult<Search[]>> {
     return { error: `Error fetching searches: ${error}` };
   }
 }
+
+export async function getKeywordsForUser(
+  email: string
+): Promise<ActionResult<string[]>> {
+  try {
+    // Query all searches and filter for ones containing the user's email
+    const allSearches = await db.query.searches.findMany();
+    
+    // Filter searches where the user's email is in the emails array
+    const userKeywords = allSearches
+      .filter((search) => search.emails?.includes(email))
+      .map((search) => search.keyword);
+
+    return { data: userKeywords };
+  } catch (error) {
+    console.error("Error fetching user keywords:", error);
+    return { error: `Error fetching user keywords: ${error}` };
+  }
+}
