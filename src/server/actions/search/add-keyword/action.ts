@@ -28,7 +28,7 @@ export async function addKeyword(keyword: string): Promise<ActionResult<void>> {
     };
 
     const result = await createKeywordSubscription(subscription);
-    
+
     if ("error" in result) {
       return { error: result.error };
     }
@@ -41,4 +41,3 @@ export async function addKeyword(keyword: string): Promise<ActionResult<void>> {
     };
   }
 }
-

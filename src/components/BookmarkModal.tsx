@@ -48,9 +48,9 @@ export function BookmarkModal() {
 
   useEffect(() => {
     if (!user?.email) return;
-    
+
     let cancelled = false;
-    
+
     const loadKeywords = async () => {
       setIsLoading(true);
       const result = await getUserKeywords();
@@ -63,9 +63,9 @@ export function BookmarkModal() {
       }
       setIsLoading(false);
     };
-    
+
     loadKeywords();
-    
+
     return () => {
       cancelled = true;
     };
@@ -76,7 +76,7 @@ export function BookmarkModal() {
     if (!newKeyword.trim() || isAdding) return;
 
     const keywordToAdd = newKeyword.trim().toLowerCase();
-    
+
     // Check if keyword already exists locally
     if (keywords.includes(keywordToAdd)) {
       toast.error("You are already subscribed to this keyword.");
@@ -179,7 +179,7 @@ export function BookmarkModal() {
                 View and manage your saved search keywords and alerts
               </DialogDescription>
             </DialogHeader>
-            
+
             {/* Add Keyword Form */}
             <form onSubmit={handleAddKeyword} className="flex gap-2 px-1 pb-3">
               <Input

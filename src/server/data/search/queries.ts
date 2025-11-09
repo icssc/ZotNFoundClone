@@ -19,7 +19,7 @@ export async function getKeywordsForUser(
   try {
     // Query all searches and filter for ones containing the user's email
     const allSearches = await db.query.searches.findMany();
-    
+
     // Filter searches where the user's email is in the emails array
     const userKeywords = allSearches
       .filter((search) => search.emails?.includes(email))
