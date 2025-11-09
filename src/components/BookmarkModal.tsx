@@ -264,7 +264,7 @@ export function BookmarkModal() {
               </p>
               <Button
                 onClick={handleSignIn}
-                className="bg-white/5 hover:bg-white/10 text-gray-400"
+                className="bg-white/5 hover:bg-white/10 text-gray-700 border border-gray-500 hover:border-gray-400 hover:text-gray-400 hover:bg-gray-500/10 cursor-pointer"
               >
                 <UserIcon className="h-4 w-4 mr-2" />
                 Sign In
