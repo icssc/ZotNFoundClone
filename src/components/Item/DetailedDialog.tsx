@@ -322,14 +322,16 @@ function DetailedDialog({ item }: { item: Item }) {
               <span>{copied ? "Copied!" : "Copy Link"}</span>
             </Button>
 
-            <Button
-              variant="outline"
-              className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
-              onClick={handleContactClick}
-              disabled={isPending || state.status === "success"}
-            >
-              {state.status === "success" ? "Sent" : "Contact"}
-            </Button>
+            {item.email !== user?.email && (
+              <Button
+                variant="outline"
+                className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
+                onClick={handleContactClick}
+                disabled={isPending || state.status === "success"}
+              >
+                {state.status === "success" ? "Sent" : "Contact"}
+              </Button>
+            )}
           </div>
         </div>
       )}
