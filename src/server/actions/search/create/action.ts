@@ -12,8 +12,26 @@ export async function createKeywordSubscription(
   const { keyword, email } = subscription;
   const lookup = await findEmailsSubscribedToKeyword(keyword);
 
+  // If keyword not found, create a new row
   if (isError(lookup)) {
-    return { error: `Error fetching emails for keyword: ${lookup.error}` };
+    // Check if it's a "not found" error or a real error
+    if (lookup.error === "Keyword not found.") {
+      // Keyword doesn't exist, create a new row
+      try {
+        const [result] = await db
+          .insert(searches)
+          .values({ keyword, emails: [email] })
+          .returning();
+        return { data: result };
+      } catch (error) {
+        return {
+          error: `Error creating new keyword subscription: ${error}`,
+        };
+      }
+    } else {
+      // Real error occurred
+      return { error: `Error fetching emails for keyword: ${lookup.error}` };
+    }
   }
 
   const existingEmails = lookup.data.emails || [];
@@ -22,25 +40,17 @@ export async function createKeywordSubscription(
   }
 
   try {
-    const query =
-      existingEmails.length > 0
-        ? db
-            .update(searches)
-            .set({ emails: [...existingEmails, email] })
-            .where(eq(searches.keyword, keyword))
-            .returning()
-        : db
-            .insert(searches)
-            .values({ keyword, emails: [email] })
-            .returning();
+    // Update existing keyword with new email
+    const [result] = await db
+      .update(searches)
+      .set({ emails: [...existingEmails, email] })
+      .where(eq(searches.keyword, keyword))
+      .returning();
 
-    const [result] = await query;
     return { data: result };
   } catch (error) {
     return {
-      error: existingEmails.length
-        ? `Error updating subscriptions for keyword: ${error}`
-        : `Error creating new keyword subscription: ${error}`,
+      error: `Error updating subscriptions for keyword: ${error}`,
     };
   }
 }

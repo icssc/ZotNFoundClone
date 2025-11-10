@@ -8,7 +8,7 @@ export const authClient = createAuthClient({
 export const { signOut, signUp } = authClient;
 
 // TODO: Changing Error Handling
-const signInWithGoogle = async () => {
+export const signInWithGoogle = async () => {
   try {
     const data = await authClient.signIn.social({
       provider: "google",
