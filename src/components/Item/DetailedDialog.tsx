@@ -1,5 +1,11 @@
 "use client";
+//write resolveItem in @/server/actions/item/update/resolve
+//add resolve button if you are owner of post
+//pop up dialog asking if zotnfound helped(not sure where to send that data)
 
+//write editItem in @/server/actions/item/update/edit
+//add edit button if owner of post
+//form that lets user update all elements of the item
 import { useActionState, useState } from "react";
 import {
   DialogContent,
@@ -7,8 +13,10 @@ import {
   DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { User, Calendar, MapPin, Share2, Check, Trash2 } from "lucide-react";
+import { User, Calendar, MapPin, Share2, Check, Trash2, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import EditItemForm from "./EditItem";
+import editItem from "@/server/actions/item/update/edit";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
 import Image from "next/image";
@@ -16,8 +24,10 @@ import { toast } from "sonner";
 import { useSharedContext } from "../ContextProvider";
 import { z } from "zod";
 import deleteItem from "@/server/actions/item/delete/action";
+import updateItem from "@/server/actions/item/update/action";
 import { useRouter } from "next/navigation";
 import { handleSignIn } from "@/lib/auth-client";
+import { db } from "@/db";
 
 type ContactState = {
   status: "idle" | "success" | "error";
@@ -31,6 +41,10 @@ function DetailedDialog({ item }: { item: Item }) {
   const [copied, setCopied] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isResolved, setIsResolved] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [isResolving, setIsResolving] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
 
   // Check if the current user owns this item
@@ -123,6 +137,53 @@ function DetailedDialog({ item }: { item: Item }) {
       setShowDeleteConfirm(false);
     }
   };
+
+  const handleResolve = async () => {
+    setIsResolving(true);
+    setIsResolved(true);
+    //feedback popup
+    //in feedback popup -> return isHelped(true or false based on yes/no)
+    try {
+      const result = await updateItem({ itemId: item.id, isResolved: true, isHelped: false});
+
+      if ("error" in result) {
+        toast.error(result.error);
+      }
+      else {
+        setShowFeedback(true); //leads to modal for yes/no feedback
+      }
+    }
+    catch (err)
+    {
+      toast.error("Failed to resolve item. Please try again.")
+    }
+    finally
+    {
+      setIsResolving(false);
+    }
+  }
+
+  const handleFeedback = async (userWasHelped: boolean) => { 
+    setShowFeedback(false);
+    try {
+      const result = await updateItem({itemId: item.id, isResolved: true, isHelped: userWasHelped});
+      if ("error" in result)
+      {
+        toast.error(result.error);
+      }
+      console.log(result);
+      toast.info("Thanks for the feedback!");
+      const url = new URL(window.location.href);
+      url.searchParams.delete("item");
+      window.history.replaceState({}, "", url.toString());
+      router.refresh();
+    }
+    catch (err)
+    {
+      toast.error("Feedback failed. Please try again.");
+    }
+
+  }
 
   const isSubmitDisabled = isPending || state.status === "success";
 
@@ -297,6 +358,7 @@ function DetailedDialog({ item }: { item: Item }) {
       {user && !showConfirm && !showDeleteConfirm && (
         <div className="flex justify-between items-center gap-2 px-4 sm:px-6 border-t border-white/20 pt-3 mt-2">
           {isOwner && (
+          <div>
             <Button
               type="button"
               variant="ghost"
@@ -307,7 +369,52 @@ function DetailedDialog({ item }: { item: Item }) {
               <Trash2 className="h-4 w-4" />
               <span>Delete</span>
             </Button>
+            <Button 
+            type="button"
+            variant="ghost"
+            disabled={isResolving}
+            onClick = {() => handleResolve()}>
+              {isResolving ? "Resolving..." : isResolved ? "Resolved" : "Resolve"}              
+            </Button>
+            {/* <Button
+            type="button"
+            variant="ghost"
+            disabled={isEditing}
+            onClick = {() => setIsEditing(true)}> Edit
+            </Button> */}
+
+            {showFeedback && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black/40">
+              <div className="bg-black p-6 rounded-lg shadow-lg text-center">
+                <p className="text-lg mb-4">Did ZotnFound help with finding this item?</p>
+                <div className="flex justify-center gap-4">
+                  <button
+                    onClick={() => handleFeedback(true)}
+                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => handleFeedback(false)}
+                    className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+        )}
+          {/* {isEditing && <EditItemForm 
+          itemId = {item.id}
+          name={item.name}
+          description={item.description}
+          type={item.type}
+          date={item.date}
+          imageURL={item.image}
+          location={item.location}/>} */}
+          </div>
           )}
+
           <div className="flex justify-end gap-2 ml-auto">
             <Button
               type="button"

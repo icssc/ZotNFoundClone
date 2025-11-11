@@ -30,6 +30,16 @@ export interface ItemUpdateParams {
   isResolved: boolean;
 }
 
+export interface ItemEditParams {
+  itemId: number;
+  itemName: string;
+  itemDescription: string;
+  type: string;
+  itemDate: string;
+  image: string;
+  location: PointTuple;
+}
+
 export interface ItemDeleteParams {
   itemId: number;
 }
