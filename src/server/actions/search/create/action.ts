@@ -9,7 +9,7 @@ import { z } from "zod";
 
 const keywordSubscriptionSchema = z.object({
   keyword: z.string().min(1, "Keyword is required"),
-  email: z.string().email("Invalid email address"),
+  email: z.email("Invalid email address"),
 });
 
 export const createKeywordSubscription = createAction(
