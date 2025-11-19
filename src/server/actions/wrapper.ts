@@ -49,7 +49,9 @@ export function createAction<T, R>(
         return {
           success: false,
           error:
-            error instanceof Error ? error.message : "An unexpected error occurred",
+            error instanceof Error
+              ? error.message
+              : "An unexpected error occurred",
         };
       }
     } catch (error) {
@@ -88,7 +90,9 @@ export function createPublicAction<T, R>(
         return {
           success: false,
           error:
-            error instanceof Error ? error.message : "An unexpected error occurred",
+            error instanceof Error
+              ? error.message
+              : "An unexpected error occurred",
         };
       }
     } catch (error) {

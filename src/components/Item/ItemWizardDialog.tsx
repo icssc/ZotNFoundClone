@@ -11,12 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  useActionState,
-  startTransition,
-  useEffect,
-  useRef,
-} from "react";
+import { useActionState, startTransition, useEffect, useRef } from "react";
 import { Step1BasicInfo } from "./Wizard/Steps/Step1BasicInfo";
 import { Step2ItemType } from "./Wizard/Steps/Step2ItemType";
 import { Step3DateSelection } from "./Wizard/Steps/Step3DateSelection";
@@ -70,8 +65,11 @@ export function ItemWizardDialog({
 }: ItemWizardDialogProps) {
   // Guard: if in edit mode without item, render nothing
   const isEditing = mode === "edit";
-  
-  const { formState, updateField, nextStep, prevStep, reset } = useItemWizard(mode, item);
+
+  const { formState, updateField, nextStep, prevStep, reset } = useItemWizard(
+    mode,
+    item
+  );
 
   const [actionState, formAction, isPending] = useActionState(
     async (state: ActionState, payload: FormData) => {
@@ -103,7 +101,9 @@ export function ItemWizardDialog({
   useEffect(() => {
     if (actionState.success && prevIsPendingRef.current && !isPending) {
       // Success transition
-      toast.success(isEditing ? "Item updated successfully" : "Item created successfully");
+      toast.success(
+        isEditing ? "Item updated successfully" : "Item created successfully"
+      );
       onOpenChange(false);
       reset();
 
@@ -115,8 +115,13 @@ export function ItemWizardDialog({
         // Refresh to reflect edits
         window.location.reload();
       }
-    } else if (!actionState.success && actionState.error && prevIsPendingRef.current && !isPending) {
-        toast.error(actionState.error);
+    } else if (
+      !actionState.success &&
+      actionState.error &&
+      prevIsPendingRef.current &&
+      !isPending
+    ) {
+      toast.error(actionState.error);
     }
     prevIsPendingRef.current = isPending;
   }, [
@@ -128,7 +133,7 @@ export function ItemWizardDialog({
     mode,
     item,
     onCompleted,
-    reset
+    reset,
   ]);
 
   const isStepValid = (): boolean => {

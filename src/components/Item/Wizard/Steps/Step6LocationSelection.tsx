@@ -3,10 +3,9 @@ import { Label } from "@/components/ui/label";
 import { LocationFormData } from "@/lib/types";
 import dynamic from "next/dynamic";
 
-const LocationMap = dynamic(
-  () => import("../components/LocationMap"),
-  { ssr: false }
-);
+const LocationMap = dynamic(() => import("../components/LocationMap"), {
+  ssr: false,
+});
 
 interface Step6Props {
   formData: LocationFormData;

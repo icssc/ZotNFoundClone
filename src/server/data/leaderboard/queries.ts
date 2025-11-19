@@ -4,9 +4,7 @@ import { ActionState } from "@/lib/types";
 import { Leaderboard, leaderboard } from "@/db/schema";
 import { desc } from "drizzle-orm";
 
-export async function getLeaderboard(): Promise<
-  ActionState<Leaderboard[]>
-> {
+export async function getLeaderboard(): Promise<ActionState<Leaderboard[]>> {
   try {
     const result = await db
       .select()

@@ -62,7 +62,10 @@ const createItemHandler = createAction(
       email: userEmail,
     };
 
-    const [newItem] = await db.insert(items).values(itemData).returning({ id: items.id });
+    const [newItem] = await db
+      .insert(items)
+      .values(itemData)
+      .returning({ id: items.id });
     revalidatePath("/");
     return newItem;
   }

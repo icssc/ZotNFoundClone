@@ -16,7 +16,10 @@ interface LocationMapProps {
   ) => void;
 }
 
-export default function LocationMap({ formData, updateField }: LocationMapProps) {
+export default function LocationMap({
+  formData,
+  updateField,
+}: LocationMapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
   const mapRef = useRef<LeafletMap | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);

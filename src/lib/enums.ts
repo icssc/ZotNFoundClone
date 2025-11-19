@@ -88,7 +88,6 @@ export function getItemStatusMetaFromItem(
   return getItemStatusMeta(getItemSemanticStatus(item));
 }
 
-
 export function toggleHelped(
   item: Pick<Item, "isLost" | "isHelped" | "isResolved">
 ): { isHelped: boolean; isResolved: boolean } {
