@@ -3,35 +3,41 @@
 import { db } from "@/db";
 import { searches, Search } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { ActionResult, isError, KeywordSubscription } from "@/lib/types";
+import { createAction } from "@/server/actions/wrapper";
 import { findEmailsSubscribedToKeyword } from "@/server/actions/search/lookup/action";
+import { z } from "zod";
 
-export async function removeKeywordSubscription(
-  subscription: KeywordSubscription
-): Promise<ActionResult<Search>> {
-  const { keyword, email } = subscription;
-  const lookup = await findEmailsSubscribedToKeyword(keyword);
+const keywordSubscriptionSchema = z.object({
+  keyword: z.string().min(1, "Keyword is required"),
+  email: z.string().email("Invalid email address"),
+});
 
-  if (isError(lookup)) {
-    return { error: `Error fetching emails for keyword: ${lookup.error}` };
-  }
+export const removeKeywordSubscription = createAction(
+  keywordSubscriptionSchema,
+  async (data) => {
+    const { keyword, email } = data;
+    const lookup = await findEmailsSubscribedToKeyword(keyword);
 
-  const existingEmails = lookup.data.emails || [];
-  if (!existingEmails.includes(email)) {
-    return { error: "Email was not subscribed to this keyword." };
-  }
+    if (!lookup.success) {
+      if (lookup.error === "Keyword not found") {
+        throw new Error("Email was not subscribed to this keyword.");
+      }
+      throw new Error(`Error fetching emails for keyword: ${lookup.error}`);
+    }
 
-  const updatedEmails = existingEmails.filter((e) => e !== email);
+    const existingEmails = lookup.data?.emails || [];
+    if (!existingEmails.includes(email)) {
+      throw new Error("Email was not subscribed to this keyword.");
+    }
 
-  try {
+    const updatedEmails = existingEmails.filter((e) => e !== email);
+
     const [result] = await db
       .update(searches)
       .set({ emails: updatedEmails })
       .where(eq(searches.keyword, keyword))
       .returning();
 
-    return { data: result };
-  } catch (error) {
-    return { error: `Error removing subscription for keyword: ${error}` };
+    return result;
   }
-}
+);

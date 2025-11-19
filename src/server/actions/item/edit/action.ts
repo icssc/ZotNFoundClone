@@ -1,17 +1,19 @@
 "use server";
 
 import { db } from "@/db";
-import { items, NewItem } from "@/db/schema";
+import { items } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import uploadImageToS3 from "@/server/actions/item/upload/action";
+import { eq } from "drizzle-orm";
 import { createAction, ActionState } from "@/server/actions/wrapper";
 
 import { Item } from "@/db/schema";
 
-export type CreateItemState = ActionState<Pick<Item, "id">>;
+export type EditItemState = ActionState<Pick<Item, "id">>;
 
-const createItemSchema = z.object({
+const editItemSchema = z.object({
+  id: z.number(),
   name: z.string().min(1, "Item name is required").max(100, "Name is too long"),
   description: z
     .string()
@@ -28,27 +30,56 @@ const createItemSchema = z.object({
   location: z
     .array(z.string())
     .length(2, "Location must have exactly 2 coordinates"),
-  file: z.instanceof(File, { message: "Image is required" }),
+  file: z.instanceof(File).optional(),
+  keepExistingImage: z.boolean().optional(),
 });
 
-const createItemHandler = createAction(
-  createItemSchema,
-  async (data, session) => {
-    const { name, description, type, date, isLost, file, location } = data;
-    const userEmail = session.user.email;
+const editItemHandler = createAction(editItemSchema, async (data, session) => {
+  const {
+    id,
+    name,
+    description,
+    type,
+    date,
+    isLost,
+    file,
+    location,
+    keepExistingImage,
+  } = data;
+  const userEmail = session.user.email;
 
-    let imageUrl = "";
+  // Verify ownership
+  const [existingItem] = await db
+    .select()
+    .from(items)
+    .where(eq(items.id, id))
+    .limit(1);
+
+  if (!existingItem) {
+    throw new Error("Item not found.");
+  }
+
+  if (existingItem.email !== userEmail) {
+    throw new Error("You can only edit your own items.");
+  }
+
+  let imageUrl = existingItem.image;
+
+  // Only upload new image if file is provided and we're not keeping existing
+  if (file && !keepExistingImage && file.size > 0) {
     const uploadResult = await uploadImageToS3(file);
     if (uploadResult.success) {
       imageUrl = uploadResult.data;
     } else {
       console.error("Error uploading image:", uploadResult.error);
-      // Should we fail if upload fails? User said "cannot be undefined", implies strictness.
-      // But previous code logged error. Let's stick to previous behavior but maybe throw if critical?
-      // For now, just log.
+      throw new Error("Failed to upload image. Please try again.");
     }
+  }
 
-    const itemData: NewItem = {
+  // Update the item
+  const [updatedItem] = await db
+    .update(items)
+    .set({
       name,
       description,
       type,
@@ -57,22 +88,20 @@ const createItemHandler = createAction(
       image: imageUrl,
       isLost,
       location,
-      isResolved: false,
-      isHelped: false,
-      email: userEmail,
-    };
+    })
+    .where(eq(items.id, id))
+    .returning({ id: items.id });
 
-    const [newItem] = await db.insert(items).values(itemData).returning({ id: items.id });
-    revalidatePath("/");
-    return newItem;
-  }
-);
+  revalidatePath("/");
+  return updatedItem;
+});
 
-export async function createItem(
-  prevState: CreateItemState,
+export async function editItem(
+  prevState: EditItemState,
   formData: FormData
-): Promise<CreateItemState> {
+): Promise<EditItemState> {
   const rawData = {
+    id: parseInt(formData.get("id") as string),
     name: formData.get("name"),
     description: formData.get("description"),
     type: formData.get("type"),
@@ -80,7 +109,8 @@ export async function createItem(
     isLost: formData.get("isLost") === "true",
     location: JSON.parse((formData.get("location") as string) || "[]"),
     file: formData.get("file") || undefined,
+    keepExistingImage: formData.get("keepExistingImage") === "true",
   };
 
-  return createItemHandler(rawData);
+  return editItemHandler(rawData);
 }

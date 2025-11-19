@@ -1,8 +1,9 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item as ItemType } from "@/db/schema";
 import Image from "next/image";
+import { trackItemViewed } from "@/lib/analytics";
+import { getStatusClasses, formatStatusLabel } from "@/lib/enums";
 
 function isValidUrl(string: string) {
   try {
@@ -26,9 +27,23 @@ export default function Item({
   if (!item) {
     return;
   }
+
+  const { tintClass: statusTintClass, textClass: statusTextColor } =
+    getStatusClasses(item);
+  const statusLabel = formatStatusLabel(item);
+
+  const handleClick = () => {
+    trackItemViewed({
+      itemId: String(item.id),
+      itemType: item.type || "unknown",
+      isLost: islostObject,
+    });
+    onClick();
+  };
+
   return (
     <div
-      onClick={onClick}
+      onClick={handleClick}
       className="flex flex-col overflow-hidden border-b border-white/20 cursor-pointer bg-black hover:bg-white/5 rounded-md transition-all duration-300 hover:shadow-lg hover:scale-[1.015] animate-in fade-in slide-in-from-bottom-1 my-3"
     >
       <div className="relative h-48 w-full overflow-hidden">
@@ -49,14 +64,17 @@ export default function Item({
           quality="75"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent" />
+        <div
+          className={`absolute -bottom-2 -left-2 w-28 h-28 rounded-tr-full opacity-70 mix-blend-screen pointer-events-none ${statusTintClass}`}
+        />
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <div className="flex flex-row justify-between items-end gap-2">
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-white truncate text-lg">
                 {item.name}
               </p>
-              <p className="text-sm text-gray-300 truncate">
-                {islostObject ? "Lost" : "Found"}
+              <p className={`text-sm truncate ${statusTextColor}`}>
+                {statusLabel}
               </p>
             </div>
             <div className="shrink-0">

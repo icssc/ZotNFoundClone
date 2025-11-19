@@ -1,11 +1,11 @@
 import ItemDisplayList from "@/components/Item/ItemDisplayList";
 import { LazyMap } from "@/components/Map/LazyMap";
 import { getAllItems } from "@/server/data/item/queries";
-import { isError } from "@/lib/types";
-async function AuthenticatedContent() {
+
+export default async function Home() {
   const itemsResult = await getAllItems();
 
-  if (isError(itemsResult)) {
+  if (itemsResult.error || !itemsResult.data) {
     return (
       <div className="flex h-full items-center justify-center">
         <p>Error loading items: {itemsResult.error}</p>
@@ -74,8 +74,4 @@ async function AuthenticatedContent() {
       </main>
     </div>
   );
-}
-
-export default async function Home() {
-  return <AuthenticatedContent />;
 }

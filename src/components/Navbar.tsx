@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { InfoIcon, UserIcon, BellIcon } from "lucide-react";
-
+import { InfoIcon, UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookmarkModal } from "@/components/BookmarkModal";
 import Image from "next/image";
@@ -10,6 +9,7 @@ import { SearchBar } from "./SearchBar";
 import { useSharedContext } from "./ContextProvider";
 import { Instrument_Serif } from "next/font/google";
 import { handleSignIn } from "@/lib/auth-client";
+import { trackNavigationToAbout, trackNavigationToHome } from "@/lib/analytics";
 
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument",
@@ -44,6 +44,7 @@ export default function Navbar() {
           />
           <Link
             href="/"
+            onClick={() => trackNavigationToHome()}
             className={`text-2xl w-full md:text-4xl font-extrabold tracking-tight ${instrumentSerif.className}`}
           >
             ZotNFound
@@ -53,17 +54,11 @@ export default function Navbar() {
           <div className="flex items-center gap-3 md:hidden ml-3">
             <Link
               href="/about"
+              onClick={() => trackNavigationToAbout()}
               className="p-1 rounded hover:text-gray-300"
               aria-label="About"
             >
               <InfoIcon className="h-5 w-5" />
-            </Link>
-            <Link
-              href="/updates"
-              className="p-1 rounded hover:text-gray-300"
-              aria-label="Updates"
-            >
-              <BellIcon className="h-5 w-5" />
             </Link>
             <BookmarkModal />
           </div>
@@ -76,17 +71,11 @@ export default function Navbar() {
         <div className="hidden md:flex items-center space-x-6">
           <Link
             href="/about"
+            onClick={() => trackNavigationToAbout()}
             className="hover:text-gray-300 flex items-center gap-1"
           >
             <InfoIcon className="h-4 w-4" />
             <span>About</span>
-          </Link>
-          <Link
-            href="/updates"
-            className="hover:text-gray-300 flex items-center gap-1"
-          >
-            <BellIcon className="h-4 w-4" />
-            <span>Updates</span>
           </Link>
           <BookmarkModal />
           {user ? (

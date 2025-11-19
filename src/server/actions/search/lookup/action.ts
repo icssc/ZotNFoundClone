@@ -3,12 +3,12 @@
 import { db } from "@/db";
 import { searches } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { ActionResult } from "@/lib/types";
+import { createAction } from "@/server/actions/wrapper";
+import { z } from "zod";
 
-export async function findEmailsSubscribedToKeyword(
-  keyword: string
-): Promise<ActionResult<{ emails: string[] | null }>> {
-  try {
+export const findEmailsSubscribedToKeyword = createAction(
+  z.string(),
+  async (keyword: string) => {
     const [emailsSubscribedToKeyword] = await db.query.searches.findMany({
       columns: {
         emails: true,
@@ -16,12 +16,12 @@ export async function findEmailsSubscribedToKeyword(
       where: eq(searches.keyword, keyword),
     });
     if (!emailsSubscribedToKeyword) {
-      return { error: "Keyword not found." };
+      // Return null or empty object if not found, or throw error?
+      // Previous implementation returned error "Keyword not found."
+      // But maybe we want to return null data?
+      // Let's throw to return error in ActionState
+      throw new Error("Keyword not found.");
     }
-    return { data: emailsSubscribedToKeyword };
-  } catch (error) {
-    return {
-      error: `Error fetching emails subscribed to keyword: ${error}`,
-    };
+    return { emails: emailsSubscribedToKeyword.emails };
   }
-}
+);

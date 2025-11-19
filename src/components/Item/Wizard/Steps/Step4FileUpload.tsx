@@ -3,6 +3,11 @@ import { Input } from "@/components/ui/input";
 import { LocationFormData } from "@/lib/types";
 import imageCompression from "browser-image-compression";
 import React from "react";
+import {
+  trackFileUploadStarted,
+  trackFileUploadCompleted,
+  trackFileUploadFailed,
+} from "@/lib/analytics";
 
 interface Step4Props {
   updateField: <K extends keyof LocationFormData>(
@@ -15,6 +20,7 @@ export function Step4FileUpload({ updateField }: Step4Props) {
   const compressImage = async (file: File | null) => {
     if (!file) return null;
     try {
+      trackFileUploadStarted();
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1920,
@@ -23,9 +29,13 @@ export function Step4FileUpload({ updateField }: Step4Props) {
         preserveExif: false,
       } as const;
       const compressed = await imageCompression(file, options);
+      trackFileUploadCompleted(compressed.size, compressed.type);
       return compressed;
-    } catch {
+    } catch (error) {
       // On failure, fall back to original file
+      trackFileUploadFailed(
+        error instanceof Error ? error.message : "Compression failed"
+      );
       return file;
     }
   };

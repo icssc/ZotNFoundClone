@@ -3,25 +3,37 @@
 import { db } from "@/db";
 import { searches, Search } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { ActionResult, isError, KeywordSubscription } from "@/lib/types";
+import { createAction } from "@/server/actions/wrapper";
 import { findEmailsSubscribedToKeyword } from "@/server/actions/search/lookup/action";
+import { z } from "zod";
 
-export async function createKeywordSubscription(
-  subscription: KeywordSubscription
-): Promise<ActionResult<Search>> {
-  const { keyword, email } = subscription;
-  const lookup = await findEmailsSubscribedToKeyword(keyword);
+const keywordSubscriptionSchema = z.object({
+  keyword: z.string().min(1, "Keyword is required"),
+  email: z.string().email("Invalid email address"),
+});
 
-  if (isError(lookup)) {
-    return { error: `Error fetching emails for keyword: ${lookup.error}` };
-  }
+export const createKeywordSubscription = createAction(
+  keywordSubscriptionSchema,
+  async (data) => {
+    const { keyword, email } = data;
+    const lookup = await findEmailsSubscribedToKeyword(keyword);
 
-  const existingEmails = lookup.data.emails || [];
-  if (existingEmails.includes(email)) {
-    return { error: "You are already subscribed to this keyword." };
-  }
+    let existingEmails: string[] = [];
 
-  try {
+    if (!lookup.success) {
+      if (lookup.error === "Keyword not found") {
+        existingEmails = [];
+      } else {
+        throw new Error(`Error fetching emails for keyword: ${lookup.error}`);
+      }
+    } else {
+      existingEmails = lookup.data?.emails || [];
+    }
+
+    if (existingEmails.includes(email)) {
+      throw new Error("You are already subscribed to this keyword.");
+    }
+
     const query =
       existingEmails.length > 0
         ? db
@@ -35,12 +47,6 @@ export async function createKeywordSubscription(
             .returning();
 
     const [result] = await query;
-    return { data: result };
-  } catch (error) {
-    return {
-      error: existingEmails.length
-        ? `Error updating subscriptions for keyword: ${error}`
-        : `Error creating new keyword subscription: ${error}`,
-    };
+    return result;
   }
-}
+);

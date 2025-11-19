@@ -24,16 +24,6 @@ export interface DisplayObjects {
   location: PointTuple;
 }
 
-export interface ItemUpdateParams {
-  itemId: number;
-  isHelped: boolean;
-  isResolved: boolean;
-}
-
-export interface ItemDeleteParams {
-  itemId: number;
-}
-
 // Type guards
 export function isLostObject(object: Item) {
   return object.isLost;
@@ -53,13 +43,12 @@ export interface KeywordSubscription {
   email: string;
 }
 
-export type ActionResult<T> = { data: T } | { error: string };
-
-export function isError<T>(
-  result: ActionResult<T>
-): result is { error: string } {
-  return "error" in result;
-}
+export type ActionState<T = void> = {
+  success?: boolean;
+  error?: string;
+  errors?: Record<string, string[]>;
+  data?: T;
+};
 
 export interface LocationFormData {
   name: string;
