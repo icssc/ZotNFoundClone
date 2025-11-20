@@ -287,16 +287,15 @@ export function ItemWizardDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn(
-          "bg-black/95 border-white/20 text-white sm:mx-4 overflow-hidden transition-all duration-300 ease-in-out",
-          formState.currentStep >= 5 ? "max-w-fit!" : "md:max-w-xl"
-        )}
+        className={
+          "bg-black/80 backdrop-blur-xl border-white/10 text-white w-[95vw] sm:w-full sm:mx-4 overflow-hidden transition-all duration-300 ease-in-out shadow-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6"
+        }
       >
         <DialogHeader className="pb-2 sm:pb-4">
-          <DialogTitle className="text-white text-lg sm:text-xl">
+          <DialogTitle className="text-white text-base sm:text-xl font-bold tracking-tight">
             {title}
           </DialogTitle>
-          <DialogDescription className="text-slate-300">
+          <DialogDescription className="text-slate-400 text-xs sm:text-sm">
             {description}
           </DialogDescription>
         </DialogHeader>

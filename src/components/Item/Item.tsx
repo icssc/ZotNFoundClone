@@ -25,7 +25,7 @@ export default function Item({
 }) {
   const islostObject = isLostObject(item);
   if (!item) {
-    return;
+    return null;
   }
 
   const { tintClass: statusTintClass, textClass: statusTextColor } =
@@ -44,9 +44,10 @@ export default function Item({
   return (
     <div
       onClick={handleClick}
-      className="flex flex-col overflow-hidden border-b border-white/20 cursor-pointer bg-black hover:bg-white/5 rounded-md transition-all duration-300 hover:shadow-lg hover:scale-[1.015] animate-in fade-in slide-in-from-bottom-1 my-3"
+      className="group relative flex flex-col overflow-hidden border border-white/5 bg-black/40 hover:bg-white/5 rounded-xl transition-all duration-300 hover:shadow-2xl hover:shadow-black/50 hover:scale-[1.02] cursor-pointer backdrop-blur-md"
     >
-      <div className="relative h-48 w-full overflow-hidden">
+      {/* Image Section */}
+      <div className="relative h-52 w-full overflow-hidden">
         <Image
           src={
             item.image && isValidUrl(item.image)
@@ -55,13 +56,14 @@ export default function Item({
           }
           alt={item.name || "Item Image"}
           fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 55vw, 45vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           style={{ objectFit: "cover" }}
           loading="lazy"
           preload={false}
           fetchPriority="low"
           priority={false}
           quality="75"
+          className="transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent" />
         <div
@@ -85,8 +87,10 @@ export default function Item({
           </div>
         </div>
       </div>
+
+      {/* Description & Action */}
       <div className="p-4">
-        <p className="text-sm text-gray-400 line-clamp-2 overflow-hidden text-ellipsis mb-3">
+        <p className="text-sm text-gray-400 max-h-10 leading-relaxed">
           {item.description}
         </p>
         <div className="flex flex-row justify-end">
@@ -94,7 +98,7 @@ export default function Item({
             onClick={() => {
               setOpen(true);
             }}
-            className="transition-all duration-200"
+            className="transition-all duration-200 bg-white/5 hover:bg-white/10 text-white"
           >
             {islostObject ? "I Found This" : "This Is Mine"}
           </Button>

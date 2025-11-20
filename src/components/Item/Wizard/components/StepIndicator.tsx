@@ -26,32 +26,48 @@ export function StepIndicator({ currentStep, mode }: StepIndicatorProps) {
         ];
 
   return (
-    <div className="w-full bg-black/95 border border-white/20 p-2 sm:p-3 rounded-md">
-      <div className="flex items-center justify-around w-full space-x-1 sm:space-x-4 min-w-max">
-        {steps.map((step) => (
-          <div className="flex items-center" key={step.number}>
-            <div className="flex flex-col items-center z-10 relative">
+    <div className="w-full py-2 sm:py-4 px-1 sm:px-2">
+      <div className="relative flex items-center justify-between w-full max-w-3xl mx-auto">
+        {/* Progress Line Background */}
+        <div className="absolute top-3 sm:top-4 left-0 w-full h-0.5 bg-white/10 -z-10 rounded-full" />
+        
+        {/* Active Progress Line */}
+        <div 
+          className="absolute top-3 sm:top-4 left-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 -z-10 transition-all duration-500 ease-out rounded-full"
+          style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
+        />
+
+        {steps.map((step) => {
+          const isActive = currentStep >= step.number;
+          const isCurrent = currentStep === step.number;
+          
+          return (
+            <div className="flex flex-col items-center group" key={step.number}>
               <div
-                className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full text-black text-xs sm:text-sm
+                className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 border-2 
                   ${
-                    currentStep === step.number
-                      ? "border-2 border-white text-white"
-                      : currentStep > step.number
-                        ? "bg-white text-black"
-                        : "bg-white/10 text-white"
-                  } mb-1`}
+                    isActive
+                      ? "bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.3)] scale-110"
+                      : "bg-black text-gray-500 border-white/10 group-hover:border-white/30"
+                  }
+                  ${isCurrent ? "ring-2 sm:ring-4 ring-white/10 scale-125" : ""}
+                `}
               >
-                {currentStep > step.number ? "✓" : step.number}
+                {currentStep > step.number ? (
+                  <span className="text-indigo-600">✓</span>
+                ) : (
+                  step.number
+                )}
               </div>
-              <div className="text-xs sm:text-xs text-white font-medium text-center">
+              
+              <div className={`mt-1 sm:mt-2 text-[8px] sm:text-[10px] md:text-xs font-medium tracking-wide uppercase transition-colors duration-300 ${
+                isActive ? "text-white" : "text-gray-600"
+              }`}>
                 {step.label}
               </div>
-              <div className="text-xs sm:text-xs text-gray-400 text-center hidden sm:block">
-                {step.sublabel}
-              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ export default async function Home() {
 
   if (itemsResult.error || !itemsResult.data) {
     return (
-      <div className="flex h-full items-center justify-center">
+      <div className="flex h-full items-center justify-center text-red-400">
         <p>Error loading items: {itemsResult.error}</p>
       </div>
     );

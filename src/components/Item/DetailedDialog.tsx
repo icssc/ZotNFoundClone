@@ -18,6 +18,7 @@ import { deleteItem } from "@/server/actions/item/delete/action";
 import { updateItem } from "@/server/actions/item/update/action";
 import { useRouter } from "next/navigation";
 import { handleSignIn } from "@/lib/auth-client";
+import { formatLocationDisplay } from "@/lib/types";
 import {
   trackItemContactAttempt,
   trackItemContactSuccess,
@@ -233,7 +234,7 @@ function DetailedDialog({ item }: { item: Item }) {
           });
           toast.success("Item marked as helped!");
         } else {
-          toast.success("Item marked as unhelp.");
+          toast.success("Item marked as unhelped.");
         }
         router.refresh();
       }
@@ -246,70 +247,79 @@ function DetailedDialog({ item }: { item: Item }) {
 
   return (
     <>
-      <DialogContent className="w-[calc(100%-2rem)] max-w-md bg-black/95 border-white/20 text-white p-0 pb-3 flex flex-col max-h-[calc(100vh-4rem)] overflow-y-auto">
-        {/* Image */}
-        <div className="pt-10 px-4 sm:px-6">
-          <div className="relative w-full h-56 sm:h-72 overflow-hidden rounded-md bg-white/10 border border-white/20 backdrop-blur-sm">
-            <Image
-              src={
-                z.url().safeParse(item.image).success
-                  ? item.image
-                  : "/placeholder.jpg"
-              }
-              alt={item.name || "Item Image"}
-              fill
-              sizes="(max-width: 640px) 100vw, 448px"
-              style={{ objectFit: "contain" }}
-              className="bg-black"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-linear-to-b from-transparent via-black/10 to-black/80 pointer-events-none" />
+      <DialogContent className="w-[95%] bg-black/50 border-white/10 text-white p-0 pb-3 flex flex-col max-h-[calc(100vh-4rem)] overflow-y-auto backdrop-blur-xl shadow-2xl animate-in-fade">
+        {/* Image Section with Gradient Overlay */}
+        <div className="relative w-full h-72 sm:h-80 shrink-0">
+          <Image
+            src={
+              z.url().safeParse(item.image).success
+                ? item.image
+                : "/dark_placeholder.jpg"
+            }
+            alt={item.name || "Item Image"}
+            fill
+            sizes="(max-width: 640px) 80vw, 448px"
+            style={{ objectFit: "cover" }}
+            className="bg-zinc-900"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/90 pointer-events-none" />
+
+          {/* Title Overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 pt-12">
+            <DialogHeader>
+              <DialogTitle className="text-white text-left font-bold text-2xl sm:text-3xl tracking-tight drop-shadow-md animate-in-slide-up">
+                {item.name}
+              </DialogTitle>
+            </DialogHeader>
           </div>
         </div>
 
-        <div className="px-4 sm:px-6">
-          <DialogHeader>
-            <div className="flex items-center gap-3 mb-2">
+        <div className="space-y-4 px-6 -mt-2 relative z-10">
+          {/* Status Badge */}
+          <div className="flex justify-start">
+            <StatusSection item={item} isLost={islostObject} />
+          </div>
+
+          {/* Info Grid */}
+          <div className="grid gap-3">
+            {/* Contact Info */}
+            <div className="flex items-center space-x-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300 group">
+              <div className="p-2 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
+                <User className="h-5 w-5 text-white/80" />
+              </div>
               <div className="flex-1 min-w-0">
-                <DialogTitle className="text-white text-left truncate text-base sm:text-lg">
-                  {item.name}
-                </DialogTitle>
+                <p className="font-medium text-white/60 text-xs uppercase tracking-wider">
+                  Contact
+                </p>
+                <p className="text-sm sm:text-base text-white font-medium truncate">
+                  {item.email}
+                </p>
               </div>
             </div>
-          </DialogHeader>
-        </div>
-        <div className="space-y-3 sm:space-y-4 px-4 sm:px-6">
-          <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
-            <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-white text-sm sm:text-base">
-                Contact
-              </p>
-              <p className="text-xs sm:text-sm text-gray-400 truncate">
-                {item.email}
-              </p>
+
+            {/* Location Info */}
+            <div className="flex items-center space-x-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300 group">
+              <div className="p-2 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
+                <MapPin className="h-5 w-5 text-white/80" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-white/60 text-xs uppercase tracking-wider">
+                  Location
+                </p>
+                <p className="text-sm sm:text-base text-white font-medium break-words">
+                  {formatLocationDisplay(item.location)}
+                </p>
+              </div>
             </div>
           </div>
 
-          <StatusSection item={item} isLost={islostObject} />
-
-          <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
-            <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-white text-sm sm:text-base">
-                Location
-              </p>
-              <p className="text-xs sm:text-sm text-gray-400 line-clamp-2">
-                {item.location || "No location provided"}
-              </p>
-            </div>
-          </div>
-
-          <div className="pt-2 p-2 sm:p-3 rounded-md bg-white/2 hover:bg-white/5">
-            <p className="font-medium text-white mb-2 text-sm sm:text-base">
+          {/* Description */}
+          <div className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300">
+            <p className="font-medium text-white/60 text-xs uppercase tracking-wider mb-2">
               Description
             </p>
-            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
+            <p className="text-sm sm:text-base text-white/90 leading-relaxed whitespace-pre-wrap">
               {item.description}
             </p>
           </div>
@@ -328,37 +338,38 @@ function DetailedDialog({ item }: { item: Item }) {
           />
 
           {isOwner && showDeleteConfirm && (
-            <div className="space-y-3 text-sm border-t border-white/20 mt-4 pt-4">
-              <p className="text-red-400 font-medium">
+            <div className="space-y-3 text-sm border-t border-white/10 mt-4 pt-4 animate-in-fade">
+              <p className="text-red-400 font-medium text-center">
                 Are you sure you want to delete this item? This action cannot be
                 undone.
               </p>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant="destructive"
-                  disabled={isDeleting}
-                  onClick={handleDelete}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  {isDeleting ? "Deleting..." : "Delete"}
-                </Button>
+              <div className="flex gap-3 justify-center">
                 <Button
                   type="button"
                   variant="ghost"
                   disabled={isDeleting}
                   onClick={() => setShowDeleteConfirm(false)}
+                  className="bg-white/5 hover:bg-white/10 text-white"
                 >
                   Cancel
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  disabled={isDeleting}
+                  onClick={handleDelete}
+                  className="bg-red-600/80 hover:bg-red-600 text-white"
+                >
+                  {isDeleting ? "Deleting..." : "Delete Item"}
                 </Button>
               </div>
             </div>
           )}
         </div>
 
-        {/* Footer */}
+        {/* Footer Actions */}
         {user && !showConfirm && !showDeleteConfirm && (
-          <div className="px-4 sm:px-6 border-t border-white/20 pt-3 mt-2">
+          <div className="px-6 pt-4 pb-2 mt-auto">
             <ActionFooter
               item={item}
               user={user}

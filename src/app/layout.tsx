@@ -25,9 +25,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${CustomFont.className} antialiased bg-neutral-950`}
+        className={`${geistSans.variable} ${CustomFont.className} antialiased bg-background`}
       >
         <Suspense fallback={null}>
           <SessionProvider>
