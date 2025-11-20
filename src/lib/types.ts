@@ -24,16 +24,6 @@ export interface DisplayObjects {
   location: PointTuple;
 }
 
-export interface ItemUpdateParams {
-  itemId: number;
-  isHelped: boolean;
-  isResolved: boolean;
-}
-
-export interface ItemDeleteParams {
-  itemId: number;
-}
-
 // Type guards
 export function isLostObject(object: Item) {
   return object.isLost;
@@ -48,18 +38,34 @@ export function stringArrayToLatLng(location: string[]): LatLngExpression {
   return [lat, lng];
 }
 
+export function formatLocationDisplay(
+  location: string[] | string | null
+): string {
+  if (!location) return "No location provided";
+
+  if (typeof location === "string") return location;
+
+  if (Array.isArray(location) && location.length === 2) {
+    const [lat, lng] = location.map(Number);
+    if (!isNaN(lat) && !isNaN(lng)) {
+      return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    }
+  }
+
+  return "Invalid location";
+}
+
 export interface KeywordSubscription {
   keyword: string;
   email: string;
 }
 
-export type ActionResult<T> = { data: T } | { error: string };
-
-export function isError<T>(
-  result: ActionResult<T>
-): result is { error: string } {
-  return "error" in result;
-}
+export type ActionState<T = void> = {
+  success?: boolean;
+  error?: string;
+  errors?: Record<string, string[]>;
+  data?: T;
+};
 
 export interface LocationFormData {
   name: string;

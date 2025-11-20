@@ -1,7 +1,7 @@
 import { Bell, BookmarkIcon, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
+import { trackBookmarksOpened } from "@/lib/analytics";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,10 @@ export function BookmarkModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="p-1 rounded cursor-pointer hover:text-gray-300 flex items-center">
+        <div
+          className="p-1 rounded cursor-pointer hover:text-gray-300 flex items-center"
+          onClick={() => trackBookmarksOpened()}
+        >
           <BookmarkIcon className="h-5 w-5" />
           <span className="hidden md:block">Bookmarks</span>
         </div>

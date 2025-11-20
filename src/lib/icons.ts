@@ -1,5 +1,6 @@
 import "leaflet.markercluster";
 import { icon, point, divIcon } from "leaflet";
+import type { MarkerCluster } from "leaflet";
 
 const resolvedIcon = icon({
   iconUrl: "/logos/resolved.png",
@@ -35,8 +36,8 @@ export const iconsMap = {
     false: resolvedIcon,
   },
 };
-// L.MarkerCluster doesn't seem to work, even though we are importing leaflet.markercluster
-export const createClusterCustomIcon = (cluster: any) => {
+
+export const createClusterCustomIcon = (cluster: MarkerCluster) => {
   const count = cluster.getChildCount();
   let size;
 

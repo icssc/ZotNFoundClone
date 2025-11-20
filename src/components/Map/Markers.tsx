@@ -2,12 +2,18 @@
 
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
-import { L, createClusterGroup, addMarkerToGroup } from "@/lib/cluster-loader";
-import { marker, type LatLngExpression, type Map as LeafletMap } from "leaflet";
+import { createClusterGroup, addMarkerToGroup } from "@/lib/cluster-loader";
+import {
+  marker,
+  type LatLngExpression,
+  type Map as LeafletMap,
+  type LayerGroup,
+} from "leaflet";
 import { Item } from "@/db/schema";
 import { filterItems } from "@/lib/utils";
 import { stringArrayToLatLng } from "@/lib/types";
 import { iconsMap, createClusterCustomIcon } from "@/lib/icons";
+import { trackMarkerClicked } from "@/lib/analytics";
 
 interface ClusterMarkersProps {
   objects: Item[];
@@ -22,7 +28,7 @@ export default function Markers({
   mapRef,
   onMarkerClick,
 }: ClusterMarkersProps) {
-  const groupRef = useRef<L.LayerGroup | null>(null);
+  const groupRef = useRef<LayerGroup | null>(null);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -46,6 +52,13 @@ export default function Markers({
       const icon = item.isLost ? iconsMap.others.true : iconsMap.others.false;
       const mkr = marker(position, { icon, title: item.name ?? "" });
       mkr.on("click", () => {
+        // Track marker click
+        trackMarkerClicked({
+          itemId: String(item.id),
+          itemType: item.type || "unknown",
+          isLost: item.isLost || false,
+        });
+
         const url = new URL(window.location.href);
         url.searchParams.set("item", item.id.toString());
         window.history.pushState({}, "", url.toString());
