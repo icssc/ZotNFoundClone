@@ -53,8 +53,12 @@ export default function ExploreCarousel() {
               />
             </div>
             <div className="text-center max-w-full">
-              <p className="text-xl font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">{item.title}</p>
-              <p className="text-sm text-gray-400 leading-relaxed">{item.description}</p>
+              <p className="text-xl font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
+                {item.title}
+              </p>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                {item.description}
+              </p>
             </div>
           </div>
         ))}

@@ -19,7 +19,7 @@ interface ItemDisplayListProps {
 function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const { setSelectedLocation, filter } = useSharedContext();
   const searchParams = useSearchParams();
-  
+
   function getSelectedItem() {
     const itemId = searchParams.get("item");
     if (!itemId) return null;
@@ -76,9 +76,12 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
             <div className="p-4 rounded-full bg-white/5 mb-4">
               <SearchX className="h-8 w-8 text-gray-400" />
             </div>
-            <h3 className="text-lg font-medium text-white mb-1">No items found</h3>
+            <h3 className="text-lg font-medium text-white mb-1">
+              No items found
+            </h3>
             <p className="text-sm text-gray-400">
-              Try adjusting your search or filters to find what you&apos;re looking for.
+              Try adjusting your search or filters to find what you&apos;re
+              looking for.
             </p>
           </div>
         )}

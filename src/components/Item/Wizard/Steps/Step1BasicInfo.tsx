@@ -15,7 +15,10 @@ export function Step1BasicInfo({ formData, updateField }: Step1Props) {
   return (
     <div className="space-y-3 sm:space-y-5">
       <div className="space-y-1.5 sm:space-y-2">
-        <Label htmlFor="name" className="text-white/90 font-medium text-xs sm:text-sm">
+        <Label
+          htmlFor="name"
+          className="text-white/90 font-medium text-xs sm:text-sm"
+        >
           🔑 Item Name
         </Label>
         <Input
@@ -27,7 +30,10 @@ export function Step1BasicInfo({ formData, updateField }: Step1Props) {
         />
       </div>
       <div className="space-y-1.5 sm:space-y-2">
-        <Label htmlFor="description" className="text-white/90 font-medium text-xs sm:text-sm">
+        <Label
+          htmlFor="description"
+          className="text-white/90 font-medium text-xs sm:text-sm"
+        >
           Description of Item:
         </Label>
         <Textarea

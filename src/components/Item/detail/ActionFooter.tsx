@@ -1,7 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Edit, CheckCircle, Trash2, Share2, Check, MessageCircle } from "lucide-react";
+import {
+  Edit,
+  CheckCircle,
+  Trash2,
+  Share2,
+  Check,
+  MessageCircle,
+} from "lucide-react";
 import type { Item } from "@/db/schema";
 
 type UserLike = {
@@ -166,4 +173,3 @@ export function ActionFooter({
 }
 
 export default ActionFooter;
-

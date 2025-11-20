@@ -12,7 +12,10 @@ type ActionHandler<T, R> = (
   session: typeof auth.$Infer.Session
 ) => Promise<R>;
 
-import { verifySession, UnauthenticatedError } from "@/server/data/user/queries";
+import {
+  verifySession,
+  UnauthenticatedError,
+} from "@/server/data/user/queries";
 
 export function createAction<T, R>(
   schema: z.ZodType<T>,

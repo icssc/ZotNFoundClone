@@ -35,8 +35,8 @@ export default function Navbar() {
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
           <div className="flex items-center space-x-3 shrink-0">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               onClick={() => trackNavigationToHome()}
               className="flex items-center gap-3 group"
             >
@@ -49,7 +49,9 @@ export default function Navbar() {
                   loading="eager"
                 />
               </div>
-              <span className={`text-2xl md:text-3xl font-bold tracking-tight text-white group-hover:text-white/90 transition-colors ${instrumentSerif.className}`}>
+              <span
+                className={`text-2xl md:text-3xl font-bold tracking-tight text-white group-hover:text-white/90 transition-colors ${instrumentSerif.className}`}
+              >
                 ZotNFound
               </span>
             </Link>
@@ -82,9 +84,9 @@ export default function Navbar() {
               <InfoIcon className="h-4 w-4" />
               <span>About</span>
             </Link>
-            
+
             <BookmarkModal />
-            
+
             {user ? (
               <Button
                 variant="ghost"
@@ -126,7 +128,7 @@ export default function Navbar() {
           <div className="flex-1">
             <SearchBar />
           </div>
-          
+
           {user ? (
             <Button
               variant="ghost"

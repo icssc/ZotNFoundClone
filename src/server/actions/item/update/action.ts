@@ -36,7 +36,7 @@ export const updateItem = createAction(
       .set({ isResolved: isResolved, isHelped: isHelped })
       .where(eq(items.id, id))
       .returning();
-    
+
     revalidatePath("/");
 
     return item;

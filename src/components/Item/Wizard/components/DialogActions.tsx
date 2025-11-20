@@ -57,15 +57,16 @@ export function DialogActions({
             Cancel
           </Button>
         )}
-        
+
         <Button
           disabled={!isStepValid || isPending}
           onClick={onContinue}
           className={`
             w-auto gap-2 transition-all duration-300
-            ${!isStepValid 
-              ? "bg-white/10 text-gray-500" 
-              : "bg-black/40 text-white hover:scale-[102%] hover:bg-white/10"
+            ${
+              !isStepValid
+                ? "bg-white/10 text-gray-500"
+                : "bg-black/40 text-white hover:scale-[102%] hover:bg-white/10"
             }
           `}
         >
@@ -77,7 +78,11 @@ export function DialogActions({
               </>
             ) : (
               <>
-                {mode === "create" ? <Send className="h-4 w-4" /> : <Save className="h-4 w-4" />}
+                {mode === "create" ? (
+                  <Send className="h-4 w-4" />
+                ) : (
+                  <Save className="h-4 w-4" />
+                )}
                 {mode === "create" ? "Submit Item" : "Save Changes"}
               </>
             )

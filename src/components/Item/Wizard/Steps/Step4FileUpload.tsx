@@ -103,7 +103,10 @@ export function Step4FileUpload({ updateField }: Step4Props) {
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      <Label htmlFor="file" className="text-white/90 font-medium text-xs sm:text-sm">
+      <Label
+        htmlFor="file"
+        className="text-white/90 font-medium text-xs sm:text-sm"
+      >
         📸 Upload an image:
       </Label>
 

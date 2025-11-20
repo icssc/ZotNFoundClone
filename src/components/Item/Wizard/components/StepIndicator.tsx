@@ -30,17 +30,19 @@ export function StepIndicator({ currentStep, mode }: StepIndicatorProps) {
       <div className="relative flex items-center justify-between w-full max-w-3xl mx-auto">
         {/* Progress Line Background */}
         <div className="absolute top-3 sm:top-4 left-0 w-full h-0.5 bg-white/10 -z-10 rounded-full" />
-        
+
         {/* Active Progress Line */}
-        <div 
+        <div
           className="absolute top-3 sm:top-4 left-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 -z-10 transition-all duration-500 ease-out rounded-full"
-          style={{ width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` }}
+          style={{
+            width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
+          }}
         />
 
         {steps.map((step) => {
           const isActive = currentStep >= step.number;
           const isCurrent = currentStep === step.number;
-          
+
           return (
             <div className="flex flex-col items-center group" key={step.number}>
               <div
@@ -59,10 +61,12 @@ export function StepIndicator({ currentStep, mode }: StepIndicatorProps) {
                   step.number
                 )}
               </div>
-              
-              <div className={`mt-1 sm:mt-2 text-[8px] sm:text-[10px] md:text-xs font-medium tracking-wide uppercase transition-colors duration-300 ${
-                isActive ? "text-white" : "text-gray-600"
-              }`}>
+
+              <div
+                className={`mt-1 sm:mt-2 text-[8px] sm:text-[10px] md:text-xs font-medium tracking-wide uppercase transition-colors duration-300 ${
+                  isActive ? "text-white" : "text-gray-600"
+                }`}
+              >
                 {step.label}
               </div>
             </div>

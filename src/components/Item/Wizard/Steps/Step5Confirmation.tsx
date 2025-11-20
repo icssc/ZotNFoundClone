@@ -35,11 +35,13 @@ export function Step5Confirmation({ formData }: Step5Props) {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
           <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3">
-            <div className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium backdrop-blur-md border border-white/10 ${
-              formData.isLost 
-                ? "bg-indigo-500/20 text-indigo-200" 
-                : "bg-emerald-500/20 text-emerald-200"
-            }`}>
+            <div
+              className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium backdrop-blur-md border border-white/10 ${
+                formData.isLost
+                  ? "bg-indigo-500/20 text-indigo-200"
+                  : "bg-emerald-500/20 text-emerald-200"
+              }`}
+            >
               {formData.isLost ? "Lost Item" : "Found Item"}
             </div>
           </div>
@@ -49,7 +51,9 @@ export function Step5Confirmation({ formData }: Step5Props) {
         <div className="space-y-3 sm:space-y-4">
           <div className="bg-white/5 rounded-xl p-3 sm:p-4 border border-white/5 space-y-3 sm:space-y-4">
             <div>
-              <h4 className="text-lg sm:text-xl font-bold text-white mb-0.5 sm:mb-1">{formData.name}</h4>
+              <h4 className="text-lg sm:text-xl font-bold text-white mb-0.5 sm:mb-1">
+                {formData.name}
+              </h4>
               <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-400">
                 <Tag className="w-3 h-3" />
                 <span className="capitalize">{formData.type}</span>
@@ -67,11 +71,11 @@ export function Step5Confirmation({ formData }: Step5Props) {
               <div className="flex items-center gap-2 sm:gap-3">
                 <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 shrink-0" />
                 <p className="text-xs sm:text-sm text-gray-300">
-                  {formData.date.toLocaleDateString(undefined, { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+                  {formData.date.toLocaleDateString(undefined, {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })}
                 </p>
               </div>

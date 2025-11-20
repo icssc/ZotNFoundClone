@@ -10,7 +10,10 @@ export default function About() {
         <AboutHeader />
         <div className="max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-2">
-            We are <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">ZotNFound</span>
+            We are{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+              ZotNFound
+            </span>
           </h1>
           <StatisticsCards />
         </div>

@@ -38,18 +38,20 @@ export function stringArrayToLatLng(location: string[]): LatLngExpression {
   return [lat, lng];
 }
 
-export function formatLocationDisplay(location: string[] | string | null): string {
+export function formatLocationDisplay(
+  location: string[] | string | null
+): string {
   if (!location) return "No location provided";
-  
+
   if (typeof location === "string") return location;
-  
+
   if (Array.isArray(location) && location.length === 2) {
     const [lat, lng] = location.map(Number);
     if (!isNaN(lat) && !isNaN(lng)) {
       return `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
     }
   }
-  
+
   return "Invalid location";
 }
 
