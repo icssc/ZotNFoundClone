@@ -97,7 +97,7 @@ const editItemHandler = createAction(editItemSchema, async (data, session) => {
 });
 
 export async function editItem(
-  prevState: EditItemState,
+  _: EditItemState,
   formData: FormData
 ): Promise<EditItemState> {
   const rawData = {

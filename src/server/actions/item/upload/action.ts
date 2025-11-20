@@ -11,7 +11,7 @@ import { z } from "zod";
 
 const uploadSchema = z.instanceof(File);
 
-export default createAction(uploadSchema, async (file, session) => {
+export default createAction(uploadSchema, async (file) => {
   const s3Client = new S3Client({});
   const type = "image/webp";
   const key = `uploads/${Date.now()}-${randomUUID()}.${type.split("/")[1]}`;

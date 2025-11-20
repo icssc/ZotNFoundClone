@@ -31,32 +31,40 @@ const createItemSchema = z.object({
   file: z.instanceof(File, { message: "Image is required" }),
 });
 
+const itemStorageSchema = createItemSchema.omit({ file: true }).extend({
+  image: z.url("Invalid image URL"),
+});
+
 const createItemHandler = createAction(
   createItemSchema,
   async (data, session) => {
     const { name, description, type, date, isLost, file, location } = data;
     const userEmail = session.user.email;
 
-    let imageUrl = "";
     const uploadResult = await uploadImageToS3(file);
-    if (uploadResult.success) {
-      imageUrl = uploadResult.data;
-    } else {
+    if (!uploadResult.success) {
       console.error("Error uploading image:", uploadResult.error);
-      // Should we fail if upload fails? User said "cannot be undefined", implies strictness.
-      // But previous code logged error. Let's stick to previous behavior but maybe throw if critical?
-      // For now, just log.
+      throw new Error("Failed to upload image. Please try again.");
     }
 
-    const itemData: NewItem = {
+    const imageUrl = uploadResult.data;
+
+    // Validate the data to be stored
+    const storageData = {
       name,
       description,
       type,
       date,
-      itemDate: date,
-      image: imageUrl,
       isLost,
       location,
+      image: imageUrl,
+    };
+
+    const validatedStorageData = itemStorageSchema.parse(storageData);
+
+    const itemData: NewItem = {
+      ...validatedStorageData,
+      itemDate: date,
       isResolved: false,
       isHelped: false,
       email: userEmail,
@@ -72,7 +80,7 @@ const createItemHandler = createAction(
 );
 
 export async function createItem(
-  prevState: CreateItemState,
+  _: CreateItemState,
   formData: FormData
 ): Promise<CreateItemState> {
   const rawData = {

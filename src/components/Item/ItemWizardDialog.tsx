@@ -18,7 +18,6 @@ import { Step3DateSelection } from "./Wizard/Steps/Step3DateSelection";
 import { Step4FileUpload } from "./Wizard/Steps/Step4FileUpload";
 import { Step5Confirmation } from "./Wizard/Steps/Step5Confirmation";
 import { Step6LocationSelection } from "./Wizard/Steps/Step6LocationSelection";
-import { LocationFormData } from "@/lib/types";
 import { formatDateYMD } from "@/lib/date";
 import {
   createItem,
@@ -39,6 +38,7 @@ import { ErrorDisplay } from "./Wizard/components/ErrorDisplay";
 import { DialogActions } from "./Wizard/components/DialogActions";
 import { useItemWizard } from "./Wizard/hooks/useItemWizard";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export type WizardMode = "create" | "edit";
 
@@ -287,9 +287,10 @@ export function ItemWizardDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={`bg-black/95 border-white/20 text-white sm:mx-4 overflow-y-auto ${
+        className={cn(
+          "bg-black/95 border-white/20 text-white sm:mx-4 overflow-hidden transition-all duration-300 ease-in-out",
           formState.currentStep >= 5 ? "max-w-fit!" : "md:max-w-xl"
-        }`}
+        )}
       >
         <DialogHeader className="pb-2 sm:pb-4">
           <DialogTitle className="text-white text-lg sm:text-xl">
@@ -304,8 +305,15 @@ export function ItemWizardDialog({
 
         <ErrorDisplay actionState={actionState} />
 
-        <div className="py-2 sm:py-4 space-y-3 sm:space-y-4">
-          <div className="w-full px-2 sm:px-4">{renderStepContent()}</div>
+        <div className="py-2 sm:py-4 space-y-3 sm:space-y-4 overflow-hidden relative">
+          <div
+            key={formState.currentStep}
+            className={cn(
+              "w-full px-2 sm:px-4 animate-in fade-in slide-in-from-right-4 duration-300 ease-out fill-mode-both"
+            )}
+          >
+            {renderStepContent()}
+          </div>
 
           <DialogActions
             currentStep={formState.currentStep}

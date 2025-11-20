@@ -12,22 +12,15 @@ type ActionHandler<T, R> = (
   session: typeof auth.$Infer.Session
 ) => Promise<R>;
 
+import { verifySession, UnauthenticatedError } from "@/server/data/user/queries";
+
 export function createAction<T, R>(
   schema: z.ZodType<T>,
   handler: ActionHandler<T, R>
 ) {
   return async (data: unknown): Promise<ActionState<R>> => {
     try {
-      const session = await auth.api.getSession({
-        headers: await headers(),
-      });
-
-      if (!session) {
-        return {
-          success: false,
-          error: "Unauthorized",
-        };
-      }
+      const session = await verifySession();
 
       const validation = schema.safeParse(data);
 
@@ -55,6 +48,12 @@ export function createAction<T, R>(
         };
       }
     } catch (error) {
+      if (error instanceof UnauthenticatedError) {
+        return {
+          success: false,
+          error: "Unauthorized",
+        };
+      }
       return {
         success: false,
         error: "Internal server error",
