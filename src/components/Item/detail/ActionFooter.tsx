@@ -159,7 +159,7 @@ export function ActionFooter({
 
         {!isOwner && user && (
           <Button
-            className="flex-1 sm:flex-none items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white border-0 h-10 px-6 rounded-xl shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-105"
+            className="flex-1 sm:flex-none items-center gap-2  bg-white/5 hover:bg-white/15 text-white border-0 h-10 px-6 rounded-xl transition-all duration-300 hover:scale-105"
             onClick={onContact}
             disabled={contactDisabled || isDeleting || isUpdating}
           >
