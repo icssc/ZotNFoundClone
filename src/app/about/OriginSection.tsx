@@ -4,7 +4,7 @@ export default function OriginSection() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 px-8 py-12 items-center justify-center max-w-6xl mx-auto bg-white/5 rounded-3xl border border-white/10 backdrop-blur-sm">
       <div className="flex-1 text-left space-y-4">
-        <h1 className="text-3xl font-bold text-white">Origin of ZotnFound</h1>
+        <h1 className="text-3xl font-bold text-white">Origin of ZotNFound</h1>
         <p className="text-gray-400 text-base leading-relaxed">
           Many people are constantly losing their belongings, whether that be
           their phones, keys, or water bottles. This is especially true for UCI
