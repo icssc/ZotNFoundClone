@@ -61,7 +61,7 @@ export default function Navbar() {
               <Link
                 href="/about"
                 onClick={() => trackNavigationToAbout()}
-                className="p-2 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-all"
+                className="p-2 rounded-full hover:bg-white/10 text-white hover:text-white transition-all"
               >
                 <InfoIcon className="h-5 w-5" />
               </Link>
@@ -79,7 +79,7 @@ export default function Navbar() {
             <Link
               href="/about"
               onClick={() => trackNavigationToAbout()}
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white hover:text-gray-400 hover:bg-white/5 transition-all"
             >
               <InfoIcon className="h-4 w-4" />
               <span>About</span>

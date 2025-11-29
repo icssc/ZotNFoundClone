@@ -17,7 +17,7 @@ export function BookmarkModal() {
     <Dialog>
       <DialogTrigger asChild>
         <div
-          className="p-1 rounded cursor-pointer hover:text-gray-300 flex items-center"
+          className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white hover:text-gray-400 hover:bg-white/5 transition-all"
           onClick={() => trackBookmarksOpened()}
         >
           <BookmarkIcon className="h-5 w-5" />

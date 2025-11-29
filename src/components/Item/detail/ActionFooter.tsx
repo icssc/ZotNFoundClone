@@ -96,7 +96,9 @@ export function ActionFooter({
               }`}
             >
               <CheckCircle className="h-4 w-4" />
-              <span>{item.isHelped ? "Mark Help Needed" : "Mark as Helped"}</span>
+              <span>
+                {item.isHelped ? "Mark Help Needed" : "Mark as Helped"}
+              </span>
             </Button>
           )}
 
