@@ -10,14 +10,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import type { Item } from "@/db/schema";
-
-type UserLike = {
-  id: string;
-  email: string;
-  name: string;
-  picture?: string | null;
-  image?: string | null;
-};
+import type { User } from "better-auth";
 
 /**
  * ActionFooter
@@ -35,7 +28,7 @@ type UserLike = {
 
 export interface ActionFooterProps {
   item: Item;
-  user: UserLike | null;
+  user: User | null;
   isLost: boolean;
   isUpdating: boolean;
   isDeleting: boolean;
@@ -103,7 +96,7 @@ export function ActionFooter({
               }`}
             >
               <CheckCircle className="h-4 w-4" />
-              <span>{item.isHelped ? "Unhelp" : "Mark as Helped"}</span>
+              <span>{item.isHelped ? "Mark Help Needed" : "Mark as Helped"}</span>
             </Button>
           )}
 

@@ -21,7 +21,12 @@ export interface StatusSectionProps {
 }
 
 export function StatusSection({ item, isLost, className }: StatusSectionProps) {
-  const statusLabel = formatStatusLabel(item);
+  let statusLabel: string;
+  if (item.isLost) {
+    statusLabel = "Lost";
+  } else {
+    statusLabel = "Found";
+  }
   const dateLabel = item.date || item.itemDate || "Unknown date";
 
   return (

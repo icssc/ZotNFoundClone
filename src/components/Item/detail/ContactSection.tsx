@@ -1,13 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Item } from "@/db/schema";
-
-type UserLike = {
-  id: string;
-  email: string;
-  name: string;
-  picture?: string | null;
-  image?: string | null;
-};
+import type { User } from "better-auth";
 import { Check, Share2 } from "lucide-react";
 
 export type ContactState = {
@@ -16,7 +8,7 @@ export type ContactState = {
 };
 
 interface ContactSectionProps {
-  user: UserLike | null;
+  user: User | null;
   copied: boolean;
   showConfirm: boolean;
   state: ContactState;

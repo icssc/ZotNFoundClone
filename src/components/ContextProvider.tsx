@@ -1,5 +1,5 @@
 "use client";
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -7,7 +7,7 @@ import React, {
   useEffect,
 } from "react";
 import type { LatLngExpression } from "leaflet";
-import { User } from "better-auth";
+import type { User } from "better-auth";
 import { authClient, signOut as clientSignOut } from "@/lib/auth-client";
 import { identifyUser } from "@/lib/analytics";
 
