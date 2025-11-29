@@ -80,7 +80,7 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
               No items found
             </h3>
             <p className="text-sm text-gray-400">
-              Try adjusting your search or filters to find what you&apos;re
+              Try adjusting your search to find what you&apos;re
               looking for.
             </p>
           </div>
