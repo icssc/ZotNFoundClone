@@ -6,8 +6,11 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import uploadImageToS3 from "@/server/actions/item/upload/action";
 import { createAction, ActionState } from "@/server/actions/wrapper";
+import { snsClient } from "@/lib/sms/client";
 
 import { Item } from "@/db/schema";
+import { Resource } from "sst/resource";
+import { PublishCommand } from "@aws-sdk/client-sns";
 
 export type CreateItemState = ActionState<Pick<Item, "id">>;
 
@@ -74,6 +77,15 @@ const createItemHandler = createAction(
       .insert(items)
       .values(itemData)
       .returning({ id: items.id });
+
+    await snsClient.send(
+      new PublishCommand({
+        TopicArn: Resource.SearchKeyword.arn,
+        Message: JSON.stringify({ name, description }),
+      })
+    );
+    console.log("SNS message published for item keywords.");
+
     revalidatePath("/");
     return newItem;
   }
