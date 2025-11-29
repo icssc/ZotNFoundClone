@@ -25,14 +25,18 @@ export const findEmailsSubscribedToKeyword = createAction(
 export const findEmailsSubscribedToKeywordsInFields = createAction(
   z.object({
     name: z.string(),
-    description: z.string()
+    description: z.string(),
   }),
   async ({ name, description }) => {
     const subscribedEmails = await db
       .select({ emails: searches.emails })
       .from(searches)
-      .where(or(sql`${name} LIKE '%' || ${searches.keyword} || '%'`,
-      sql`${description} LIKE '%' || ${searches.keyword} || '%'`));
+      .where(
+        or(
+          sql`${name} LIKE '%' || ${searches.keyword} || '%'`,
+          sql`${description} LIKE '%' || ${searches.keyword} || '%'`
+        )
+      );
 
     const allEmails = subscribedEmails.flatMap((entry) => entry.emails);
     return { emails: Array.from(new Set(allEmails)) };
