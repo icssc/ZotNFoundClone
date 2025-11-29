@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { searches, Search } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { createAction } from "@/server/actions/wrapper";
-import { findEmailsSubscribedToKeyword } from "@/server/actions/search/lookup/action";
+import { findEmailsSubscribedToKeywordsInFields } from "@/server/actions/search/lookup/action";
 import { z } from "zod";
 
 const keywordSubscriptionSchema = z.object({
@@ -16,7 +16,7 @@ export const createKeywordSubscription = createAction(
   keywordSubscriptionSchema,
   async (data) => {
     const { keyword, email } = data;
-    const lookup = await findEmailsSubscribedToKeyword(keyword);
+    const lookup = await findEmailsSubscribedToKeywordsInFields(keyword);
 
     let existingEmails: string[] = [];
 
