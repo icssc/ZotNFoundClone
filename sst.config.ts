@@ -13,8 +13,18 @@ export default $config({
     const bucket = new sst.aws.Bucket("ItemImages", {
       access: "public",
     });
+    const topic = new sst.aws.SnsTopic("SearchKeyword");
     new sst.aws.Nextjs("ZotNFound", {
-      link: [bucket],
+      link: [bucket, topic],
+    });
+    topic.subscribe("SearchKeywordSubscriber", {
+      handler: "src/server/keywords.handler",
+      permissions: [
+        {
+          actions: ["sns:Publish"],
+          resources: ["*"],
+        },
+      ],
     });
   },
 });
