@@ -6,12 +6,11 @@ export default function OriginSection() {
       <div className="flex-1 text-left space-y-4">
         <h1 className="text-3xl font-bold text-white">Origin of ZotNFound</h1>
         <p className="text-gray-400 text-base leading-relaxed">
-          Maybe something like this would work better: ZotNFound is the lost and
-          found website for UCI. We noticed the UCI subreddit was filled with
-          students looking for lost phones, keys, and water bottles, so we built
-          a better solution. We are Anteaters helping Anteaters, ensuring that
-          every lost item finds its way back home. We have so far helped over 10
-          people and gained over 300+ followers.
+          ZotNFound is the lost and found website for UCI. We noticed the UCI
+          subreddit was filled with students looking for lost phones, keys, and
+          water bottles, so we built a better solution. We are Anteaters helping
+          Anteaters, ensuring that every lost item finds its way back home. So
+          far, we have helped over 10 people and gained over 300+ followers.
         </p>
       </div>
       <div className="flex justify-center">
