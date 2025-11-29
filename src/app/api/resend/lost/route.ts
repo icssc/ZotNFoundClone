@@ -1,5 +1,5 @@
 import { sendItemLostNotification } from "@/lib/email/service";
-import { LostPayloadSchema, type LostPayload } from "@/lib/validators/email";
+import { LostPayloadSchema } from "@/lib/validators/email";
 import { NextResponse } from "next/server";
 import { treeifyError } from "zod";
 
