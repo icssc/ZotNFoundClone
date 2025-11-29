@@ -5,8 +5,6 @@ import { useSharedContext } from "@/components/ContextProvider";
 import { trackSearch } from "@/lib/analytics";
 import { useEffect, useRef } from "react";
 
-// TODO: unsure if i want to keep a useEffect here just for tracking searches
-
 export function SearchBar() {
   const { filter, setFilter } = useSharedContext();
   const previousFilterRef = useRef(filter);
