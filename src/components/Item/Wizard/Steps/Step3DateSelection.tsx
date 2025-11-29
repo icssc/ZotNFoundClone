@@ -19,7 +19,7 @@ export function Step3DateSelection({ formData, updateField }: Step3Props) {
       >
         📅 When was it {formData.isLost ? "lost" : "found"}?
       </Label>
-      <div className="w-full max-h-[45vh] sm:max-h-[55vh] overflow-auto mb-4">
+      <div className="w-full max-h-[45vh] sm:max-h-[55vh] overflow-y-auto">
         <Calendar
           mode="single"
           selected={formData.date}
