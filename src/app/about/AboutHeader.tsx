@@ -6,7 +6,7 @@ export default function AboutHeader() {
     <div className="flex flex-row place-content-end items-center">
       <Link href="/">
         <div className="flex flex-row gap-4 items-center group cursor-pointer">
-          <h1 className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">
+          <h1 className="text-2xl font-bold text-white group-hover:text-green-300 transition-colors duration-300">
             ZotNFound
           </h1>
           <Image
