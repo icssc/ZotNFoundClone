@@ -81,7 +81,11 @@ export default function Item({
             </div>
             <div className="shrink-0">
               <p className="text-sm text-gray-300 truncate whitespace-nowrap">
-                {item.date}
+                {new Date(item.date).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
               </p>
             </div>
           </div>
@@ -90,7 +94,7 @@ export default function Item({
 
       {/* Description & Action */}
       <div className="p-4">
-        <p className="text-sm text-gray-400 max-h-10 leading-relaxed">
+        <p className="text-sm truncate text-gray-400 max-h-10 leading-relaxed">
           {item.description}
         </p>
         <div className="flex flex-row justify-end">
