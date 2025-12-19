@@ -1,13 +1,13 @@
 "use client";
 
-import { Bell, BookmarkIcon, Search, UserIcon, Plus, X } from "lucide-react";
+import { BookmarkIcon, Search, UserIcon, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { useSharedContext } from "./ContextProvider";
 import { signInWithGoogle } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { getUserKeywords } from "@/server/actions/search/get-user-keywords/action";
 import { addKeyword } from "@/server/actions/search/add-keyword/action";
 import { removeKeyword } from "@/server/actions/search/remove-keyword/action";
@@ -32,19 +32,6 @@ export function BookmarkModal() {
   const [removingKeywords, setRemovingKeywords] = useState<Set<string>>(
     new Set()
   );
-
-  const fetchKeywords = async () => {
-    if (!user?.email) return;
-    setIsLoading(true);
-    const result = await getUserKeywords();
-    if (isError(result)) {
-      toast.error(result.error);
-      setKeywords([]);
-    } else {
-      setKeywords(result.data);
-    }
-    setIsLoading(false);
-  };
 
   useEffect(() => {
     if (!user?.email) return;
