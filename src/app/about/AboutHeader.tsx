@@ -5,8 +5,10 @@ export default function AboutHeader() {
   return (
     <div className="flex flex-row place-content-end items-center">
       <Link href="/">
-        <div className="flex flex-row gap-4 items-center">
-          <h1 className="text-2xl font-bold">ZotNFound</h1>
+        <div className="flex flex-row gap-4 items-center group cursor-pointer">
+          <h1 className="text-2xl font-bold text-white group-hover:text-green-300 transition-colors duration-300">
+            ZotNFound
+          </h1>
           <Image
             src="/ZotNFound_Small_Logo.png"
             alt="ZotNFound Logo"

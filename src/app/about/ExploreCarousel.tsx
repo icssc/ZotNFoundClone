@@ -33,27 +33,32 @@ const carousel: CarouselItem[] = [
 
 export default function ExploreCarousel() {
   return (
-    <div className="max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold text-center mb-6">
-        Explore how ZotnFound works
+    <div className="max-w-7xl mx-auto py-12">
+      <h1 className="text-2xl md:text-3xl font-bold text-center mb-10 text-white">
+        Explore how ZotNFound works
       </h1>
-      <div className="flex flex-wrap justify-center gap-6">
+      <div className="flex flex-wrap justify-center gap-8">
         {carousel.map((item, idx) => (
           <div
             key={idx}
-            className="flex-1 min-w-[300px] max-w-[350px] px-4 py-4 rounded-md shadow-lg transition-transform duration-300 hover:scale-105 bg-white flex flex-col items-center" //added min and max widths to fix centering issue on medium screens
+            className="flex-1 min-w-[300px] max-w-[350px] px-6 py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/10 bg-white/5 border border-white/10 backdrop-blur-sm flex flex-col items-center group"
           >
-            <Image
-              src={item.image}
-              width={0}
-              height={0}
-              sizes="100vw"
-              className="w-full h-auto rounded-md"
-              alt={item.alt}
-            />
-            <div className="text-center max-w-full mt-2">
-              <p className="text-lg font-semibold">{item.title}</p>
-              <p className="text-md mt-1">{item.description}</p>
+            <div className="relative w-full aspect-video mb-6 overflow-hidden rounded-lg border border-white/5">
+              <Image
+                src={item.image}
+                fill
+                sizes="(max-width: 768px) 100vw, 350px"
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                alt={item.alt}
+              />
+            </div>
+            <div className="text-center max-w-full">
+              <p className="text-xl font-semibold text-white mb-2 group-hover:text-green-400 transition-colors">
+                {item.title}
+              </p>
+              <p className="text-sm text-gray-400 leading-relaxed">
+                {item.description}
+              </p>
             </div>
           </div>
         ))}

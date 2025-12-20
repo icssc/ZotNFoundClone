@@ -1,18 +1,14 @@
 "use client";
+
 import { useEffect, useRef } from "react";
-import L, {
-  map as createMap,
-  tileLayer,
-  type Map as LeafletMap,
-  type Marker as LeafletMarker,
-} from "leaflet";
+import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
+import { Map as createMap, tileLayer, marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Label } from "@/components/ui/label";
 import { LocationFormData } from "@/lib/types";
 import { centerPosition, mapBounds } from "@/lib/constants";
 import { iconsMap } from "@/lib/icons";
 
-interface Step6Props {
+interface LocationMapProps {
   formData: LocationFormData;
   updateField: <K extends keyof LocationFormData>(
     field: K,
@@ -20,7 +16,10 @@ interface Step6Props {
   ) => void;
 }
 
-export function Step6LocationSelection({ formData, updateField }: Step6Props) {
+export default function LocationMap({
+  formData,
+  updateField,
+}: LocationMapProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
   const mapRef = useRef<LeafletMap | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +27,7 @@ export function Step6LocationSelection({ formData, updateField }: Step6Props) {
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
-    const map = createMap(containerRef.current, {
+    const map = new createMap(containerRef.current, {
       center: centerPosition as [number, number],
       zoom: 17,
       minZoom: 12,
@@ -40,8 +39,8 @@ export function Step6LocationSelection({ formData, updateField }: Step6Props) {
     mapRef.current = map;
     tileLayer(accessToken).addTo(map);
     map.fitBounds(mapBounds);
-    map.on("click", (e) => {
-      updateField("location", [e.latlng.lat, e.latlng.lng]);
+    map.on("click", (event) => {
+      updateField("location", [event.latlng.lat, event.latlng.lng]);
     });
     return () => {
       map.remove();
@@ -62,7 +61,7 @@ export function Step6LocationSelection({ formData, updateField }: Step6Props) {
     }
     const icon = formData.isLost ? iconsMap.others.true : iconsMap.others.false;
     if (!markerRef.current) {
-      markerRef.current = L.marker(formData.location as [number, number], {
+      markerRef.current = marker(formData.location as [number, number], {
         icon,
         title: formData.name || "",
       }).addTo(map);
@@ -72,16 +71,5 @@ export function Step6LocationSelection({ formData, updateField }: Step6Props) {
     }
   }, [formData.location, formData.isLost, formData.name]);
 
-  return (
-    <div className="space-y-2">
-      <Label className="text-white">📍 Select the location on the map:</Label>
-      <div className="md:h-[400px] h-[300px] md:w-[600px] w-full rounded-md overflow-hidden">
-        <div ref={containerRef} className="w-full h-full" />
-      </div>
-      <p className="text-sm text-gray-400">
-        Click on the map to place a marker where the item was{" "}
-        {formData.isLost ? "lost" : "found"}.
-      </p>
-    </div>
-  );
+  return <div ref={containerRef} className="w-full h-full" />;
 }

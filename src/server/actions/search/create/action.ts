@@ -1,27 +1,34 @@
 "use server";
 
 import { db } from "@/db";
-import { searches, Search } from "@/db/schema";
+import { searches } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { ActionResult, isError, KeywordSubscription } from "@/lib/types";
+import { createAction } from "@/server/actions/wrapper";
 import { findEmailsSubscribedToKeyword } from "@/server/actions/search/lookup/action";
+import { keywordSubscriptionSchema } from "@/server/actions/search/schema";
 
-export async function createKeywordSubscription(
-  subscription: KeywordSubscription
-): Promise<ActionResult<Search>> {
-  const { keyword, email } = subscription;
-  const lookup = await findEmailsSubscribedToKeyword(keyword);
+export const createKeywordSubscription = createAction(
+  keywordSubscriptionSchema,
+  async (data) => {
+    const { keyword, email } = data;
+    const lookup = await findEmailsSubscribedToKeyword(keyword);
 
-  if (isError(lookup)) {
-    return { error: `Error fetching emails for keyword: ${lookup.error}` };
-  }
+    let existingEmails: string[] = [];
 
-  const existingEmails = lookup.data.emails || [];
-  if (existingEmails.includes(email)) {
-    return { error: "You are already subscribed to this keyword." };
-  }
+    if (!lookup.success) {
+      if (lookup.error === "Keyword not found") {
+        existingEmails = [];
+      } else {
+        throw new Error(`Error fetching emails for keyword: ${lookup.error}`);
+      }
+    } else {
+      existingEmails = lookup.data?.emails || [];
+    }
 
-  try {
+    if (existingEmails.includes(email)) {
+      throw new Error("You are already subscribed to this keyword.");
+    }
+
     const query =
       existingEmails.length > 0
         ? db
@@ -35,12 +42,6 @@ export async function createKeywordSubscription(
             .returning();
 
     const [result] = await query;
-    return { data: result };
-  } catch (error) {
-    return {
-      error: existingEmails.length
-        ? `Error updating subscriptions for keyword: ${error}`
-        : `Error creating new keyword subscription: ${error}`,
-    };
+    return result;
   }
-}
+);

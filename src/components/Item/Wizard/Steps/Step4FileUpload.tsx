@@ -3,6 +3,12 @@ import { Input } from "@/components/ui/input";
 import { LocationFormData } from "@/lib/types";
 import imageCompression from "browser-image-compression";
 import React from "react";
+import {
+  trackFileUploadStarted,
+  trackFileUploadCompleted,
+  trackFileUploadFailed,
+} from "@/lib/analytics";
+import { UploadCloud } from "lucide-react";
 
 interface Step4Props {
   updateField: <K extends keyof LocationFormData>(
@@ -15,6 +21,7 @@ export function Step4FileUpload({ updateField }: Step4Props) {
   const compressImage = async (file: File | null) => {
     if (!file) return null;
     try {
+      trackFileUploadStarted();
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1920,
@@ -23,9 +30,13 @@ export function Step4FileUpload({ updateField }: Step4Props) {
         preserveExif: false,
       } as const;
       const compressed = await imageCompression(file, options);
+      trackFileUploadCompleted(compressed.size, compressed.type);
       return compressed;
-    } catch {
+    } catch (error) {
       // On failure, fall back to original file
+      trackFileUploadFailed(
+        error instanceof Error ? error.message : "Compression failed"
+      );
       return file;
     }
   };
@@ -51,7 +62,7 @@ export function Step4FileUpload({ updateField }: Step4Props) {
       if (!preview) {
         preview = document.createElement("img");
         preview.className =
-          "preview-img absolute inset-0 w-full h-full object-contain rounded-lg pointer-events-none p-2";
+          "preview-img absolute inset-0 w-full h-full object-contain rounded-xl pointer-events-none p-2 bg-black/50 backdrop-blur-sm";
         const inputEl = dropZone.querySelector("input[type=file]");
         if (inputEl && inputEl.parentElement === dropZone) {
           dropZone.insertBefore(preview, inputEl);
@@ -91,28 +102,33 @@ export function Step4FileUpload({ updateField }: Step4Props) {
   };
 
   return (
-    <div className="space-y-2">
-      <Label htmlFor="file" className="text-white">
+    <div className="space-y-3 sm:space-y-4">
+      <Label
+        htmlFor="file"
+        className="text-white/90 font-medium text-xs sm:text-sm"
+      >
         📸 Upload an image:
       </Label>
 
-      <div className="relative">
+      <div className="relative group">
         <div
-          className="group drop-zone relative flex items-center justify-center rounded-lg border-2 border-dashed border-slate-600 bg-slate-800/30 p-6 transition-all duration-200 ease-out hover:scale-[1.02] hover:shadow-lg hover:border-sky-400 hover:bg-linear-to-br hover:from-sky-600/10 hover:to-indigo-600/10 min-h-[200px] overflow-hidden"
+          className="group drop-zone relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/10 bg-white/5 p-4 sm:p-8 transition-all duration-300 ease-out hover:border-indigo-500/50 hover:bg-white/10 min-h-[160px] sm:min-h-[240px] overflow-hidden cursor-pointer"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
         >
           {/* Placeholder text */}
-          <div className="pointer-events-none text-center placeholder transition-opacity duration-200">
-            <p className="text-sm text-slate-200">
-              <span className="text-2xl block mb-2">📸</span>
-              <span className="font-medium">
-                Drop image here or click to browse
-              </span>
-            </p>
-            <p className="mt-2 text-xs text-slate-400 group-hover:text-sky-200 transition-colors">
-              PNG, JPG, GIF — up to 10MB (auto-compressed to WebP)
-            </p>
+          <div className="pointer-events-none text-center placeholder transition-opacity duration-300 flex flex-col items-center gap-2 sm:gap-3">
+            <div className="p-3 sm:p-4 rounded-full bg-white/5 group-hover:bg-indigo-500/20 transition-colors duration-300">
+              <UploadCloud className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400 group-hover:text-indigo-400" />
+            </div>
+            <div className="space-y-0.5 sm:space-y-1">
+              <p className="text-sm sm:text-base font-medium text-white group-hover:text-indigo-300 transition-colors">
+                Click or drag image here
+              </p>
+              <p className="text-[10px] sm:text-xs text-gray-400 group-hover:text-gray-300">
+                Supports JPG, PNG, GIF (max 10MB)
+              </p>
+            </div>
           </div>
 
           {/* Hidden file input overlay */}
@@ -121,14 +137,9 @@ export function Step4FileUpload({ updateField }: Step4Props) {
             type="file"
             accept="image/*"
             onChange={handleInputChange}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
           />
         </div>
-
-        <p className="mt-2 text-xs text-slate-400">
-          Tip: Click or drag-and-drop to upload. Preview shows after
-          compression.
-        </p>
       </div>
     </div>
   );

@@ -31,6 +31,7 @@ const nextConfig: NextConfig = {
       "leaflet.markercluster",
       "react-day-picker",
     ],
+    // turbopackTreeShaking: true,
   },
   reactCompiler: true,
   logging: {
@@ -47,6 +48,30 @@ const nextConfig: NextConfig = {
       leaflet: "leaflet/dist/leaflet.js",
     },
   },
+  // webpack: (config, _options) => {
+  //   config.resolve = config.resolve || {};
+  //   config.resolve.alias = {
+  //     ...(config.resolve.alias || {}),
+  //     leaflet: "leaflet/dist/leaflet.js",
+  //   };
+  //   return config;
+  // },
+  output: "standalone",
+  // PostHog rewrites for ingest routes
+  async rewrites() {
+    return [
+      {
+        source: "/ingest/static/:path*",
+        destination: "https://us-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/ingest/:path*",
+        destination: "https://us.i.posthog.com/:path*",
+      },
+    ];
+  },
+  // Required to support PostHog trailing slash API requests
+  skipTrailingSlashRedirect: true,
 };
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({

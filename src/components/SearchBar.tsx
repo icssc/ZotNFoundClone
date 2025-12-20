@@ -2,9 +2,27 @@
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useSharedContext } from "@/components/ContextProvider";
+import { trackSearch } from "@/lib/analytics";
+import { useEffect, useRef } from "react";
 
 export function SearchBar() {
   const { filter, setFilter } = useSharedContext();
+  const previousFilterRef = useRef(filter);
+
+  useEffect(() => {
+    // Track when search is performed (debounced)
+    if (filter && filter.length >= 2) {
+      const timeoutId = setTimeout(() => {
+        if (filter !== previousFilterRef.current) {
+          trackSearch(filter);
+        }
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
+    }
+
+    previousFilterRef.current = filter;
+  }, [filter]);
 
   return (
     <div className="relative w-full">
