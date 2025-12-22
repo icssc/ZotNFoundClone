@@ -1,28 +1,27 @@
 "use server";
 
 import { db } from "@/db";
-import { searches, Search } from "@/db/schema";
+import { searches } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { createAction } from "@/server/actions/wrapper";
 import { findEmailsSubscribedToKeyword } from "@/server/actions/search/lookup/action";
-import { keywordSubscriptionSchema } from "@/server/actions/search/schema";
+import { keywordSchema } from "@/server/actions/search/schema";
 
 export const removeKeywordSubscription = createAction(
-  keywordSubscriptionSchema,
-  async (data) => {
-    const { keyword, email } = data;
-    const lookup = await findEmailsSubscribedToKeyword(keyword);
+  keywordSchema,
+  async (keyword, session) => {
+    const email = session.user.email;
 
+    const lookup = await findEmailsSubscribedToKeyword(keyword);
     if (!lookup.success) {
-      if (lookup.error === "Keyword not found") {
-        throw new Error("Email was not subscribed to this keyword.");
-      }
-      throw new Error(`Error fetching emails for keyword: ${lookup.error}`);
+      throw new Error(
+        lookup.error || "Failed to fetch existing subscriptions."
+      );
     }
 
-    const existingEmails = lookup.data?.emails || [];
+    const existingEmails = lookup.data?.emails ?? [];
     if (!existingEmails.includes(email)) {
-      throw new Error("Email was not subscribed to this keyword.");
+      throw new Error("You are not subscribed to this keyword.");
     }
 
     const updatedEmails = existingEmails.filter((e) => e !== email);

@@ -4,10 +4,10 @@ import { db } from "@/db";
 import { searches } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { createAction } from "@/server/actions/wrapper";
-import { z } from "zod";
+import { keywordSchema } from "@/server/actions/search/schema";
 
 export const findEmailsSubscribedToKeyword = createAction(
-  z.string(),
+  keywordSchema,
   async (keyword: string) => {
     const [emailsSubscribedToKeyword] = await db.query.searches.findMany({
       columns: {
@@ -15,9 +15,11 @@ export const findEmailsSubscribedToKeyword = createAction(
       },
       where: eq(searches.keyword, keyword),
     });
+
     if (!emailsSubscribedToKeyword) {
-      throw new Error("Keyword not found.");
+      return { emails: [] };
     }
+
     return { emails: emailsSubscribedToKeyword.emails };
   }
 );
