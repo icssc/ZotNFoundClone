@@ -10,6 +10,7 @@ import type { LatLngExpression } from "leaflet";
 import { filterItems } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { SearchX } from "lucide-react";
 
 interface ItemDisplayListProps {
   initialItems: ItemType[];
@@ -18,6 +19,7 @@ interface ItemDisplayListProps {
 function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const { setSelectedLocation, filter } = useSharedContext();
   const searchParams = useSearchParams();
+
   function getSelectedItem() {
     const itemId = searchParams.get("item");
     if (!itemId) return null;
@@ -51,21 +53,37 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   };
 
   const filteredItems = filterItems(initialItems, filter);
+
   return (
     <>
-      <div className="item-display-list flex h-full overflow-y-auto flex-col p-4 space-y-3 bg-black/95 rounded-md animate-in fade-in duration-300 transition-all">
-        {filteredItems.map((item: ItemType, index: number) => (
-          <div
-            key={item.id ?? index}
-            className="group animate-in fade-in slide-in-from-bottom-1 duration-200 will-change-transform transition-all"
-          >
-            <Item
-              item={item}
-              onClick={() => handleItemClick(item)}
-              setOpen={() => handleActionButtonClick(item)}
-            />
+      <div className="item-display-list flex h-full overflow-y-auto flex-col p-4 space-y-4 bg-black/80 backdrop-blur-xl border-r border-white/5 animate-in fade-in duration-500">
+        {filteredItems.length > 0 ? (
+          filteredItems.map((item: ItemType, index: number) => (
+            <div
+              key={item.id ?? index}
+              className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-backwards"
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <Item
+                item={item}
+                onClick={() => handleItemClick(item)}
+                setOpen={() => handleActionButtonClick(item)}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center h-64 text-center p-6 animate-in fade-in zoom-in-95 duration-300">
+            <div className="p-4 rounded-full bg-white/5 mb-4">
+              <SearchX className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-white mb-1">
+              No items found
+            </h3>
+            <p className="text-sm text-gray-400">
+              Try adjusting your search to find what you&apos;re looking for.
+            </p>
           </div>
-        ))}
+        )}
       </div>
 
       <Dialog

@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
-// import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
 import localFont from "next/font/local";
 import { SessionProvider } from "@/components/SessionProvider";
+import { PostHogPageView } from "@/components/PostHogPageView";
 import { Suspense } from "react";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,12 +25,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${CustomFont.className} antialiased bg-neutral-950`}
+        className={`${geistSans.variable} ${CustomFont.className} antialiased bg-background`}
       >
         <Suspense fallback={null}>
           <SessionProvider>
+            <PostHogPageView />
             <Navbar />
             {children}
           </SessionProvider>

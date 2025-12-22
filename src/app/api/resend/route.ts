@@ -1,30 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
 import { sendItemFoundEmail } from "@/lib/email/service";
-import { FoundPayloadSchema, type FoundPayload } from "@/lib/validators/email";
+import { FoundPayloadSchema } from "@/lib/validators/email";
+import { NextResponse } from "next/server";
+import { treeifyError } from "zod";
 
-/**
- * POST /api/resend
- * Body: { item: { id, name, type, email, image? }, finderName, finderEmail }
- * Validated with FoundPayloadSchema
- */
-
-/**
- * POST /api/resend
- * Body: { item: { id, name, type, email, image? }, finderName, finderEmail }
- * Uses zod (FoundPayloadSchema) to validate the body.
- */
-export async function POST(req: NextRequest) {
-  const parsed = FoundPayloadSchema.safeParse(await req.json());
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Invalid payload", issues: parsed.error.format() },
-      { status: 400 }
-    );
-  }
-
-  const body = parsed.data as FoundPayload;
-
+export async function POST(req: Request) {
   try {
+    const raw = await req.json();
+    const validation = FoundPayloadSchema.safeParse(raw);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Invalid payload", issues: treeifyError(validation.error) },
+        { status: 400 }
+      );
+    }
+
+    const body = validation.data;
+
+    if (body.item.email === body.finderEmail) {
+      return NextResponse.json(
+        { error: "Cannot contact yourself", code: "BAD_REQUEST" },
+        { status: 400 }
+      );
+    }
+
     const result = await sendItemFoundEmail({
       item: {
         id: body.item.id,
@@ -37,11 +36,11 @@ export async function POST(req: NextRequest) {
       finderEmail: body.finderEmail,
     });
 
-    return NextResponse.json({ success: true, result });
-  } catch (err) {
-    console.error("send found email error:", err);
+    return NextResponse.json({ data: { result } });
+  } catch (error) {
+    console.error("Error in /api/resend:", error);
     return NextResponse.json(
-      { error: "Failed to send email" },
+      { error: "Internal server error", code: "INTERNAL_ERROR" },
       { status: 500 }
     );
   }

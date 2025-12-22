@@ -1,24 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
 import { sendItemLostNotification } from "@/lib/email/service";
-import { LostPayloadSchema, type LostPayload } from "@/lib/validators/email";
+import { LostPayloadSchema } from "@/lib/validators/email";
+import { NextResponse } from "next/server";
+import { treeifyError } from "zod";
 
-/**
- * POST /api/resend/lost
- * Body: { item: { id, name, type, email?, image? }, subscriberEmails: string[] }
- * Validated with LostPayloadSchema (zod).
- */
-export async function POST(req: NextRequest) {
-  const parsed = LostPayloadSchema.safeParse(await req.json());
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Invalid payload", issues: parsed.error.format() },
-      { status: 400 }
-    );
-  }
-
-  const body = parsed.data as LostPayload;
-
+export async function POST(req: Request) {
   try {
+    const raw = await req.json();
+    const validation = LostPayloadSchema.safeParse(raw);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: "Invalid payload", issues: treeifyError(validation.error) },
+        { status: 400 }
+      );
+    }
+
+    const body = validation.data;
+
+    if (!body.subscriberEmails.length) {
+      return NextResponse.json(
+        { error: "No subscriber emails provided", code: "BAD_REQUEST" },
+        { status: 400 }
+      );
+    }
+
     const result = await sendItemLostNotification({
       item: {
         id: body.item.id,
@@ -31,14 +36,15 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({
-      success: true,
-      result,
-      sentTo: body.subscriberEmails.length,
+      data: {
+        result,
+        sentTo: body.subscriberEmails.length,
+      },
     });
-  } catch (err) {
-    console.error("Send lost notification error:", err);
+  } catch (error) {
+    console.error("Error in /api/resend/lost:", error);
     return NextResponse.json(
-      { error: "Failed to send notification" },
+      { error: "Internal server error", code: "INTERNAL_ERROR" },
       { status: 500 }
     );
   }

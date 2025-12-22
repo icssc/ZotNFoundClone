@@ -4,10 +4,9 @@ import { useActionState, useState } from "react";
 import {
   DialogContent,
   DialogTitle,
-  DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
-import { User, Calendar, MapPin, Share2, Check, Trash2 } from "lucide-react";
+import { User, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item } from "@/db/schema";
@@ -15,9 +14,29 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { useSharedContext } from "../ContextProvider";
 import { z } from "zod";
-import deleteItem from "@/server/actions/item/delete/action";
+import { deleteItem } from "@/server/actions/item/delete/action";
+import { updateItem } from "@/server/actions/item/update/action";
 import { useRouter } from "next/navigation";
 import { handleSignIn } from "@/lib/auth-client";
+import { formatLocationDisplay } from "@/lib/types";
+import {
+  trackItemContactAttempt,
+  trackItemContactSuccess,
+  trackItemShareLink,
+  trackItemDeleted,
+  trackItemResolved,
+  trackItemHelped,
+  trackEditItemDialogOpened,
+} from "@/lib/analytics";
+import ContactSection from "./detail/ContactSection";
+import StatusSection from "./detail/StatusSection";
+import ActionFooter from "./detail/ActionFooter";
+import dynamic from "next/dynamic";
+
+const ItemWizardDialog = dynamic(
+  () => import("./ItemWizardDialog").then((mod) => mod.ItemWizardDialog),
+  { ssr: false }
+);
 
 type ContactState = {
   status: "idle" | "success" | "error";
@@ -31,9 +50,10 @@ function DetailedDialog({ item }: { item: Item }) {
   const [copied, setCopied] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const router = useRouter();
 
-  // Check if the current user owns this item
   const isOwner = user?.email === item.email;
 
   const contactAction = async (): Promise<ContactState> => {
@@ -43,6 +63,13 @@ function DetailedDialog({ item }: { item: Item }) {
     }
 
     try {
+      // Track contact attempt
+      trackItemContactAttempt({
+        itemId: String(item.id),
+        itemType: item.type || "unknown",
+        isLost: islostObject,
+      });
+
       const res = await fetch("/api/resend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,6 +89,12 @@ function DetailedDialog({ item }: { item: Item }) {
       });
 
       if (res.ok) {
+        // Track successful contact
+        trackItemContactSuccess({
+          itemId: String(item.id),
+          itemType: item.type || "unknown",
+          isLost: islostObject,
+        });
         toast.success("Owner notified successfully!");
         return { status: "success", message: "Owner notified." };
       }
@@ -94,6 +127,13 @@ function DetailedDialog({ item }: { item: Item }) {
     try {
       const shareUrl = `${window.location.origin}/?item=${item.id}`;
       await navigator.clipboard.writeText(shareUrl);
+
+      trackItemShareLink({
+        itemId: String(item.id),
+        itemType: item.type || "unknown",
+        isLost: islostObject,
+      });
+
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -104,13 +144,18 @@ function DetailedDialog({ item }: { item: Item }) {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const result = await deleteItem({ itemId: item.id });
+      trackItemDeleted({
+        itemId: String(item.id),
+        itemType: item.type || "unknown",
+        isLost: islostObject,
+      });
 
-      if ("error" in result) {
-        toast.error(result.error);
+      const result = await deleteItem({ id: item.id });
+
+      if (!result.success) {
+        toast.error(result.error || "Failed to delete item");
       } else {
         toast.success("Item deleted successfully");
-        // Close the dialog and refresh the page
         const url = new URL(window.location.href);
         url.searchParams.delete("item");
         window.history.replaceState({}, "", url.toString());
@@ -126,214 +171,233 @@ function DetailedDialog({ item }: { item: Item }) {
 
   const isSubmitDisabled = isPending || state.status === "success";
 
+  const handleEditClick = () => {
+    trackEditItemDialogOpened({
+      itemId: String(item.id),
+      itemType: item.type || "unknown",
+    });
+    setShowEditDialog(true);
+  };
+
+  const handleToggleResolved = async () => {
+    if (islostObject) return; // not applicable
+    setIsUpdating(true);
+    const nextResolved = !item.isResolved;
+    try {
+      const result = await updateItem({
+        id: item.id,
+        isResolved: nextResolved,
+        isHelped: item.isHelped ?? false,
+      });
+
+      if (!result.success) {
+        toast.error(result.error || "Failed to update item");
+      } else {
+        if (nextResolved) {
+          trackItemResolved({
+            itemId: String(item.id),
+            itemType: item.type || "unknown",
+            isLost: islostObject,
+          });
+          toast.success("Item marked as resolved!");
+        } else {
+          toast.success("Item marked as unresolved.");
+        }
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error("Failed to update item. Please try again.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleToggleHelped = async () => {
+    if (!islostObject) return; // not applicable
+    setIsUpdating(true);
+    const nextHelped = !item.isHelped;
+    try {
+      const result = await updateItem({
+        id: item.id,
+        isResolved: item.isResolved ?? false,
+        isHelped: nextHelped,
+      });
+
+      if (!result.success) {
+        toast.error(result.error || "Failed to update item");
+      } else {
+        if (nextHelped) {
+          trackItemHelped({
+            itemId: String(item.id),
+            itemType: item.type || "unknown",
+            isLost: islostObject,
+          });
+          toast.success("Item marked as helped!");
+        } else {
+          toast.success("Item marked as unhelped.");
+        }
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error("Failed to update item. Please try again.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return (
-    <DialogContent className="w-[calc(100%-2rem)] max-w-md bg-black/95 border-white/20 text-white p-0 pb-3 flex flex-col max-h-[calc(100vh-4rem)] overflow-y-auto">
-      {/* Image */}
-      <div className="pt-10 px-4 sm:px-6">
-        <div className="relative w-full h-56 sm:h-72 overflow-hidden rounded-md bg-white/10 border border-white/20 backdrop-blur-sm">
+    <>
+      <DialogContent className="w-[95%] bg-black/50 border-white/10 text-white p-0 pb-3 flex flex-col max-h-[calc(100vh-4rem)] overflow-y-auto backdrop-blur-xl shadow-2xl animate-in-fade">
+        {/* Image Section with Gradient Overlay */}
+        <div className="relative w-full h-72 sm:h-80 shrink-0">
           <Image
             src={
               z.url().safeParse(item.image).success
                 ? item.image
-                : "/placeholder.jpg"
+                : "/dark_placeholder.jpg"
             }
             alt={item.name || "Item Image"}
             fill
-            sizes="(max-width: 640px) 100vw, 448px"
-            style={{ objectFit: "contain" }}
-            className="bg-black"
-            loading="lazy"
+            sizes="(max-width: 640px) 80vw, 448px"
+            style={{ objectFit: "cover" }}
+            className="bg-zinc-900"
+            loading="eager"
           />
-          <div className="absolute inset-0 bg-linear-to-b from-transparent via-black/10 to-black/80 pointer-events-none" />
-        </div>
-      </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/90 pointer-events-none" />
 
-      <div className="px-4 sm:px-6">
-        <DialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex-1 min-w-0">
-              <DialogTitle className="text-white text-left truncate text-base sm:text-lg">
+          {/* Title Overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 pt-12">
+            <DialogHeader>
+              <DialogTitle className="text-white text-left font-bold text-2xl sm:text-3xl tracking-tight drop-shadow-md animate-in-slide-up">
                 {item.name}
               </DialogTitle>
-            </div>
-          </div>
-        </DialogHeader>
-      </div>
-      <div className="space-y-3 sm:space-y-4 px-4 sm:px-6">
-        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
-          <User className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-white text-sm sm:text-base">
-              Contact
-            </p>
-            <p className="text-xs sm:text-sm text-gray-400 truncate">
-              {item.email}
-            </p>
+            </DialogHeader>
           </div>
         </div>
 
-        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
-          <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-white text-sm sm:text-base">
-              Date & Status
-            </p>
-            <p className="text-xs sm:text-sm text-gray-400">{item.date}</p>
-            <p className="text-xs sm:text-sm text-gray-400">
-              Status: {islostObject ? "Lost" : "Found"}
-            </p>
+        <div className="space-y-4 px-6 -mt-2 relative z-10">
+          {/* Status Badge */}
+          <div className="flex justify-start">
+            <StatusSection item={item} isLost={islostObject} />
           </div>
-        </div>
 
-        <div className="flex items-start space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-md bg-white/1 hover:bg-white/5 transition-all duration-200">
-          <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mt-0.5 shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-white text-sm sm:text-base">
-              Location
-            </p>
-            <p className="text-xs sm:text-sm text-gray-400 line-clamp-2">
-              {item.location || "No location provided"}
-            </p>
-          </div>
-        </div>
+          {/* Info Grid */}
+          <div className="grid gap-3">
+            {/* Contact Info */}
+            <div className="flex items-center space-x-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300 group">
+              <div className="p-2 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
+                <User className="h-5 w-5 text-white/80" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-white/60 text-xs uppercase tracking-wider">
+                  Contact
+                </p>
+                <p className="text-sm sm:text-base text-white font-medium truncate">
+                  {item.email}
+                </p>
+              </div>
+            </div>
 
-        <div className="pt-2 p-2 sm:p-3 rounded-md bg-white/2 hover:bg-white/5">
-          <p className="font-medium text-white mb-2 text-sm sm:text-base">
-            Description
-          </p>
-          <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
-            {item.description}
-          </p>
-        </div>
-
-        {!user && (
-          <div className="flex flex-col gap-3 pt-2 text-sm">
-            <p className="text-gray-400">
-              Sign in with your UCI email to contact the owner directly from
-              ZotNFound.
-            </p>
-            <div className="flex gap-2 w-full flex-col">
-              <Button
-                variant="default"
-                className="bg-white/5 hover:bg-white/10 tex-white w-full"
-                onClick={handleSignIn}
-              >
-                Sign In
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleCopy}
-                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white"
-              >
-                {copied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Share2 className="h-4 w-4" />
-                )}
-                <span>{copied ? "Copied!" : "Copy Link"}</span>
-              </Button>
+            {/* Location Info */}
+            <div className="flex items-center space-x-3 p-3 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300 group">
+              <div className="p-2 rounded-full bg-white/10 group-hover:bg-white/20 transition-colors">
+                <MapPin className="h-5 w-5 text-white/80" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-white/60 text-xs uppercase tracking-wider">
+                  Location
+                </p>
+                <p className="text-sm sm:text-base text-white font-medium break-words">
+                  {formatLocationDisplay(item.location)}
+                </p>
+              </div>
             </div>
           </div>
-        )}
 
-        {user && showConfirm && (
-          <form action={formAction} className="space-y-3 pt-2 text-sm">
-            <p>Notify the owner and CC your email ({user.email})?</p>
-            <div className="flex gap-2">
-              <Button
-                type="submit"
-                variant="default"
-                disabled={isSubmitDisabled}
-              >
-                {isPending
-                  ? "Sending..."
-                  : state.status === "success"
-                    ? "Sent"
-                    : "Send"}
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                disabled={isPending}
-                onClick={() => setShowConfirm(false)}
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
-        )}
-
-        {isOwner && showDeleteConfirm && (
-          <div className="space-y-3 pt-2 text-sm border-t border-white/20 mt-4 pt-4">
-            <p className="text-red-400 font-medium">
-              Are you sure you want to delete this item? This action cannot be
-              undone.
+          {/* Description */}
+          <div className="p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300">
+            <p className="font-medium text-white/60 text-xs uppercase tracking-wider mb-2">
+              Description
             </p>
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="destructive"
-                disabled={isDeleting}
-                onClick={handleDelete}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                {isDeleting ? "Deleting..." : "Delete"}
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                disabled={isDeleting}
-                onClick={() => setShowDeleteConfirm(false)}
-              >
-                Cancel
-              </Button>
-            </div>
+            <p className="text-sm sm:text-base text-white/90 leading-relaxed whitespace-pre-wrap">
+              {item.description}
+            </p>
           </div>
-        )}
-      </div>
 
-      {/* Footer */}
-      {user && !showConfirm && !showDeleteConfirm && (
-        <div className="flex justify-between items-center gap-2 px-4 sm:px-6 border-t border-white/20 pt-3 mt-2">
-          {isOwner && (
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => setShowDeleteConfirm(true)}
-              disabled={isDeleting}
-              className="flex items-center gap-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 text-sm px-3 py-1.5"
-            >
-              <Trash2 className="h-4 w-4" />
-              <span>Delete</span>
-            </Button>
+          <ContactSection
+            user={user ?? null}
+            copied={copied}
+            showConfirm={showConfirm}
+            state={state}
+            isPending={isPending}
+            isSubmitDisabled={isSubmitDisabled}
+            onShowConfirmChange={setShowConfirm}
+            onCopyLink={handleCopy}
+            onSignIn={handleSignIn}
+            formAction={formAction}
+          />
+
+          {isOwner && showDeleteConfirm && (
+            <div className="space-y-3 text-sm border-t border-white/10 mt-4 pt-4 animate-in-fade">
+              <p className="text-red-400 font-medium text-center">
+                Are you sure you want to delete this item? This action cannot be
+                undone.
+              </p>
+              <div className="flex gap-3 justify-center">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  disabled={isDeleting}
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="bg-white/5 hover:bg-white/10 text-white"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  disabled={isDeleting}
+                  onClick={handleDelete}
+                  className="bg-red-600/80 hover:bg-red-600 text-white"
+                >
+                  {isDeleting ? "Deleting..." : "Delete Item"}
+                </Button>
+              </div>
+            </div>
           )}
-          <div className="flex justify-end gap-2 ml-auto">
-            <Button
-              type="button"
-              onClick={handleCopy}
-              className="flex items-center gap-2 border-white/20 text-white bg-white/5 hover:bg-white/10 text-sm px-3 py-1.5"
-            >
-              {copied ? (
-                <Check className="h-4 w-4" />
-              ) : (
-                <Share2 className="h-4 w-4" />
-              )}
-              <span>{copied ? "Copied!" : "Copy Link"}</span>
-            </Button>
-
-            <Button
-              variant="outline"
-              className="bg-black hover:bg-white/10 border-white/30 text-white hover:text-white transition-all duration-200 hover:scale-105 text-sm sm:text-base px-3 sm:px-4 py-1.5 sm:py-2"
-              onClick={handleContactClick}
-              disabled={isPending || state.status === "success"}
-            >
-              {state.status === "success" ? "Sent" : "Contact"}
-            </Button>
-          </div>
         </div>
+
+        {/* Footer Actions */}
+        {user && !showConfirm && !showDeleteConfirm && (
+          <div className="px-6 pt-4 pb-2 mt-auto">
+            <ActionFooter
+              item={item}
+              user={user}
+              isLost={islostObject}
+              isUpdating={isUpdating}
+              isDeleting={isDeleting}
+              copied={copied}
+              onEdit={handleEditClick}
+              onToggleHelped={handleToggleHelped}
+              onToggleResolved={handleToggleResolved}
+              onDeleteConfirm={() => setShowDeleteConfirm(true)}
+              onCopyLink={handleCopy}
+              onContact={handleContactClick}
+              contactDisabled={isPending || state.status === "success"}
+            />
+          </div>
+        )}
+      </DialogContent>
+
+      {isOwner && (
+        <ItemWizardDialog
+          mode="edit"
+          item={item}
+          open={showEditDialog}
+          onOpenChange={setShowEditDialog}
+        />
       )}
-    </DialogContent>
+    </>
   );
 }
 
