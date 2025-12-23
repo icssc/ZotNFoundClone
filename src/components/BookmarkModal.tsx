@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useActionState, FormEvent } from "react";
+import { useState, useActionState, FormEvent, useTransition } from "react";
 import {
   Bell,
   BookmarkIcon,
@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -38,6 +39,7 @@ const initialState: KeywordActionState = {
 export function BookmarkModal() {
   const { user, setFilter } = useSharedContext();
   const [open, setOpen] = useState(false);
+  const [transitionPending, startTransition] = useTransition();
 
   const [state, formAction, isPending] = useActionState<
     KeywordActionState,
@@ -45,12 +47,15 @@ export function BookmarkModal() {
   >(keywordFormAction, initialState);
 
   const keywords = state.success ? (state.data ?? []) : (state.data ?? []);
+  const loadedOnce = state.success && state.data !== undefined;
 
   const triggerLoad = () => {
-    if (!user) return;
+    if (!user || loadedOnce || transitionPending) return;
     const fd = new FormData();
     fd.set("intent", "load");
-    formAction(fd);
+    startTransition(() => {
+      formAction(fd);
+    });
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -93,16 +98,22 @@ export function BookmarkModal() {
                 variant="outline"
                 size="sm"
                 onClick={triggerLoad}
-                disabled={isPending}
+                disabled={isPending || transitionPending}
                 className="gap-2"
               >
-                {isPending ? (
+                {isPending || transitionPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <RefreshCw className="h-4 w-4" />
                 )}
                 Refresh
               </Button>
+              {isPending || transitionPending ? (
+                <span className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Updating…
+                </span>
+              ) : null}
               {!state.success && state.error && (
                 <p
                   className="text-xs text-red-400 truncate"
@@ -171,17 +182,19 @@ export function BookmarkModal() {
                             Remove
                           </Button>
                         </form>
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          className="text-sm"
-                          onClick={() => {
-                            setFilter(searchTerm);
-                            setOpen(false);
-                          }}
-                        >
-                          <Search className="h-4 w-4" />
-                        </Button>
+                        <DialogClose asChild>
+                          <Button
+                            variant="secondary"
+                            size="icon"
+                            className="text-sm"
+                            onClick={() => {
+                              setFilter(searchTerm);
+                              setOpen(false);
+                            }}
+                          >
+                            <Search className="h-4 w-4" />
+                          </Button>
+                        </DialogClose>
                       </div>
                     </div>
                   ))}
