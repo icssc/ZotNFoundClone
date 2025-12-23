@@ -5,26 +5,21 @@ import { searches } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { createAction } from "@/server/actions/wrapper";
 import { findEmailsSubscribedToKeyword } from "@/server/actions/search/lookup/action";
-import { keywordSubscriptionSchema } from "@/server/actions/search/schema";
+import { keywordSchema } from "@/server/actions/search/schema";
 
 export const createKeywordSubscription = createAction(
-  keywordSubscriptionSchema,
-  async (data) => {
-    const { keyword, email } = data;
+  keywordSchema,
+  async (keyword, session) => {
+    const email = session.user.email;
+
     const lookup = await findEmailsSubscribedToKeyword(keyword);
-
-    let existingEmails: string[] = [];
-
     if (!lookup.success) {
-      if (lookup.error === "Keyword not found") {
-        existingEmails = [];
-      } else {
-        throw new Error(`Error fetching emails for keyword: ${lookup.error}`);
-      }
-    } else {
-      existingEmails = lookup.data?.emails || [];
+      throw new Error(
+        lookup.error || "Failed to fetch existing subscriptions."
+      );
     }
 
+    const existingEmails = lookup.data?.emails ?? [];
     if (existingEmails.includes(email)) {
       throw new Error("You are already subscribed to this keyword.");
     }
