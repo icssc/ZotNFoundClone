@@ -19,6 +19,13 @@ export default $config({
     });
     topic.subscribe("SearchKeywordSubscriber", {
       handler: "src/server/keywords.handler",
+      environment: {
+        AWS_USER: process.env.AWS_USER!,
+        AWS_PASSWORD: process.env.AWS_PASSWORD!,
+        AWS_HOST: process.env.AWS_HOST!,
+        AWS_PORT: process.env.AWS_PORT!,
+        AWS_DB_NAME: process.env.AWS_DB_NAME!,
+      },
       permissions: [
         {
           actions: ["sns:Publish"],

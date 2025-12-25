@@ -1,12 +1,19 @@
 import { sendSMS } from "@/lib/sms/service";
-import { findEmailsCore } from "./searchEmail";
+import { findEmailsCore, getPhoneNumbersCorrespondingToEmails } from "./searchEmail";
+import { SNSEvent } from "aws-lambda";
 
-export const handler = async (event) => {
-  const { name, description } = JSON.parse(event.Records[0].Sns.Message);
+export const handler = async (event: SNSEvent) => {
+  const { name, description, itemId } = JSON.parse(
+    event.Records[0].Sns.Message
+  );
   const emails = await findEmailsCore(name, description);
-
-  for (const email of emails) {
-    await sendSMS("test", "#");
+  const phoneNumbers = await getPhoneNumbersCorrespondingToEmails(emails);
+  const uniqueNumbers = new Set<string>(phoneNumbers);
+  for (const number of uniqueNumbers) {
+    await sendSMS(
+      `An item matching your saved search keyword(s) was found! View it at: https://zotnfound.com/${itemId}`,
+      number
+    );
   }
 
   return "done";
