@@ -41,7 +41,7 @@ export default function ExploreCarousel() {
         {carousel.map((item, idx) => (
           <div
             key={idx}
-            className="flex-1 min-w-[300px] max-w-[350px] px-6 py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/10 bg-white/5 border border-white/10 backdrop-blur-sm flex flex-col items-center group"
+            className="flex-1 min-w-[300px] max-w-[350px] px-6 py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/10 bg-white/5 border border-white/10 backdrop-blur-sm flex flex-col items-center group"
           >
             <div className="relative w-full aspect-video mb-6 overflow-hidden rounded-lg border border-white/5">
               <Image
@@ -53,7 +53,7 @@ export default function ExploreCarousel() {
               />
             </div>
             <div className="text-center max-w-full">
-              <p className="text-xl font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors">
+              <p className="text-xl font-semibold text-white mb-2 group-hover:text-green-400 transition-colors">
                 {item.title}
               </p>
               <p className="text-sm text-gray-400 leading-relaxed">

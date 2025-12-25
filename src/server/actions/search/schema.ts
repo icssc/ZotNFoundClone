@@ -1,7 +1,14 @@
 import { z } from "zod";
 
+export const keywordSchema = z
+  .string()
+  .trim()
+  .min(1, "Keyword is required")
+  .max(64, "Keyword is too long")
+  .transform((value) => value.toLowerCase());
+
 export const keywordSubscriptionSchema = z.object({
-  keyword: z.string().min(1, "Keyword is required"),
+  keyword: keywordSchema,
   email: z.email("Invalid email address"),
 });
 

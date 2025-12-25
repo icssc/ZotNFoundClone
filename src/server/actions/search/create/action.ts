@@ -2,6 +2,7 @@
 
 import { db } from "@/db";
 import { searches } from "@/db/schema";
+import { searches } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { createAction } from "@/server/actions/wrapper";
 import { findEmailsSubscribedToKeywordsInFields } from "@/server/actions/search/lookup/action";
@@ -48,5 +49,7 @@ export const createKeywordSubscription = createAction(
 
     const [result] = await query;
     return result;
+    return result;
   }
+);
 );

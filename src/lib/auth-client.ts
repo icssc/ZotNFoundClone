@@ -16,7 +16,7 @@ async function signOut() {
   return originalSignOut();
 }
 
-// TODO: Changing Error Handling
+// Sign in with Google using the master branch style
 async function signInWithGoogle() {
   try {
     const data = await authClient.signIn.social({
@@ -40,4 +40,4 @@ async function handleSignIn() {
   }
 }
 
-export { signUp, signOut, handleSignIn };
+export { signUp, signOut, handleSignIn, signInWithGoogle };
