@@ -49,7 +49,5 @@ export const createKeywordSubscription = createAction(
 
     const [result] = await query;
     return result;
-    return result;
   }
-);
 );
