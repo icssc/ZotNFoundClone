@@ -1,5 +1,8 @@
 import { sendSMS } from "@/lib/sms/service";
-import { findEmailsCore, getPhoneNumbersCorrespondingToEmails } from "./searchEmail";
+import {
+  findEmailsCore,
+  getPhoneNumbersCorrespondingToEmails,
+} from "./searchEmail";
 import { SNSEvent } from "aws-lambda";
 
 export const handler = async (event: SNSEvent) => {

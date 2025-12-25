@@ -16,14 +16,14 @@ export async function findEmailsCore(name: string, description: string) {
 }
 
 export async function getPhoneNumbersCorrespondingToEmails(emails: string[]) {
- if (emails.length === 0) {
-  return [];
- }
- const phoneNumbers = await db.query.emailToNumber.findMany({
-      columns: {
-        phonenumber: true,
-      },
-      where: inArray(emailToNumber.email, emails),
-    });
-    return phoneNumbers.flatMap((number) => number.phonenumber);
+  if (emails.length === 0) {
+    return [];
+  }
+  const phoneNumbers = await db.query.emailToNumber.findMany({
+    columns: {
+      phonenumber: true,
+    },
+    where: inArray(emailToNumber.email, emails),
+  });
+  return phoneNumbers.flatMap((number) => number.phonenumber);
 }

@@ -78,13 +78,15 @@ const createItemHandler = createAction(
       .values(itemData)
       .returning({ id: items.id });
 
-    await snsClient.send(
-      new PublishCommand({
-        TopicArn: Resource.SearchKeyword.arn,
-        Message: JSON.stringify({ name, description }),
-      })
-    );
-    console.log("SNS message published for item keywords.");
+    if (!storageData.isLost) {
+      await snsClient.send(
+        new PublishCommand({
+          TopicArn: Resource.SearchKeyword.arn,
+          Message: JSON.stringify({ name, description, itemId: newItem.id }),
+        })
+      );
+      console.log("SNS message published for item keywords.");
+    }
 
     revalidatePath("/");
     return newItem;
