@@ -33,6 +33,11 @@ export const searches = pgTable("searches", {
   emails: varchar("emails").array().default([]).notNull(),
 });
 
+export const emailToNumber = pgTable("emailtonumber", {
+  email: varchar({ length: 254 }).primaryKey().notNull(),
+  phonenumber: varchar({ length: 15 }).notNull(),
+});
+
 // Types for TypeScript
 export type Item = typeof items.$inferSelect;
 export type NewItem = typeof items.$inferInsert;

@@ -2,24 +2,35 @@
 
 import { db } from "@/db";
 import { searches } from "@/db/schema";
+import { searches } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { createAction } from "@/server/actions/wrapper";
-import { findEmailsSubscribedToKeyword } from "@/server/actions/search/lookup/action";
-import { keywordSchema } from "@/server/actions/search/schema";
+import { findEmailsSubscribedToKeywordsInFields } from "@/server/actions/search/lookup/action";
+import { z } from "zod";
+
+const keywordSubscriptionSchema = z.object({
+  keyword: z.string().min(1, "Keyword is required"),
+  email: z.email("Invalid email address"),
+});
 
 export const createKeywordSubscription = createAction(
-  keywordSchema,
-  async (keyword, session) => {
-    const email = session.user.email;
+  keywordSubscriptionSchema,
+  async (data) => {
+    const { keyword, email } = data;
+    const lookup = await findEmailsSubscribedToKeywordsInFields(keyword);
 
-    const lookup = await findEmailsSubscribedToKeyword(keyword);
+    let existingEmails: string[] = [];
+
     if (!lookup.success) {
-      throw new Error(
-        lookup.error || "Failed to fetch existing subscriptions."
-      );
+      if (lookup.error === "Keyword not found") {
+        existingEmails = [];
+      } else {
+        throw new Error(`Error fetching emails for keyword: ${lookup.error}`);
+      }
+    } else {
+      existingEmails = lookup.data?.emails || [];
     }
 
-    const existingEmails = lookup.data?.emails ?? [];
     if (existingEmails.includes(email)) {
       throw new Error("You are already subscribed to this keyword.");
     }
