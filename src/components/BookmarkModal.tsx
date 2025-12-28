@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useActionState, FormEvent } from "react";
+import { useState, useActionState, FormEvent, startTransition } from "react";
 import {
   Bell,
   BookmarkIcon,
@@ -49,7 +49,7 @@ export function BookmarkModal() {
     if (!user) return;
     const fd = new FormData();
     fd.set("intent", "load");
-    formAction(fd);
+    startTransition(() => {formAction(fd)});
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
