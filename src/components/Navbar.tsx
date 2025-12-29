@@ -24,6 +24,7 @@ export default function Navbar() {
   const handleSignOut = async () => {
     try {
       await signOut();
+      window.location.href = '/';
     } catch (error) {
       console.error("Sign out error:", error);
     }
