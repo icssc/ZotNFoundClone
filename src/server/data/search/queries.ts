@@ -1,9 +1,9 @@
 "use server";
-import { ActionResult } from "./../../../lib/types";
+import { ActionState } from "@/lib/types";
 import { db } from "@/db";
 import { Search } from "@/db/schema";
 
-export async function getAllSearches(): Promise<ActionResult<Search[]>> {
+export async function getAllSearches(): Promise<ActionState<Search[]>> {
   try {
     const result = await db.query.searches.findMany();
     return { data: result };
@@ -15,7 +15,7 @@ export async function getAllSearches(): Promise<ActionResult<Search[]>> {
 
 export async function getKeywordsForUser(
   email: string
-): Promise<ActionResult<string[]>> {
+): Promise<ActionState<string[]>> {
   try {
     // Query all searches and filter for ones containing the user's email
     const allSearches = await db.query.searches.findMany();
