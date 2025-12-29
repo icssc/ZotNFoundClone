@@ -1,9 +1,12 @@
 import {
-  pgTable,
-  serial,
-  varchar,
   boolean,
   integer,
+  pgTable,
+  serial,
+  smallint,
+  timestamp,
+  unique,
+  varchar,
 } from "drizzle-orm/pg-core";
 
 export const items = pgTable("items", {
@@ -33,10 +36,34 @@ export const searches = pgTable("searches", {
   emails: varchar("emails").array().default([]).notNull(),
 });
 
-export const emailToNumber = pgTable("emailtonumber", {
-  email: varchar({ length: 254 }).primaryKey().notNull(),
-  phonenumber: varchar({ length: 15 }).notNull(),
-});
+export const emailToNumber = pgTable(
+  "emailtonumber",
+  {
+    email: varchar({ length: 254 }).primaryKey().notNull(),
+    phoneNumber: varchar("phonenumber", { length: 15 }).notNull(),
+    verifiedAt: timestamp("verifiedat", { withTimezone: true, mode: "string" })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [unique("emailtonumber_phonenumber_key").on(table.phoneNumber)]
+);
+
+export const phoneVerifications = pgTable(
+  "phoneverifications",
+  {
+    email: varchar({ length: 254 }).primaryKey().notNull(),
+    phoneNumber: varchar("phonenumber", { length: 15 }).notNull(),
+    attemptsLeft: smallint("attemptsleft").notNull(),
+    expiresAt: timestamp("expiresat", {
+      withTimezone: true,
+      mode: "string",
+    }).notNull(),
+    verificationCode: varchar("verificationcode", { length: 6 }).notNull(),
+  },
+  (table) => [
+    unique("phoneverifications_phonenumber_key").on(table.phoneNumber),
+  ]
+);
 
 // Types for TypeScript
 export type Item = typeof items.$inferSelect;

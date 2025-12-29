@@ -16,6 +16,12 @@ export default $config({
     const topic = new sst.aws.SnsTopic("SearchKeyword");
     new sst.aws.Nextjs("ZotNFound", {
       link: [bucket, topic],
+      permissions: [
+        {
+          actions: ["sns:Publish"],
+          resources: ["*"],
+        },
+      ],
     });
     topic.subscribe("SearchKeywordSubscriber", {
       handler: "src/server/keywords.handler",
