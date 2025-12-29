@@ -2,13 +2,9 @@ import PhoneNumberForm from "@/components/PhoneNumberForm/PhoneNumberForm";
 import { findPhoneNumber } from "@/server/actions/phone-number/lookup/action";
 
 export default async function SettingsPage() {
+  let userSettings;
   try {
-    const userSettings = await findPhoneNumber({});
-    return (
-      <div className="p-4">
-        <PhoneNumberForm initialSettings={userSettings} />
-      </div>
-    );
+    userSettings = await findPhoneNumber({});
   } catch (error) {
     return (
       <div className="text-center min-h-screen space-y-8 bg-black text-white selection:bg-blue-500/30">
@@ -19,4 +15,9 @@ export default async function SettingsPage() {
       </div>
     );
   }
+  return (
+      <div className="p-4">
+        <PhoneNumberForm initialSettings={userSettings} />
+      </div>
+  );
 }
