@@ -21,9 +21,9 @@ export async function getPhoneNumbersCorrespondingToEmails(emails: string[]) {
   }
   const phoneNumbers = await db.query.emailToNumber.findMany({
     columns: {
-      phonenumber: true,
+      phoneNumber: true,
     },
     where: inArray(emailToNumber.email, emails),
   });
-  return phoneNumbers.flatMap((number) => number.phonenumber);
+  return phoneNumbers.flatMap((number) => number.phoneNumber);
 }
