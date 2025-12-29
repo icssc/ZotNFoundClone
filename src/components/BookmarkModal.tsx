@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useActionState, FormEvent, startTransition } from "react";
+import Link from "next/link";
 import {
   Bell,
   BookmarkIcon,
@@ -49,7 +50,9 @@ export function BookmarkModal() {
     if (!user) return;
     const fd = new FormData();
     fd.set("intent", "load");
-    startTransition(() => {formAction(fd)});
+    startTransition(() => {
+      formAction(fd);
+    });
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -83,7 +86,7 @@ export function BookmarkModal() {
             <DialogHeader>
               <DialogTitle>Saved Searches</DialogTitle>
               <DialogDescription>
-                Manage your saved search keywords and alerts.
+                Manage your saved search keywords. To receive SMS alerts when items matching your search keywords are found, subscribe your phone number <Link className="text-blue-400" href="/settings" rel="noopener" target="_blank">here</Link>.
               </DialogDescription>
             </DialogHeader>
 
