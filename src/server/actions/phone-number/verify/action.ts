@@ -4,17 +4,15 @@ import { revalidatePath } from "next/cache";
 import z from "zod";
 import { db } from "@/db";
 import { emailToNumber, phoneVerifications } from "@/db/schema";
-import { sendSMS } from "@/lib/sms/service";
 import { createAction } from "@/server/actions/wrapper";
+import { getPendingVerificationInfoByEmail } from "@/server/data/phone-number/queries";
+import sendVerificationCodeBySMS from "@/server/actions/phone-number/sendCode";
 
 export const resendVerificationCode = createAction(
   z.object({}),
   async ({}, session) => {
     const email = session.user.email;
-    const [pendingVerification] = await db
-      .select({ phoneNumber: phoneVerifications.phoneNumber })
-      .from(phoneVerifications)
-      .where(eq(phoneVerifications.email, email));
+    const pendingVerification = await getPendingVerificationInfoByEmail(email);
     if (!pendingVerification) {
       throw new Error("No phone number to verify. Please add a phone number.");
     }
@@ -25,19 +23,7 @@ export const resendVerificationCode = createAction(
     currentTime.setMinutes(currentTime.getMinutes() + 3);
     const expiresAt = currentTime.toISOString();
 
-    try {
-      await sendSMS(
-        `Your verification code to confirm that you'd like to receive found item posting alerts at ${newNumber} is ${verificationCode}.`,
-        newNumber
-      );
-    } catch (error) {
-      console.log(error);
-      throw new Error(
-        "Failed to send verification code to " +
-          newNumber +
-          ". Please try adding a different phone number to receive alerts."
-      );
-    }
+    await sendVerificationCodeBySMS(newNumber, verificationCode);
     await db
       .update(phoneVerifications)
       .set({
@@ -59,10 +45,7 @@ export const verifyCode = createAction(
   z.object({ code: z.string() }),
   async ({ code }, session) => {
     const email = session.user.email;
-    const [pendingVerification] = await db
-      .select()
-      .from(phoneVerifications)
-      .where(eq(phoneVerifications.email, email));
+    const pendingVerification = await getPendingVerificationInfoByEmail(email);
     if (!pendingVerification) {
       // no code to verify against
       throw new Error(

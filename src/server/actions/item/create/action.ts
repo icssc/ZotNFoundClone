@@ -85,7 +85,6 @@ const createItemHandler = createAction(
           Message: JSON.stringify({ name, description, itemId: newItem.id }),
         })
       );
-      console.log("SNS message published for item keywords.");
     }
 
     revalidatePath("/");

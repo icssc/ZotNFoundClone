@@ -5,8 +5,8 @@ import { revalidatePath } from "next/cache";
 import z from "zod";
 import { db } from "@/db";
 import { phoneVerifications } from "@/db/schema";
-import { sendSMS } from "@/lib/sms/service";
 import { createAction } from "@/server/actions/wrapper";
+import sendVerificationCodeBySMS from "@/server/actions/phone-number/sendCode";
 
 const phoneSchema = z.string().regex(/^\+1\d{10}$/);
 
@@ -19,18 +19,7 @@ export const addPhoneNumberToVerify = createAction(
     currentTime.setMinutes(currentTime.getMinutes() + 3);
     const expiresAt = currentTime.toISOString();
 
-    try {
-      await sendSMS(
-        `Your verification code to confirm that you'd like to receive found item posting alerts at ${newNumber} is ${verificationCode}.`,
-        newNumber
-      );
-    } catch (error) {
-      throw new Error(
-        "Failed to send verification code to " +
-          newNumber +
-          ". Please try adding a different phone number to receive alerts."
-      );
-    }
+    await sendVerificationCodeBySMS(newNumber, verificationCode);
     await db.insert(phoneVerifications).values({
       email,
       phoneNumber: newNumber,

@@ -1,6 +1,6 @@
 import { sendSMS } from "@/lib/sms/service";
 import {
-  findEmailsCore,
+  findSubscribedEmails,
   getPhoneNumbersCorrespondingToEmails,
 } from "./searchEmail";
 import { SNSEvent } from "aws-lambda";
@@ -9,7 +9,7 @@ export const handler = async (event: SNSEvent) => {
   const { name, description, itemId } = JSON.parse(
     event.Records[0].Sns.Message
   );
-  const emails = await findEmailsCore(name, description);
+  const emails = await findSubscribedEmails(name, description);
   const phoneNumbers = await getPhoneNumbersCorrespondingToEmails(emails);
   const uniqueNumbers = new Set<string>(phoneNumbers);
   for (const number of uniqueNumbers) {
@@ -18,6 +18,4 @@ export const handler = async (event: SNSEvent) => {
       number
     );
   }
-
-  return "done";
 };

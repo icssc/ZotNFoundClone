@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { emailToNumber, searches } from "@/db/schema";
 import { inArray, or, sql } from "drizzle-orm";
 
-export async function findEmailsCore(name: string, description: string) {
+export async function findSubscribedEmails(name: string, description: string) {
   const results = await db
     .select({ emails: searches.emails })
     .from(searches)
