@@ -86,7 +86,18 @@ export function BookmarkModal() {
             <DialogHeader>
               <DialogTitle>Saved Searches</DialogTitle>
               <DialogDescription>
-                Manage your saved search keywords. To receive SMS alerts when items matching your search keywords are found, subscribe your phone number <Link className="text-blue-400" href="/settings" rel="noopener" target="_blank">here</Link>.
+                Manage your saved search keywords. To receive SMS alerts when
+                items matching your search keywords are found, subscribe your
+                phone number{" "}
+                <Link
+                  className="text-blue-400"
+                  href="/settings"
+                  rel="noopener"
+                  target="_blank"
+                >
+                  here
+                </Link>
+                .
               </DialogDescription>
             </DialogHeader>
 
