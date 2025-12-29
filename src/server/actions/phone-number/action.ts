@@ -32,18 +32,25 @@ export async function phoneNumberFormAction(
   const verificationCode = formData.get("verificationCode") || "";
   let result;
   try {
-    if (intent === "load_phone") {
-      result = await findPhoneNumber({});
-    } else if (intent === "add_phone") {
-      result = await addPhoneNumberToVerify({ newNumber: num });
-    } else if (intent === "remove_phone") {
-      result = await removeVerifiedNumber({});
-    } else if (intent === "verify_phone") {
-      result = await verifyCode({ code: verificationCode });
-    } else if (intent === "resend_code") {
-      result = await resendVerificationCode({});
-    } else if (intent === "change_number") {
-      result = await removeUnverifiedNumber({});
+    switch (intent) {
+      case "load_phone":
+        result = await findPhoneNumber({});
+        break;
+      case "add_phone":
+        result = await addPhoneNumberToVerify({ newNumber: num });
+        break;
+      case "remove_phone":
+        result = await removeVerifiedNumber({});
+        break;
+      case "verify_phone":
+        result = await verifyCode({ code: verificationCode });
+        break;
+      case "resend_code":
+        result = await resendVerificationCode({});
+        break;
+      case "change_number":
+        result = await removeUnverifiedNumber({});
+        break;
     }
     if (result && result.success) {
       return result;
