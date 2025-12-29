@@ -16,8 +16,8 @@ export default async function SettingsPage() {
     );
   }
   return (
-      <div className="p-4">
-        <PhoneNumberForm initialSettings={userSettings} />
-      </div>
+    <div className="p-4">
+      <PhoneNumberForm initialSettings={userSettings} />
+    </div>
   );
 }
