@@ -14,7 +14,7 @@ export const handler = async (event: SNSEvent) => {
   const uniqueNumbers = new Set<string>(phoneNumbers);
   for (const number of uniqueNumbers) {
     await sendSMS(
-      `An item matching your saved search keyword(s) was found! View it at: https://zotnfound.com/?item=${itemId}`,
+      `An item matching your saved search keywords was found! View it at: https://zotnfound.com/?item=${itemId}`,
       number
     );
   }
