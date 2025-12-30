@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import z from "zod";
@@ -18,12 +17,8 @@ export const resendVerificationCode = createAction(
     }
 
     const newNumber = pendingVerification.phoneNumber;
-    const verificationCode = crypto.randomInt(100000, 1000000).toString();
-    const currentTime = new Date();
-    currentTime.setMinutes(currentTime.getMinutes() + 3);
-    const expiresAt = currentTime.toISOString();
-
-    await sendVerificationCodeBySMS(newNumber, verificationCode);
+    const { expiresAt, verificationCode } =
+      await sendVerificationCodeBySMS(newNumber);
     await db
       .update(phoneVerifications)
       .set({

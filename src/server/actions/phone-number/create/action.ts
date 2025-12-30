@@ -1,6 +1,5 @@
 "use server";
 
-import crypto from "crypto";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 import { db } from "@/db";
@@ -14,12 +13,8 @@ export const addPhoneNumberToVerify = createAction(
   z.object({ newNumber: phoneSchema }),
   async ({ newNumber }, session) => {
     const email = session.user.email;
-    const verificationCode = crypto.randomInt(100000, 1000000).toString();
-    const currentTime = new Date();
-    currentTime.setMinutes(currentTime.getMinutes() + 3);
-    const expiresAt = currentTime.toISOString();
-
-    await sendVerificationCodeBySMS(newNumber, verificationCode);
+    const { expiresAt, verificationCode } =
+      await sendVerificationCodeBySMS(newNumber);
     await db.insert(phoneVerifications).values({
       email,
       phoneNumber: newNumber,
