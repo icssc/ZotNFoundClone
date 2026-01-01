@@ -1,29 +1,24 @@
+import { NextRequest, NextResponse } from "next/server";
 import { sendItemLostNotification } from "@/lib/email/service";
-import { LostPayloadSchema } from "@/lib/validators/email";
-import { NextResponse } from "next/server";
-import { treeifyError } from "zod";
+import { LostPayloadSchema, type LostPayload } from "@/lib/validators/email";
 
-export async function POST(req: Request) {
+/**
+ * POST /api/resend/lost
+ * Body: { item: { id, name, type, email?, image? }, subscriberEmails: string[] }
+ * Validated with LostPayloadSchema (zod).
+ */
+export async function POST(req: NextRequest) {
+  const parsed = LostPayloadSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid payload", issues: parsed.error.format() },
+      { status: 400 }
+    );
+  }
+
+  const body = parsed.data as LostPayload;
+
   try {
-    const raw = await req.json();
-    const validation = LostPayloadSchema.safeParse(raw);
-
-    if (!validation.success) {
-      return NextResponse.json(
-        { error: "Invalid payload", issues: treeifyError(validation.error) },
-        { status: 400 }
-      );
-    }
-
-    const body = validation.data;
-
-    if (!body.subscriberEmails.length) {
-      return NextResponse.json(
-        { error: "No subscriber emails provided", code: "BAD_REQUEST" },
-        { status: 400 }
-      );
-    }
-
     const result = await sendItemLostNotification({
       item: {
         id: body.item.id,
@@ -36,15 +31,14 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({
-      data: {
-        result,
-        sentTo: body.subscriberEmails.length,
-      },
+      success: true,
+      result,
+      sentTo: body.subscriberEmails.length,
     });
-  } catch (error) {
-    console.error("Error in /api/resend/lost:", error);
+  } catch (err) {
+    console.error("Send lost notification error:", err);
     return NextResponse.json(
-      { error: "Internal server error", code: "INTERNAL_ERROR" },
+      { error: "Failed to send notification" },
       { status: 500 }
     );
   }

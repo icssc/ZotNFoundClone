@@ -3,12 +3,12 @@
 import { db } from "@/db";
 import { searches } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { createAction } from "@/server/actions/wrapper";
-import { z } from "zod";
+import { ActionResult } from "@/lib/types";
 
-export const findEmailsSubscribedToKeyword = createAction(
-  z.string(),
-  async (keyword: string) => {
+export async function findEmailsSubscribedToKeyword(
+  keyword: string
+): Promise<ActionResult<{ emails: string[] | null }>> {
+  try {
     const [emailsSubscribedToKeyword] = await db.query.searches.findMany({
       columns: {
         emails: true,
@@ -16,8 +16,12 @@ export const findEmailsSubscribedToKeyword = createAction(
       where: eq(searches.keyword, keyword),
     });
     if (!emailsSubscribedToKeyword) {
-      throw new Error("Keyword not found.");
+      return { error: "Keyword not found." };
     }
-    return { emails: emailsSubscribedToKeyword.emails };
+    return { data: emailsSubscribedToKeyword };
+  } catch (error) {
+    return {
+      error: `Error fetching emails subscribed to keyword: ${error}`,
+    };
   }
-);
+}

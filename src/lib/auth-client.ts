@@ -1,36 +1,26 @@
 import { createAuthClient } from "better-auth/react";
 import { toast } from "sonner";
-import { trackUserSignIn, trackUserSignOut, resetUser } from "./analytics";
-
 export const authClient = createAuthClient({
   // Use relative base URL (same origin) so signOut/signIn work in deployed environments
   baseURL: "",
 });
 
-const { signOut: originalSignOut, signUp } = authClient;
-
-// Wrap signOut with analytics tracking
-async function signOut() {
-  trackUserSignOut();
-  resetUser();
-  return originalSignOut();
-}
+export const { signOut, signUp } = authClient;
 
 // TODO: Changing Error Handling
-async function signInWithGoogle() {
+export const signInWithGoogle = async () => {
   try {
     const data = await authClient.signIn.social({
       provider: "google",
     });
-    trackUserSignIn();
     return data;
   } catch (error) {
     console.error("Error signing in with Google:", error);
     throw error;
   }
-}
+};
 
-async function handleSignIn() {
+export async function handleSignIn() {
   try {
     await signInWithGoogle();
     // successful redirect
@@ -39,5 +29,3 @@ async function handleSignIn() {
     toast.error("Unable to sign in. Please try again.");
   }
 }
-
-export { signUp, signOut, handleSignIn };

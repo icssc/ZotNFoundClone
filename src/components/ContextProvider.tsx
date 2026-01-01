@@ -1,5 +1,5 @@
 "use client";
-import {
+import React, {
   createContext,
   useContext,
   useState,
@@ -7,9 +7,8 @@ import {
   useEffect,
 } from "react";
 import type { LatLngExpression } from "leaflet";
-import type { User } from "better-auth";
+import { User } from "better-auth";
 import { authClient, signOut as clientSignOut } from "@/lib/auth-client";
-import { identifyUser } from "@/lib/analytics";
 
 // ---- Shared Context ----
 type SharedContextType = {
@@ -45,17 +44,6 @@ function SharedProviders({
   // (including the signed-out case where data.user may be null).
   // Otherwise fall back to the local optimistic user state.
   const user: User | undefined = data?.user ?? localUser;
-
-  // Identify user in PostHog when they sign in
-  useEffect(() => {
-    if (user?.id) {
-      identifyUser(user.id, {
-        email: user.email,
-        name: user.name,
-        image: user.image,
-      });
-    }
-  }, [user?.id, user?.email, user?.name, user?.image]);
 
   const signOut = async () => {
     const previousLocal = localUser;

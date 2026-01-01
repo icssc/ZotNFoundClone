@@ -5,11 +5,21 @@ import { items, NewItem } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import uploadImageToS3 from "@/server/actions/item/upload/action";
-import { createAction, ActionState } from "@/server/actions/wrapper";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
-import { Item } from "@/db/schema";
-
-export type CreateItemState = ActionState<Pick<Item, "id">>;
+export interface CreateItemState {
+  success: boolean;
+  error?: string;
+  errors?: {
+    name?: string[];
+    description?: string[];
+    type?: string[];
+    date?: string[];
+    location?: string[];
+    file?: string[];
+  };
+}
 
 const createItemSchema = z.object({
   name: z.string().min(1, "Item name is required").max(100, "Name is too long"),
@@ -28,70 +38,82 @@ const createItemSchema = z.object({
   location: z
     .array(z.string())
     .length(2, "Location must have exactly 2 coordinates"),
-  file: z.instanceof(File, { message: "Image is required" }),
+  file: z.instanceof(File).optional(),
 });
 
-const itemStorageSchema = createItemSchema.omit({ file: true }).extend({
-  image: z.url("Invalid image URL"),
-});
+export async function createItem(
+  prevState: CreateItemState,
+  formData: FormData
+): Promise<CreateItemState> {
+  try {
+    // Get the current session to get the user's email
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
-const createItemHandler = createAction(
-  createItemSchema,
-  async (data, session) => {
-    const { name, description, type, date, isLost, file, location } = data;
-    const userEmail = session.user.email;
-
-    const uploadResult = await uploadImageToS3(file);
-    if (!uploadResult.success) {
-      console.error("Error uploading image:", uploadResult.error);
-      throw new Error("Failed to upload image. Please try again.");
+    if (!session?.user?.email) {
+      return {
+        success: false,
+        error: "You must be signed in to create an item.",
+      };
     }
 
-    const imageUrl = uploadResult.data;
+    const userEmail = session.user.email;
 
-    // Validate the data to be stored
-    const storageData = {
+    const rawData = {
+      name: formData.get("name"),
+      description: formData.get("description"),
+      type: formData.get("type"),
+      date: formData.get("date"),
+      isLost: formData.get("isLost") === "true",
+      location: JSON.parse((formData.get("location") as string) || "[]"),
+      file: formData.get("file"),
+    };
+
+    const validation = createItemSchema.safeParse(rawData);
+
+    if (!validation.success) {
+      return {
+        success: false,
+        error: "Validation failed",
+        errors: validation.error.flatten().fieldErrors,
+      };
+    }
+
+    const { name, description, type, date, isLost, file, location } =
+      validation.data;
+
+    let imageUrl = "";
+    if (file) {
+      try {
+        imageUrl = await uploadImageToS3(file);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    }
+
+    const itemData: NewItem = {
       name,
       description,
       type,
       date,
+      itemDate: date,
+      image: imageUrl,
       isLost,
       location,
-      image: imageUrl,
-    };
-
-    const validatedStorageData = itemStorageSchema.parse(storageData);
-
-    const itemData: NewItem = {
-      ...validatedStorageData,
-      itemDate: date,
       isResolved: false,
       isHelped: false,
       email: userEmail,
     };
 
-    const [newItem] = await db
-      .insert(items)
-      .values(itemData)
-      .returning({ id: items.id });
+    await db.insert(items).values(itemData).returning();
     revalidatePath("/");
-    return newItem;
+
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to create item",
+    };
   }
-);
-
-export async function createItem(
-  _: CreateItemState,
-  formData: FormData
-): Promise<CreateItemState> {
-  const rawData = {
-    name: formData.get("name"),
-    description: formData.get("description"),
-    type: formData.get("type"),
-    date: formData.get("date"),
-    isLost: formData.get("isLost") === "true",
-    location: JSON.parse((formData.get("location") as string) || "[]"),
-    file: formData.get("file") || undefined,
-  };
-
-  return createItemHandler(rawData);
 }

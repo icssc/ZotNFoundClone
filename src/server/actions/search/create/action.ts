@@ -1,47 +1,56 @@
 "use server";
 
 import { db } from "@/db";
-import { searches } from "@/db/schema";
+import { searches, Search } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { createAction } from "@/server/actions/wrapper";
+import { ActionResult, isError, KeywordSubscription } from "@/lib/types";
 import { findEmailsSubscribedToKeyword } from "@/server/actions/search/lookup/action";
-import { keywordSubscriptionSchema } from "@/server/actions/search/schema";
 
-export const createKeywordSubscription = createAction(
-  keywordSubscriptionSchema,
-  async (data) => {
-    const { keyword, email } = data;
-    const lookup = await findEmailsSubscribedToKeyword(keyword);
+export async function createKeywordSubscription(
+  subscription: KeywordSubscription
+): Promise<ActionResult<Search>> {
+  const { keyword, email } = subscription;
+  const lookup = await findEmailsSubscribedToKeyword(keyword);
 
-    let existingEmails: string[] = [];
-
-    if (!lookup.success) {
-      if (lookup.error === "Keyword not found") {
-        existingEmails = [];
-      } else {
-        throw new Error(`Error fetching emails for keyword: ${lookup.error}`);
+  // If keyword not found, create a new row
+  if (isError(lookup)) {
+    // Check if it's a "not found" error or a real error
+    if (lookup.error === "Keyword not found.") {
+      // Keyword doesn't exist, create a new row
+      try {
+        const [result] = await db
+          .insert(searches)
+          .values({ keyword, emails: [email] })
+          .returning();
+        return { data: result };
+      } catch (error) {
+        return {
+          error: `Error creating new keyword subscription: ${error}`,
+        };
       }
     } else {
-      existingEmails = lookup.data?.emails || [];
+      // Real error occurred
+      return { error: `Error fetching emails for keyword: ${lookup.error}` };
     }
-
-    if (existingEmails.includes(email)) {
-      throw new Error("You are already subscribed to this keyword.");
-    }
-
-    const query =
-      existingEmails.length > 0
-        ? db
-            .update(searches)
-            .set({ emails: [...existingEmails, email] })
-            .where(eq(searches.keyword, keyword))
-            .returning()
-        : db
-            .insert(searches)
-            .values({ keyword, emails: [email] })
-            .returning();
-
-    const [result] = await query;
-    return result;
   }
-);
+
+  const existingEmails = lookup.data.emails || [];
+  if (existingEmails.includes(email)) {
+    return { error: "You are already subscribed to this keyword." };
+  }
+
+  try {
+    // Update existing keyword with new email
+    const [result] = await db
+      .update(searches)
+      .set({ emails: [...existingEmails, email] })
+      .where(eq(searches.keyword, keyword))
+      .returning();
+
+    return { data: result };
+  } catch (error) {
+    return {
+      error: `Error updating subscriptions for keyword: ${error}`,
+    };
+  }
+}

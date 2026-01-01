@@ -2,32 +2,22 @@
 
 import { db } from "@/db";
 import { items, Item } from "@/db/schema";
-import { ActionState } from "@/lib/types";
-import { eq, or, isNull, and, gte } from "drizzle-orm";
-
-export async function getAllItems(): Promise<ActionState<Item[]>> {
+import { ActionResult } from "@/lib/types";
+import { eq, or, isNull, and } from "drizzle-orm";
+export async function getAllItems(): Promise<ActionResult<Item[]>> {
   "use cache";
   try {
-    const twoYearsAgo = new Date();
-    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
-    const cutoffStr = twoYearsAgo.toISOString().slice(0, 10);
-
     const result = await db
       .select()
       .from(items)
-      .where(
-        and(
-          or(eq(items.is_deleted, false), isNull(items.is_deleted)),
-          gte(items.itemDate, cutoffStr)
-        )
-      );
+      .where(or(eq(items.is_deleted, false), isNull(items.is_deleted)));
     return { data: result };
   } catch (err) {
     return { error: `Error fetching item: ${err}` };
   }
 }
 
-export async function getItem(id: number): Promise<ActionState<Item>> {
+export async function getItem(id: number): Promise<ActionResult<Item>> {
   try {
     const [result] = await db
       .select()
@@ -50,7 +40,7 @@ export async function getItem(id: number): Promise<ActionState<Item>> {
   }
 }
 
-export async function getItemEmail(id: number): Promise<ActionState<string>> {
+export async function getItemEmail(id: number): Promise<ActionResult<string>> {
   try {
     const result = await db.query.items.findFirst({
       columns: {
@@ -75,7 +65,7 @@ export async function getItemEmail(id: number): Promise<ActionState<string>> {
 export async function getTopFewItems(
   limit: number,
   offset: number
-): Promise<ActionState<Item[]>> {
+): Promise<ActionResult<Item[]>> {
   try {
     // Filter out deleted items (is_deleted is false or null)
     const result = await db
