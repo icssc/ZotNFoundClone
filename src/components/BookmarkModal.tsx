@@ -38,7 +38,7 @@ export function BookmarkModal() {
     FormData
   >(keywordFormAction, initialState);
 
-  const keywords = state.success ? (state.data ?? []) : (state.data ?? []);
+  const keywords = state.data ?? [];
   const loadedOnce = state.success && state.data !== undefined;
 
   const triggerLoad = () => {
