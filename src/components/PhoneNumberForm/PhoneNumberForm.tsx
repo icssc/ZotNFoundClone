@@ -1,19 +1,12 @@
 "use client";
-
-import UnverifiedView from "@/components/PhoneNumberForm/UnverifiedView";
-import VerifiedView from "@/components/PhoneNumberForm/VerifiedView";
 import { useActionState } from "react";
+import VerifiedView from "./VerifiedView";
+import UnverifiedView from "./UnverifiedView";
+import { formatPhoneNumber } from "@/lib/utils";
 import {
   phoneNumberFormAction,
   type PhoneNumberActionState,
 } from "@/server/actions/phone-number/action";
-
-function formatPhoneNumber(number: string | undefined) {
-  if (!number) {
-    return "";
-  }
-  return number?.replace(/(\+\d{1})(\d{3})(\d{3})(\d{4})/, "$1 ($2) $3-$4");
-}
 
 export default function PhoneNumberForm({
   initialSettings,
@@ -26,37 +19,40 @@ export default function PhoneNumberForm({
   >(phoneNumberFormAction, initialSettings);
 
   const {
-    phoneNumber: unformattedPhoneNumber,
+    phoneNumber: raw,
     isVerified,
     verificationPending,
-  } = state.success ? state.data : state?.prevState || {};
-  const phoneNumber = formatPhoneNumber(unformattedPhoneNumber);
+  } = state.success ? state.data : state.prevState || {};
+  const phoneNumber = formatPhoneNumber(raw);
+
+  const common: {
+    formAction: (payload: FormData) => void;
+    isPending: boolean;
+  } = { formAction, isPending };
 
   return (
     <div className="space-y-2 px-20">
       <h4 className="text-xl font-medium">SMS Alerts</h4>
       {isVerified ? (
-        <VerifiedView
-          phoneNumber={phoneNumber}
-          formAction={formAction}
-          isPending={isPending}
-        />
+        <VerifiedView {...common} phoneNumber={phoneNumber} />
       ) : (
         <UnverifiedView
-          formAction={formAction}
-          isPending={isPending}
-          phoneNumber={phoneNumber}
+          {...common}
+          phoneNumber={phoneNumber || ""}
           verificationPending={verificationPending}
         />
       )}
-
-      {!state.success && state.error && (
-        <p className="text-sm text-red-400">
-          {state.error === "Validation failed"
-            ? "Phone number must be a valid US number (+1XXXXXXXXXX)."
-            : state.error}
-        </p>
-      )}
+      {!state.success && state.error && <ErrorMsg error={state.error} />}
     </div>
+  );
+}
+
+function ErrorMsg({ error }: { error: string }) {
+  return (
+    <p className="text-sm text-red-400">
+      {error === "Validation failed"
+        ? "Phone number must be a valid US number (+1XXXXXXXXXX)."
+        : error}
+    </p>
   );
 }

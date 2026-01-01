@@ -1,7 +1,14 @@
 import { ArrowLeft, RefreshCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import SubmitButton from "@/components/PhoneNumberForm/SubmitButton";
+import SubmitButton from "@/components/ui/submit-button";
+
+const INTENT = {
+  VERIFY: "verify_phone",
+  ADD: "add_phone",
+  RESEND: "resend_code",
+  CHANGE: "change_number",
+} as const;
 
 export default function UnverifiedView({
   formAction,
@@ -14,29 +21,14 @@ export default function UnverifiedView({
   verificationPending?: boolean;
   phoneNumber: string;
 }) {
-  const formConfig = verificationPending
-    ? {
-        inputName: "verificationCode",
-        inputType: "text",
-        placeholder: "123456",
-        submitLabel: "Verify",
-        submitIntent: "verify_phone",
-      }
-    : {
-        inputName: "phoneNumber",
-        inputType: "tel",
-        placeholder: "+19491234567",
-        submitLabel: "Add Phone Number",
-        submitIntent: "add_phone",
-      };
-
+  const pending = verificationPending;
   return (
     <>
       <p className="text-gray-400 text-sm leading-relaxed">
         To get SMS alerts when items matching your search keywords are found,
         add and verify your phone number.
       </p>
-      {verificationPending && (
+      {pending && (
         <p className="text-sm leading-relaxed">
           Verify {phoneNumber} by inputting the verification code sent via SMS.
           The code expires three minutes after it is sent.
@@ -45,9 +37,9 @@ export default function UnverifiedView({
       <form action={formAction} className="space-y-3">
         <div className="flex items-center gap-2">
           <Input
-            name={formConfig.inputName}
-            type={formConfig.inputType}
-            placeholder={formConfig.placeholder}
+            name={pending ? "verificationCode" : "phoneNumber"}
+            type={pending ? "text" : "tel"}
+            placeholder={pending ? "123456" : "+19491234567"}
             className="flex-1"
             disabled={isPending}
           />
@@ -55,20 +47,19 @@ export default function UnverifiedView({
             isPending={isPending}
             type="submit"
             name="intent"
-            value={formConfig.submitIntent}
+            value={pending ? INTENT.VERIFY : INTENT.ADD}
           >
-            {formConfig.submitLabel}
+            {pending ? "Verify" : "Add Phone Number"}
           </SubmitButton>
         </div>
 
-        {/* Additional options once an unverified phone number exists */}
-        {verificationPending && (
+        {pending && (
           <div className="flex gap-2">
             <Button
               variant="ghost"
               size="sm"
               name="intent"
-              value="resend_code"
+              value={INTENT.RESEND}
               disabled={isPending}
               className="text-xs text-muted-foreground"
             >
@@ -79,7 +70,7 @@ export default function UnverifiedView({
               variant="ghost"
               size="sm"
               name="intent"
-              value="change_number"
+              value={INTENT.CHANGE}
               disabled={isPending}
               className="text-xs text-muted-foreground"
             >
