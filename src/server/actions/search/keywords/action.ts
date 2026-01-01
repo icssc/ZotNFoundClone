@@ -12,7 +12,9 @@ import { getKeywordsForUser } from "@/server/data/search/queries";
 
 const noInputSchema = z.object({});
 
-export type KeywordActionState = ActionState<string[]> & { data?: string[] };
+export type KeywordActionState = ActionState<string[] | undefined> & {
+  data?: string[];
+};
 
 async function fetchUserKeywordsOrThrow(email: string) {
   const result = await getKeywordsForUser(email);

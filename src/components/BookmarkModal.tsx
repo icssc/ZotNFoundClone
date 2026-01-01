@@ -1,14 +1,7 @@
 "use client";
 
-import { useState, useActionState, FormEvent } from "react";
-import {
-  Bell,
-  BookmarkIcon,
-  Search,
-  UserIcon,
-  RefreshCw,
-  Loader2,
-} from "lucide-react";
+import { useActionState, FormEvent, useTransition } from "react";
+import { Bell, BookmarkIcon, Search, UserIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -32,12 +26,12 @@ import {
 
 const initialState: KeywordActionState = {
   success: true,
-  data: [],
+  data: undefined,
 };
 
 export function BookmarkModal() {
   const { user, setFilter } = useSharedContext();
-  const [open, setOpen] = useState(false);
+  const [transitionPending, startTransition] = useTransition();
 
   const [state, formAction, isPending] = useActionState<
     KeywordActionState,
@@ -45,16 +39,18 @@ export function BookmarkModal() {
   >(keywordFormAction, initialState);
 
   const keywords = state.success ? (state.data ?? []) : (state.data ?? []);
+  const loadedOnce = state.success && state.data !== undefined;
 
   const triggerLoad = () => {
-    if (!user) return;
+    if (!user || loadedOnce || transitionPending) return;
     const fd = new FormData();
     fd.set("intent", "load");
-    formAction(fd);
+    startTransition(() => {
+      formAction(fd);
+    });
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
     if (nextOpen && user) {
       trackBookmarksOpened();
       triggerLoad();
@@ -69,7 +65,7 @@ export function BookmarkModal() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <div className="p-1 rounded hover:text-gray-300 flex items-center cursor-pointer">
           <BookmarkIcon className="h-5 w-5" />
@@ -78,7 +74,7 @@ export function BookmarkModal() {
           </span>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="sm:max-w-120">
         {user ? (
           <>
             <DialogHeader>
@@ -88,21 +84,13 @@ export function BookmarkModal() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={triggerLoad}
-                disabled={isPending}
-                className="gap-2"
-              >
-                {isPending ? (
+            <div className="flex items-center gap-2 ">
+              {isPending ? (
+                <span className="inline-flex items-center gap-2 text-xs text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <RefreshCw className="h-4 w-4" />
-                )}
-                Refresh
-              </Button>
+                  Updating…
+                </span>
+              ) : null}
               {!state.success && state.error && (
                 <p
                   className="text-xs text-red-400 truncate"
@@ -171,17 +159,16 @@ export function BookmarkModal() {
                             Remove
                           </Button>
                         </form>
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          className="text-sm"
-                          onClick={() => {
-                            setFilter(searchTerm);
-                            setOpen(false);
-                          }}
-                        >
-                          <Search className="h-4 w-4" />
-                        </Button>
+                        <DialogClose asChild>
+                          <Button
+                            variant="secondary"
+                            size="icon"
+                            className="text-sm"
+                            onClick={() => setFilter(searchTerm)}
+                          >
+                            <Search className="h-4 w-4" />
+                          </Button>
+                        </DialogClose>
                       </div>
                     </div>
                   ))}
