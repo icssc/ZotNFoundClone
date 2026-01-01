@@ -1,14 +1,7 @@
 "use client";
 
-import { useState, useActionState, FormEvent, useTransition } from "react";
-import {
-  Bell,
-  BookmarkIcon,
-  Search,
-  UserIcon,
-  RefreshCw,
-  Loader2,
-} from "lucide-react";
+import { useActionState, FormEvent, useTransition } from "react";
+import { Bell, BookmarkIcon, Search, UserIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -33,12 +26,11 @@ import {
 
 const initialState: KeywordActionState = {
   success: true,
-  data: [],
+  data: undefined,
 };
 
 export function BookmarkModal() {
   const { user, setFilter } = useSharedContext();
-  const [open, setOpen] = useState(false);
   const [transitionPending, startTransition] = useTransition();
 
   const [state, formAction, isPending] = useActionState<
@@ -59,7 +51,6 @@ export function BookmarkModal() {
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
-    setOpen(nextOpen);
     if (nextOpen && user) {
       trackBookmarksOpened();
       triggerLoad();
@@ -74,7 +65,7 @@ export function BookmarkModal() {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <div className="p-1 rounded hover:text-gray-300 flex items-center cursor-pointer">
           <BookmarkIcon className="h-5 w-5" />
@@ -83,7 +74,7 @@ export function BookmarkModal() {
           </span>
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent className="sm:max-w-120">
         {user ? (
           <>
             <DialogHeader>
@@ -93,22 +84,8 @@ export function BookmarkModal() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={triggerLoad}
-                disabled={isPending || transitionPending}
-                className="gap-2"
-              >
-                {isPending || transitionPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <RefreshCw className="h-4 w-4" />
-                )}
-                Refresh
-              </Button>
-              {isPending || transitionPending ? (
+            <div className="flex items-center gap-2 ">
+              {isPending ? (
                 <span className="inline-flex items-center gap-2 text-xs text-muted-foreground">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Updating…
@@ -187,10 +164,7 @@ export function BookmarkModal() {
                             variant="secondary"
                             size="icon"
                             className="text-sm"
-                            onClick={() => {
-                              setFilter(searchTerm);
-                              setOpen(false);
-                            }}
+                            onClick={() => setFilter(searchTerm)}
                           >
                             <Search className="h-4 w-4" />
                           </Button>
