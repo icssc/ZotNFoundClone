@@ -4,8 +4,15 @@ import z from "zod";
 import { db } from "@/db";
 import { emailToNumber, phoneVerifications } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
-import { getPendingVerificationInfoByEmail } from "@/server/data/phone-number/queries";
 import sendVerificationCodeBySMS from "@/server/actions/phone-number/sendCode";
+
+async function getPendingVerificationInfoByEmail(email: string) {
+  const [pendingVerification] = await db
+    .select()
+    .from(phoneVerifications)
+    .where(eq(phoneVerifications.email, email));
+  return pendingVerification;
+}
 
 export const resendVerificationCode = createAction(
   z.object({}),
