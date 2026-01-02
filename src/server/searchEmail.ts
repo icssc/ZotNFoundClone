@@ -2,7 +2,10 @@ import { db } from "@/db";
 import { emailToNumber, searches } from "@/db/schema";
 import { inArray, or, sql } from "drizzle-orm";
 
-export async function findSubscribedEmails(name: string, description: string) {
+export async function findSubscribedEmails(
+  name: string,
+  description: string
+): Promise<string[]> {
   const results = await db
     .select({ emails: searches.emails })
     .from(searches)
@@ -12,10 +15,13 @@ export async function findSubscribedEmails(name: string, description: string) {
         sql`${description} ILIKE '%' || ${searches.keyword} || '%'`
       )
     );
-  return results.flatMap((r) => r.emails);
+  const allEmails = results.flatMap((r) => r.emails);
+  return [...new Set(allEmails)];
 }
 
-export async function getPhoneNumbersCorrespondingToEmails(emails: string[]) {
+export async function getPhoneNumbersCorrespondingToEmails(
+  emails: string[]
+): Promise<string[]> {
   if (emails.length === 0) {
     return [];
   }
