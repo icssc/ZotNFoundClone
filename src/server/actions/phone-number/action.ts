@@ -1,5 +1,7 @@
 "use server";
 
+import { type PhoneIntent } from "@/lib/types";
+import { phoneIntents } from "@/lib/constants";
 import { type ActionState } from "@/server/actions/wrapper";
 import { findPhoneNumber } from "@/server/actions/phone-number/lookup/action";
 import { addPhoneNumberToVerify } from "@/server/actions/phone-number/create/action";
@@ -27,30 +29,33 @@ export async function phoneNumberFormAction(
   prevState: PhoneNumberActionState,
   formData: FormData
 ): Promise<PhoneNumberActionState> {
-  const intent = formData.get("intent") || "";
+  const intent = formData.get("intent") as PhoneIntent;
   const num = formData.get("phoneNumber") || "";
   const verificationCode = formData.get("verificationCode") || "";
   let result;
   try {
     switch (intent) {
-      case "load_phone":
+      case phoneIntents.LOAD:
         result = await findPhoneNumber({});
         break;
-      case "add_phone":
+      case phoneIntents.ADD:
         result = await addPhoneNumberToVerify({ newNumber: num });
         break;
-      case "remove_phone":
+      case phoneIntents.REMOVE:
         result = await removeVerifiedNumber({});
         break;
-      case "verify_phone":
+      case phoneIntents.VERIFY:
         result = await verifyCode({ code: verificationCode });
         break;
-      case "resend_code":
+      case phoneIntents.RESEND:
         result = await resendVerificationCode({});
         break;
-      case "change_number":
+      case phoneIntents.CHANGE:
         result = await removeUnverifiedNumber({});
         break;
+      default:
+        const _otherIntent: never = intent;
+        throw new Error(`Unhandled intent: ${intent}`);
     }
     if (result && result.success) {
       return result;

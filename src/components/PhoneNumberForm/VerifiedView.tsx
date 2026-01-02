@@ -1,5 +1,6 @@
 import { Phone } from "lucide-react";
 import SubmitButton from "@/components/ui/submit-button";
+import { phoneIntents } from "@/lib/constants";
 
 export default function VerifiedView({
   phoneNumber,
@@ -32,7 +33,7 @@ export default function VerifiedView({
           <SubmitButton
             isPending={isPending}
             name="intent"
-            value="remove_phone"
+            value={phoneIntents.REMOVE}
             variant="ghost"
             size="sm"
             className="text-red-400 hover:text-red-300 hover:bg-red-400/10"

@@ -2,13 +2,7 @@ import { ArrowLeft, RefreshCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SubmitButton from "@/components/ui/submit-button";
-
-const INTENT = {
-  VERIFY: "verify_phone",
-  ADD: "add_phone",
-  RESEND: "resend_code",
-  CHANGE: "change_number",
-} as const;
+import { phoneIntents } from "@/lib/constants";
 
 export default function UnverifiedView({
   formAction,
@@ -47,7 +41,7 @@ export default function UnverifiedView({
             isPending={isPending}
             type="submit"
             name="intent"
-            value={pending ? INTENT.VERIFY : INTENT.ADD}
+            value={pending ? phoneIntents.VERIFY : phoneIntents.ADD}
           >
             {pending ? "Verify" : "Add Phone Number"}
           </SubmitButton>
@@ -59,7 +53,7 @@ export default function UnverifiedView({
               variant="ghost"
               size="sm"
               name="intent"
-              value={INTENT.RESEND}
+              value={phoneIntents.RESEND}
               disabled={isPending}
               className="text-xs text-muted-foreground"
             >
@@ -70,7 +64,7 @@ export default function UnverifiedView({
               variant="ghost"
               size="sm"
               name="intent"
-              value={INTENT.CHANGE}
+              value={phoneIntents.CHANGE}
               disabled={isPending}
               className="text-xs text-muted-foreground"
             >
