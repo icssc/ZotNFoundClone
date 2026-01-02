@@ -1,7 +1,12 @@
 import crypto from "crypto";
 import { sendSMS } from "@/lib/sms/service";
 
-export default async function sendVerificationCodeBySMS(newNumber: string) {
+export default async function sendVerificationCodeBySMS(
+  newNumber: string
+): Promise<{
+  expiresAt: string;
+  verificationCode: string;
+}> {
   const verificationCode = crypto.randomInt(100000, 1000000).toString();
   const currentTime = new Date();
   currentTime.setMinutes(currentTime.getMinutes() + 3);
