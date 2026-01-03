@@ -1,4 +1,4 @@
-import { text, timestamp, boolean, pgSchema } from "drizzle-orm/pg-core";
+import { text, timestamp, varchar, boolean, pgSchema } from "drizzle-orm/pg-core";
 
 // TODO: Make sure this changes for the production database
 export const dev = pgSchema("dev");
@@ -17,6 +17,8 @@ export const user = dev.table("user", {
   updatedAt: timestamp("updated_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
+  phoneNumber: varchar("phone_number", { length: 15 }).unique(),
+  verifiedAt: timestamp("verified_at", { withTimezone: true, mode: "string" })
 });
 
 export const session = dev.table("session", {
