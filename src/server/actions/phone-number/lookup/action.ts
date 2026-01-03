@@ -6,40 +6,39 @@ import { db } from "@/db";
 import { emailToNumber, phoneVerifications } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
 
-async function getVerifiedPhoneNumber(email: string) {
-  const existing = await db.query.emailToNumber.findFirst({
-    columns: { phoneNumber: true },
-    where: eq(emailToNumber.email, email),
-  });
-  const verifiedNum = existing?.phoneNumber ?? "";
-  return {
-    phoneNumber: verifiedNum,
-    isVerified: Boolean(verifiedNum),
-    verificationPending: false,
-  };
-}
-
-async function getPhoneNumberPendingVerification(email: string) {
-  const existing = await db.query.phoneVerifications.findFirst({
-    columns: { phoneNumber: true },
-    where: eq(phoneVerifications.email, email),
-  });
-  const pendingNum = existing?.phoneNumber ?? "";
-  return {
-    phoneNumber: pendingNum,
-    isVerified: false,
-    verificationPending: Boolean(pendingNum),
-  };
+async function getPhoneNumber(verified: boolean, email: string) {
+  let existing;
+  if (verified) {
+    existing = await db.query.emailToNumber.findFirst({
+      columns: { phoneNumber: true },
+      where: eq(emailToNumber.email, email),
+    });
+  } else {
+    existing = await db.query.phoneVerifications.findFirst({
+      columns: { phoneNumber: true },
+      where: eq(phoneVerifications.email, email),
+    });
+  }
+  return existing?.phoneNumber ?? "";
 }
 
 export const findPhoneNumber = createAction(
   z.object({}),
   async (_, session) => {
     const email = session.user.email;
-    const result = await getVerifiedPhoneNumber(email);
-    if (result.phoneNumber) {
-      return result;
+    const verifiedNum = await getPhoneNumber(true, email);
+    if (verifiedNum) {
+      return {
+        phoneNumber: verifiedNum,
+        isVerified: true,
+        verificationPending: false,
+      };
     }
-    return await getPhoneNumberPendingVerification(email);
+    const pendingNum = await getPhoneNumber(false, email);
+    return {
+      phoneNumber: pendingNum,
+      isVerified: false,
+      verificationPending: Boolean(pendingNum),
+    };
   }
 );
