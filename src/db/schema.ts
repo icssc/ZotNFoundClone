@@ -51,11 +51,11 @@ export const phoneVerifications = pgTable(
   },
   (table) => [
     foreignKey({
-          columns: [table.email],
-          foreignColumns: [user.email],
-          name: "phoneverifications_email_fkey"
-        }).onDelete("cascade"),
-      ]
+      columns: [table.email],
+      foreignColumns: [user.email],
+      name: "phoneverifications_email_fkey",
+    }).onDelete("cascade"),
+  ]
 );
 
 // Types for TypeScript
