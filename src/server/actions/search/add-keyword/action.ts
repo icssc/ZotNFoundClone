@@ -1,12 +1,12 @@
 "use server";
 
 import { createKeywordSubscription } from "@/server/actions/search/create/action";
-import { ActionResult, KeywordSubscription } from "@/lib/types";
+import { ActionState, KeywordSubscription } from "@/lib/types";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
-export async function addKeyword(keyword: string): Promise<ActionResult<void>> {
+export async function addKeyword(keyword: string): Promise<ActionState<void>> {
   try {
     // Get the current session to get the user's email
     const session = await auth.api.getSession({
