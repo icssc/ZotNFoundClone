@@ -10,8 +10,7 @@ import {
   verifyCode,
 } from "@/server/actions/phone-number/verify/action";
 import {
-  removeVerifiedNumber,
-  removeUnverifiedNumber,
+  removePhoneNumber,
 } from "@/server/actions/phone-number/delete/action";
 
 type PhoneStatus = {
@@ -42,7 +41,7 @@ export async function phoneNumberFormAction(
         result = await addPhoneNumberToVerify({ newNumber: num });
         break;
       case phoneIntents.REMOVE:
-        result = await removeVerifiedNumber({});
+        result = await removePhoneNumber("verified");
         break;
       case phoneIntents.VERIFY:
         result = await verifyCode({ code: verificationCode });
@@ -51,7 +50,7 @@ export async function phoneNumberFormAction(
         result = await resendVerificationCode({});
         break;
       case phoneIntents.CHANGE:
-        result = await removeUnverifiedNumber({});
+        result = await removePhoneNumber("unverified");
         break;
       default:
         const _otherIntent: never = intent;
