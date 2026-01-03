@@ -9,9 +9,7 @@ import {
   resendVerificationCode,
   verifyCode,
 } from "@/server/actions/phone-number/verify/action";
-import {
-  removePhoneNumber,
-} from "@/server/actions/phone-number/delete/action";
+import { removePhoneNumber } from "@/server/actions/phone-number/delete/action";
 
 type PhoneStatus = {
   phoneNumber: string;
