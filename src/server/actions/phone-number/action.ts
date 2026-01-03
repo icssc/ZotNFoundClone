@@ -3,7 +3,6 @@
 import { type PhoneIntent } from "@/lib/types";
 import { phoneIntents } from "@/lib/sms/constants";
 import { type ActionState } from "@/server/actions/wrapper";
-import { findPhoneNumber } from "@/server/actions/phone-number/lookup/action";
 import { addPhoneNumberToVerify } from "@/server/actions/phone-number/create/action";
 import {
   resendVerificationCode,
@@ -32,9 +31,6 @@ export async function phoneNumberFormAction(
   let result;
   try {
     switch (intent) {
-      case phoneIntents.LOAD:
-        result = await findPhoneNumber({});
-        break;
       case phoneIntents.ADD:
         result = await addPhoneNumberToVerify({ newNumber: num });
         break;
