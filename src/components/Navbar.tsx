@@ -5,6 +5,7 @@ import { InfoIcon, UserIcon, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookmarkModal } from "@/components/BookmarkModal";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { SearchBar } from "./SearchBar";
 import { useSharedContext } from "./ContextProvider";
 import { Instrument_Serif } from "next/font/google";
@@ -20,11 +21,11 @@ const instrumentSerif = Instrument_Serif({
 
 export default function Navbar() {
   const { user, signOut } = useSharedContext();
-
+  const router = useRouter();
   const handleSignOut = async () => {
     try {
       await signOut();
-      window.location.href = "/";
+      router.replace("/");
     } catch (error) {
       console.error("Sign out error:", error);
     }
