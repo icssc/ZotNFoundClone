@@ -9,12 +9,9 @@ import { phoneVerifications } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
 
 export const removePhoneNumber = createAction(
-  z.object({
-    target: z.enum(["verified", "unverified"]),
-  }),
-  async ({ target }, session) => {
+  z.enum(["verified", "unverified"]),
+  async (target, session) => {
     const email = session.user.email;
-
     if (target === "verified") {
       await db
         .update(user)
