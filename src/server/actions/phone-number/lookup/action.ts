@@ -3,16 +3,18 @@
 import z from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { emailToNumber, phoneVerifications } from "@/db/schema";
+import { user } from "@/db/auth-schema";
+import { phoneVerifications } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
 
 async function getPhoneNumber(verified: boolean, email: string) {
   let existing;
   if (verified) {
-    existing = await db.query.emailToNumber.findFirst({
-      columns: { phoneNumber: true },
-      where: eq(emailToNumber.email, email),
-    });
+    [existing] = await db
+      .select({ phoneNumber: user.phoneNumber })
+      .from(user)
+      .where(eq(user.email, email))
+      .limit(1);
   } else {
     existing = await db.query.phoneVerifications.findFirst({
       columns: { phoneNumber: true },

@@ -1,5 +1,6 @@
 import { db } from "@/db";
-import { emailToNumber, searches } from "@/db/schema";
+import { user } from "@/db/auth-schema";
+import { searches } from "@/db/schema";
 import { inArray, or, sql } from "drizzle-orm";
 
 export async function findSubscribedEmails(
@@ -25,11 +26,12 @@ export async function getPhoneNumbersCorrespondingToEmails(
   if (emails.length === 0) {
     return [];
   }
-  const phoneNumbers = await db.query.emailToNumber.findMany({
-    columns: {
-      phoneNumber: true,
-    },
-    where: inArray(emailToNumber.email, emails),
-  });
-  return phoneNumbers.flatMap((number) => number.phoneNumber);
+  const phoneNumbers = await db
+    .select({ phoneNumber: user.phoneNumber })
+    .from(user)
+    .where(inArray(user.email, emails));
+
+  return phoneNumbers
+    .map((row) => row.phoneNumber)
+    .filter((n): n is string => n != null);
 }

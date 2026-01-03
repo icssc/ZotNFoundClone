@@ -1,7 +1,7 @@
 "use server";
 
 import { type PhoneIntent } from "@/lib/types";
-import { phoneIntents } from "@/lib/constants";
+import { phoneIntents } from "@/lib/sms/constants";
 import { type ActionState } from "@/server/actions/wrapper";
 import { findPhoneNumber } from "@/server/actions/phone-number/lookup/action";
 import { addPhoneNumberToVerify } from "@/server/actions/phone-number/create/action";

@@ -2,7 +2,8 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import z from "zod";
 import { db } from "@/db";
-import { emailToNumber, phoneVerifications } from "@/db/schema";
+import { user } from "@/db/auth-schema";
+import { phoneVerifications } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
 import sendVerificationCodeBySMS from "@/server/actions/phone-number/sendCode";
 
@@ -83,10 +84,13 @@ export const verifyCode = createAction(
     }
 
     await db.transaction(async (tx) => {
-      await tx.insert(emailToNumber).values({
-        email,
-        phoneNumber: pendingVerification.phoneNumber,
-      });
+      await tx
+        .update(user)
+        .set({
+          phoneNumber: pendingVerification.phoneNumber,
+          verifiedAt: new Date().toISOString(),
+        })
+        .where(eq(user.email, email));
       await tx
         .delete(phoneVerifications)
         .where(eq(phoneVerifications.email, email));
