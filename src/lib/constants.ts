@@ -17,13 +17,4 @@ const centerPosition = [33.64363144392915, -117.84895805659363];
 
 const mapBounds = latLngBounds(mapBoundsCoordinates);
 
-const phoneIntents = {
-  LOAD: "load_phone",
-  ADD: "add_phone",
-  REMOVE: "remove_phone",
-  VERIFY: "verify_phone",
-  RESEND: "resend_code",
-  CHANGE: "change_number",
-} as const;
-
-export { allowedBounds, centerPosition, mapBounds, phoneIntents };
+export { allowedBounds, centerPosition, mapBounds };

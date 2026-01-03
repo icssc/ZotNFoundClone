@@ -1,6 +1,6 @@
 import { Item } from "@/db/schema";
 import type { LatLngExpression, PointTuple } from "leaflet";
-import { phoneIntents } from "@/lib/constants";
+import { phoneIntents } from "@/lib/sms/constants";
 
 export type ItemPostParams = {
   image: string;

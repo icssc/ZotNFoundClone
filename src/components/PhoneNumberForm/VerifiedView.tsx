@@ -1,6 +1,6 @@
 import { Phone } from "lucide-react";
 import SubmitButton from "@/components/ui/submit-button";
-import { phoneIntents } from "@/lib/constants";
+import { phoneIntents } from "@/lib/sms/constants";
 
 export default function VerifiedView({
   phoneNumber,

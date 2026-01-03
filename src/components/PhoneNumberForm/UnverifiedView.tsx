@@ -2,7 +2,7 @@ import { ArrowLeft, RefreshCcw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SubmitButton from "@/components/ui/submit-button";
-import { phoneIntents } from "@/lib/constants";
+import { phoneIntents } from "@/lib/sms/constants";
 
 export default function UnverifiedView({
   formAction,
