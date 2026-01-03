@@ -1,10 +1,14 @@
 import {
+  boolean,
+  foreignKey,
+  integer,
   pgTable,
   serial,
+  smallint,
+  timestamp,
   varchar,
-  boolean,
-  integer,
 } from "drizzle-orm/pg-core";
+import { user } from "@/db/auth-schema";
 
 export const items = pgTable("items", {
   id: serial("id").primaryKey(),
@@ -32,6 +36,27 @@ export const searches = pgTable("searches", {
   keyword: varchar("keyword").primaryKey(),
   emails: varchar("emails").array().default([]).notNull(),
 });
+
+export const phoneVerifications = pgTable(
+  "phoneverifications",
+  {
+    email: varchar({ length: 254 }).primaryKey().notNull(),
+    phoneNumber: varchar("phonenumber", { length: 15 }).notNull().unique(),
+    attemptsLeft: smallint("attemptsleft").notNull(),
+    expiresAt: timestamp("expiresat", {
+      withTimezone: true,
+      mode: "string",
+    }).notNull(),
+    verificationCode: varchar("verificationcode", { length: 6 }).notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.email],
+      foreignColumns: [user.email],
+      name: "phoneverifications_email_fkey",
+    }).onDelete("cascade"),
+  ]
+);
 
 // Types for TypeScript
 export type Item = typeof items.$inferSelect;

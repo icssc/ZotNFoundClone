@@ -1,5 +1,4 @@
 import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { z } from "zod";
 import { treeifyError } from "zod";
 

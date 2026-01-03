@@ -1,5 +1,6 @@
 import { Item } from "@/db/schema";
 import type { LatLngExpression, PointTuple } from "leaflet";
+import { phoneIntents } from "@/lib/sms/constants";
 
 export type ItemPostParams = {
   image: string;
@@ -75,3 +76,5 @@ export interface StepProps {
 }
 
 export type ConfirmationStepProps = Pick<StepProps, "formData">;
+
+export type PhoneIntent = (typeof phoneIntents)[keyof typeof phoneIntents];

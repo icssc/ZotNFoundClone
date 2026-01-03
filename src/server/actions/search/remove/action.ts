@@ -24,7 +24,7 @@ export const removeKeywordSubscription = createAction(
       throw new Error("You are not subscribed to this keyword.");
     }
 
-    const updatedEmails = existingEmails.filter((e) => e !== email);
+    const updatedEmails = existingEmails.filter((e: string) => e !== email);
 
     const [result] = await db
       .update(searches)

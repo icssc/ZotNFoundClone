@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, FormEvent, useTransition } from "react";
 import { Bell, BookmarkIcon, Search, UserIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -38,7 +38,7 @@ export function BookmarkModal() {
     FormData
   >(keywordFormAction, initialState);
 
-  const keywords = state.success ? (state.data ?? []) : (state.data ?? []);
+  const keywords = state.data ?? [];
   const loadedOnce = state.success && state.data !== undefined;
 
   const triggerLoad = () => {
@@ -80,7 +80,18 @@ export function BookmarkModal() {
             <DialogHeader>
               <DialogTitle>Saved Searches</DialogTitle>
               <DialogDescription>
-                Manage your saved search keywords and alerts.
+                Manage your saved search keywords. To receive SMS alerts when
+                items matching your search keywords are found, subscribe your
+                phone number{" "}
+                <Link
+                  className="text-blue-400"
+                  href="/settings"
+                  rel="noopener"
+                  target="_blank"
+                >
+                  here
+                </Link>
+                .
               </DialogDescription>
             </DialogHeader>
 
