@@ -1,11 +1,11 @@
 "use server";
 
 import { getKeywordsForUser } from "@/server/data/search/queries";
-import { ActionResult } from "@/lib/types";
+import { ActionState } from "@/lib/types";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export async function getUserKeywords(): Promise<ActionResult<string[]>> {
+export async function getUserKeywords(): Promise<ActionState<string[]>> {
   try {
     // Get the current session to get the user's email
     const session = await auth.api.getSession({
