@@ -1,23 +1,45 @@
 "use server";
 
 import { db } from "@/db";
-import { eq } from "drizzle-orm";
-import { Item, items } from "@/db/schema";
-import type { ActionResult, ItemDeleteParams } from "@/lib/types";
+import { eq, and } from "drizzle-orm";
+import { items } from "@/db/schema";
+import { createAction } from "@/server/actions/wrapper";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
-export default async function deleteItem(
-  params: ItemDeleteParams
-): Promise<ActionResult<Item>> {
-  const { itemId } = params;
+const deleteItemSchema = z.object({
+  id: z.number(),
+});
 
-  try {
+export const deleteItem = createAction(
+  deleteItemSchema,
+  async (data, session) => {
+    const { id } = data;
+    const userEmail = session.user.email;
+
+    const [existingItem] = await db
+      .select()
+      .from(items)
+      .where(and(eq(items.id, id), eq(items.email, userEmail)));
+
+    if (!existingItem) {
+      throw new Error(
+        "Item not found or you don't have permission to delete it."
+      );
+    }
+
+    if (existingItem.is_deleted) {
+      throw new Error("Item is already deleted.");
+    }
+
     const [item] = await db
       .update(items)
       .set({ is_deleted: true })
-      .where(eq(items.id, itemId))
+      .where(and(eq(items.id, id), eq(items.email, userEmail)))
       .returning();
-    return { data: item };
-  } catch (error) {
-    return { error: `Error deleting item: ${error}` };
+
+    revalidatePath("/");
+
+    return item;
   }
-}
+);

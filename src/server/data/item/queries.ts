@@ -2,22 +2,43 @@
 
 import { db } from "@/db";
 import { items, Item } from "@/db/schema";
-import { ActionResult } from "@/lib/types";
-import { eq } from "drizzle-orm";
-export async function getAllItems(): Promise<ActionResult<Item[]>> {
+import { ActionState } from "@/lib/types";
+import { eq, or, isNull, and, gte } from "drizzle-orm";
+
+export async function getAllItems(): Promise<ActionState<Item[]>> {
+  "use cache";
   try {
-    const result = await db.query.items.findMany();
+    const twoYearsAgo = new Date();
+    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+    const cutoffStr = twoYearsAgo.toISOString().slice(0, 10);
+
+    const result = await db
+      .select()
+      .from(items)
+      .where(
+        and(
+          or(eq(items.is_deleted, false), isNull(items.is_deleted)),
+          gte(items.itemDate, cutoffStr)
+        )
+      );
     return { data: result };
   } catch (err) {
     return { error: `Error fetching item: ${err}` };
   }
 }
 
-export async function getItem(id: number): Promise<ActionResult<Item>> {
+export async function getItem(id: number): Promise<ActionState<Item>> {
   try {
-    const result = await db.query.items.findFirst({
-      where: eq(items.id, id),
-    });
+    const [result] = await db
+      .select()
+      .from(items)
+      .where(
+        and(
+          eq(items.id, id),
+          or(eq(items.is_deleted, false), isNull(items.is_deleted))
+        )
+      )
+      .limit(1);
 
     if (!result) {
       return { error: "Item not found for the given ID." };
@@ -29,7 +50,7 @@ export async function getItem(id: number): Promise<ActionResult<Item>> {
   }
 }
 
-export async function getItemEmail(id: number): Promise<ActionResult<string>> {
+export async function getItemEmail(id: number): Promise<ActionState<string>> {
   try {
     const result = await db.query.items.findFirst({
       columns: {
@@ -54,12 +75,15 @@ export async function getItemEmail(id: number): Promise<ActionResult<string>> {
 export async function getTopFewItems(
   limit: number,
   offset: number
-): Promise<ActionResult<Item[]>> {
+): Promise<ActionState<Item[]>> {
   try {
-    const result = await db.query.items.findMany({
-      limit,
-      offset,
-    });
+    // Filter out deleted items (is_deleted is false or null)
+    const result = await db
+      .select()
+      .from(items)
+      .where(or(eq(items.is_deleted, false), isNull(items.is_deleted)))
+      .limit(limit)
+      .offset(offset);
 
     return { data: result };
   } catch (err) {

@@ -3,25 +3,23 @@
 import { db } from "@/db";
 import { searches } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { ActionResult } from "@/lib/types";
+import { createAction } from "@/server/actions/wrapper";
+import { keywordSchema } from "@/server/actions/search/schema";
 
-export async function findEmailsSubscribedToKeyword(
-  keyword: string
-): Promise<ActionResult<{ emails: string[] | null }>> {
-  try {
+export const findEmailsSubscribedToKeyword = createAction(
+  keywordSchema,
+  async (keyword: string) => {
     const [emailsSubscribedToKeyword] = await db.query.searches.findMany({
       columns: {
         emails: true,
       },
       where: eq(searches.keyword, keyword),
     });
+
     if (!emailsSubscribedToKeyword) {
-      return { error: "Keyword not found." };
+      return { emails: [] };
     }
-    return { data: emailsSubscribedToKeyword };
-  } catch (error) {
-    return {
-      error: `Error fetching emails subscribed to keyword: ${error}`,
-    };
+
+    return { emails: emailsSubscribedToKeyword.emails };
   }
-}
+);

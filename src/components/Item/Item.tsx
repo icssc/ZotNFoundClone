@@ -1,8 +1,9 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
 import { Item as ItemType } from "@/db/schema";
 import Image from "next/image";
+import { trackItemViewed } from "@/lib/analytics";
+import { getStatusClasses, formatStatusLabel } from "@/lib/enums";
 
 function isValidUrl(string: string) {
   try {
@@ -24,51 +25,88 @@ export default function Item({
 }) {
   const islostObject = isLostObject(item);
   if (!item) {
-    return;
+    return null;
   }
+
+  const { tintClass: statusTintClass, textClass: statusTextColor } =
+    getStatusClasses(item);
+  const statusLabel = formatStatusLabel(item);
+
+  const handleClick = () => {
+    trackItemViewed({
+      itemId: String(item.id),
+      itemType: item.type || "unknown",
+      isLost: islostObject,
+    });
+    onClick();
+  };
+
   return (
     <div
-      onClick={onClick}
-      className="flex flex-col p-4 border-b border-gray-200 cursor-pointer bg-gray-300 hover:bg-gray-50 duration-200 rounded-md transition-colors"
+      onClick={handleClick}
+      className="group relative flex flex-col overflow-hidden border border-white/5 bg-black/40 hover:bg-white/5 rounded-xl transition-all duration-300 hover:shadow-2xl hover:shadow-black/50 hover:scale-[1.02] cursor-pointer backdrop-blur-md"
     >
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-row items-center space-x-2">
-          <div className="h-8 w-8 relative rounded-full overflow-hidden">
-            <Image
-              src={
-                item.image && isValidUrl(item.image)
-                  ? item.image
-                  : "/placeholder.jpg"
-              }
-              alt={item.name || "Item Image"}
-              fill
-              sizes="32px"
-              style={{ objectFit: "cover" }}
-              loading="lazy"
-            />
-          </div>
-          <div>
-            <p className="font-semibold">{item.name}</p>
-            <p className="text-sm text-gray-500">
-              {islostObject ? "Lost" : "Found"}
-            </p>
+      {/* Image Section */}
+      <div className="relative h-52 w-full overflow-hidden">
+        <Image
+          src={
+            item.image && isValidUrl(item.image)
+              ? item.image
+              : "/placeholder.jpg"
+          }
+          alt={item.name || "Item Image"}
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          style={{ objectFit: "cover" }}
+          loading="lazy"
+          preload={false}
+          fetchPriority="low"
+          priority={false}
+          quality="75"
+          className="transition-transform duration-700 group-hover:scale-110"
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent" />
+        <div
+          className={`absolute -bottom-2 -left-2 w-28 h-28 rounded-tr-full opacity-70 mix-blend-screen pointer-events-none ${statusTintClass}`}
+        />
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <div className="flex flex-row justify-between items-end gap-2">
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-white truncate text-lg">
+                {item.name}
+              </p>
+              <p className={`text-sm truncate ${statusTextColor}`}>
+                {statusLabel}
+              </p>
+            </div>
+            <div className="shrink-0">
+              <p className="text-sm text-gray-300 truncate whitespace-nowrap">
+                {new Date(item.date).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </p>
+            </div>
           </div>
         </div>
-        <div>
-          <p className="text-sm text-gray-500">{item.date}</p>
+      </div>
+
+      {/* Description & Action */}
+      <div className="p-4">
+        <p className="text-sm truncate text-gray-400 max-h-10 leading-relaxed">
+          {item.description}
+        </p>
+        <div className="flex flex-row justify-end">
+          <Button
+            onClick={() => {
+              setOpen(true);
+            }}
+            className="transition-all duration-200 bg-white/5 hover:bg-white/10 text-white"
+          >
+            {islostObject ? "I Found This" : "This Is Mine"}
+          </Button>
         </div>
-      </div>
-      <div>
-        <p className="text-sm text-gray-500 line-clamp-2">{item.description}</p>
-      </div>
-      <div className="flex flex-row justify-end">
-        <Button
-          onClick={() => {
-            setOpen(true);
-          }}
-        >
-          {islostObject ? "I Found This" : "This Is Mine"}
-        </Button>
       </div>
     </div>
   );

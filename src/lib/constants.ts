@@ -1,4 +1,4 @@
-import { latLngBounds, LatLngExpression } from "leaflet";
+import { latLngBounds, type LatLngExpression } from "leaflet";
 
 const allowedBounds = [
   [33.656487295651, -117.85412222020983],
