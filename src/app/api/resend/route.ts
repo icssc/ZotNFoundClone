@@ -1,4 +1,8 @@
+import { db } from "@/db";
+import { user } from "@/db/auth-schema";
+import { eq } from "drizzle-orm";
 import { sendItemFoundEmail } from "@/lib/email/service";
+import { sendSMS } from "@/lib/sms/service";
 import { FoundPayloadSchema } from "@/lib/validators/email";
 import { NextResponse } from "next/server";
 import { treeifyError } from "zod";
@@ -35,6 +39,17 @@ export async function POST(req: Request) {
       finderName: body.finderName,
       finderEmail: body.finderEmail,
     });
+
+    const [itemOwner] = await db
+      .select({ phoneNumber: user.phoneNumber })
+      .from(user)
+      .where(eq(user.email, body.item.email))
+      .limit(1);
+
+    if (itemOwner.phoneNumber) {
+      const message = `Someone found your item! View it at: https://zotnfound.com/?item=${body.item.id}. Contact them at ${body.finderEmail}.`;
+      await sendSMS(message, itemOwner.phoneNumber);
+    }
 
     return NextResponse.json({ data: { result } });
   } catch (error) {

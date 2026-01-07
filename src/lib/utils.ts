@@ -17,3 +17,8 @@ export function filterItems(items: Item[], filter: string): Item[] {
       item.description?.toLowerCase().includes(keyword)
   );
 }
+
+export function formatPhoneNumber(n?: string): string {
+  if (!n) return "";
+  return n.replace(/(\+\d{1})(\d{3})(\d{3})(\d{4})/, "$1 ($2) $3-$4");
+}
