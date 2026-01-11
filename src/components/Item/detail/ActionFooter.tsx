@@ -152,7 +152,7 @@ export function ActionFooter({
           <span>{copied ? "Copied!" : "Share"}</span>
         </Button>
 
-        {!isOwner && user && (
+        {!isOwner && isLost && user && (
           <Button
             className="flex-1 sm:flex-none items-center gap-2  bg-white/5 hover:bg-white/15 text-white border-0 h-10 px-6 rounded-xl transition-all duration-300 hover:scale-105"
             onClick={onContact}

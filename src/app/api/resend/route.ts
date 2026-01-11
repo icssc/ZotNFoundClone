@@ -46,9 +46,19 @@ export async function POST(req: Request) {
       .where(eq(user.email, body.item.email))
       .limit(1);
 
-    if (itemOwner.phoneNumber) {
-      const message = `Someone found your item! View it at: https://zotnfound.com/?item=${body.item.id}. Contact them at ${body.finderEmail}.`;
-      await sendSMS(message, itemOwner.phoneNumber);
+    try {
+      if (itemOwner && itemOwner.phoneNumber) {
+        const message = `Someone found your item! View it at: https://zotnfound.com/?item=${body.item.id}. Contact them at ${body.finderEmail}.`;
+        await sendSMS(message, itemOwner.phoneNumber);
+      }
+    } catch (error) {
+      return NextResponse.json(
+        {
+          error: "Item owner notified by email, but failed via SMS",
+          code: "BAD_REQUEST",
+        },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json({ data: { result } });
