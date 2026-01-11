@@ -25,7 +25,7 @@ const carousel: CarouselItem[] = [
   {
     title: "Search for Lost & Found Items",
     description:
-      "Utilize the easy-to-use filter and search bar to look up specific items.",
+      "Use the search bar to find specific items. Bookmark your searches for easy access and found item alerts.",
     image: "/search_for.png",
     alt: "Search for Lost & Found Items Image",
   },
