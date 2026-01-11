@@ -4,6 +4,7 @@ import { Item as ItemType } from "@/db/schema";
 import Image from "next/image";
 import { trackItemViewed } from "@/lib/analytics";
 import { getStatusClasses, formatStatusLabel } from "@/lib/enums";
+import { formatDate } from "@/lib/utils";
 
 function isValidUrl(string: string) {
   try {
@@ -81,11 +82,7 @@ export default function Item({
             </div>
             <div className="shrink-0">
               <p className="text-sm text-gray-300 truncate whitespace-nowrap">
-                {new Date(item.date).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                })}
+                {formatDate(item.itemDate)}
               </p>
             </div>
           </div>

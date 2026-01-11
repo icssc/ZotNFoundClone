@@ -1,7 +1,7 @@
 "use client";
 
+import { formatDate } from "@/lib/utils";
 import { Item } from "@/db/schema";
-import { formatStatusLabel } from "@/lib/enums";
 
 /**
  * StatusSection
@@ -27,7 +27,7 @@ export function StatusSection({ item, isLost, className }: StatusSectionProps) {
   } else {
     statusLabel = "Found";
   }
-  const dateLabel = item.date || item.itemDate || "Unknown date";
+  const dateLabel = formatDate(item.itemDate || item.date);
 
   return (
     <div
