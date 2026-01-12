@@ -67,6 +67,7 @@ const createItemHandler = createAction(
 
     const itemData: NewItem = {
       ...validatedStorageData,
+      date: new Date().toISOString(),
       itemDate: date,
       isResolved: false,
       isHelped: false,
