@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { sendSMS } from "@/lib/sms/service";
+import { trackError } from "@/lib/analytics";
 
 export default async function sendVerificationCodeBySMS(
   newNumber: string
@@ -16,8 +17,12 @@ export default async function sendVerificationCodeBySMS(
       `Your verification code to confirm that you'd like to receive found item posting alerts at ${newNumber} is ${verificationCode}.`,
       newNumber
     );
-  } catch (error) {
-    console.log("Failed to send verification code.");
+  } catch (error: any) {
+    console.error("Failed to send verification code.");
+    trackError({
+      error: error?.name || "Unknown error",
+      context: "Failure sending phone number verification code",
+    });
     throw new Error(
       "Failed to send verification code to " +
         newNumber +
