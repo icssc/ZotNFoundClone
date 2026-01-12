@@ -17,7 +17,6 @@ export default async function sendVerificationCodeBySMS(
       newNumber
     );
   } catch (error) {
-    console.log(error);
     throw new Error(
       "Failed to send verification code to " +
         newNumber +
