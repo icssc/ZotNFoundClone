@@ -16,8 +16,8 @@ export const items = pgTable("items", {
   description: varchar("description").notNull(),
   type: varchar("type").notNull(),
   location: varchar("location").array().notNull(),
-  date: varchar("date").notNull(),
-  itemDate: varchar("itemdate").notNull(),
+  date: varchar("date").notNull(), // date of posting
+  itemDate: varchar("itemdate").notNull(), // date item was lost or found
   email: varchar("email").notNull(),
   image: varchar("image").notNull(),
   isLost: boolean("islost").notNull(),

@@ -27,7 +27,7 @@ export function StatusSection({ item, isLost, className }: StatusSectionProps) {
   } else {
     statusLabel = "Found";
   }
-  const dateLabel = formatDate(item.itemDate || item.date);
+  const dateLabel = formatDate(item.itemDate);
 
   return (
     <div

@@ -27,18 +27,15 @@ export function formatPhoneNumber(n?: string): string {
 export function formatDate(dateString: string) {
   const yearMonthDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
   let date;
-  if (dateString) {
-    if (yearMonthDateSchema.safeParse(dateString).success) {
-      const [year, month, day] = dateString.split("-").map(Number);
-      date = new Date(year, month - 1, day);
-    } else {
-      date = new Date(dateString);
-    }
-    return date.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+  if (yearMonthDateSchema.safeParse(dateString).success) {
+    const [year, month, day] = dateString.split("-").map(Number);
+    date = new Date(year, month - 1, day);
+  } else {
+    date = new Date(dateString);
   }
-  return "Unknown date";
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
