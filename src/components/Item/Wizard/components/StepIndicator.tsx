@@ -33,7 +33,7 @@ export function StepIndicator({ currentStep, mode }: StepIndicatorProps) {
 
         {/* Active Progress Line */}
         <div
-          className="absolute top-3 sm:top-4 left-0 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 -z-10 transition-all duration-500 ease-out rounded-full"
+          className="absolute top-3 sm:top-4 left-0 h-0.5 bg-linear-to-r from-indigo-500 to-purple-500 -z-10 transition-all duration-500 ease-out rounded-full"
           style={{
             width: `${((currentStep - 1) / (steps.length - 1)) * 100}%`,
           }}
@@ -46,7 +46,7 @@ export function StepIndicator({ currentStep, mode }: StepIndicatorProps) {
           return (
             <div className="flex flex-col items-center group" key={step.number}>
               <div
-                className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 border-2 
+                className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full text-[10px] sm:text-xs font-bold transition-all duration-300 border-2
                   ${
                     isActive
                       ? "bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.3)] scale-110"

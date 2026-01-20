@@ -31,18 +31,22 @@ export default function PhoneNumberForm({
   } = { formAction, isPending };
 
   return (
-    <div className="space-y-2 px-20">
-      <h4 className="text-xl font-medium">SMS Alerts</h4>
-      {isVerified ? (
-        <VerifiedView {...common} phoneNumber={phoneNumber} />
-      ) : (
-        <UnverifiedView
-          {...common}
-          phoneNumber={phoneNumber || ""}
-          verificationPending={verificationPending}
-        />
-      )}
-      {!state.success && state.error && <ErrorMsg error={state.error} />}
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-2">
+        <h4 className="text-lg font-semibold text-white">SMS Alerts</h4>
+      </div>
+      <div className="space-y-3">
+        {isVerified ? (
+          <VerifiedView {...common} phoneNumber={phoneNumber} />
+        ) : (
+          <UnverifiedView
+            {...common}
+            phoneNumber={phoneNumber || ""}
+            verificationPending={verificationPending}
+          />
+        )}
+        {!state.success && state.error && <ErrorMsg error={state.error} />}
+      </div>
     </div>
   );
 }
