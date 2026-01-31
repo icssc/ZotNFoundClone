@@ -16,6 +16,11 @@ export default $config({
     const topic = new sst.aws.SnsTopic("SearchKeyword");
     new sst.aws.Nextjs("ZotNFound", {
       link: [bucket, topic],
+      domain: "clone.zotnfound.com",
+      environment: {
+        NODE_ENV: "production",
+        BETTER_AUTH_URL: "https://clone.zotnfound.com",
+      },
       permissions: [
         {
           actions: ["sns:Publish"],

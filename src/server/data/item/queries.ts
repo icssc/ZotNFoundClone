@@ -6,7 +6,7 @@ import { ActionState } from "@/lib/types";
 import { eq, or, isNull, and, gte } from "drizzle-orm";
 
 export async function getAllItems(): Promise<ActionState<Item[]>> {
-  "use cache";
+  // "use cache";
   try {
     const twoYearsAgo = new Date();
     twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
