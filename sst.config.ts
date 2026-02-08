@@ -20,6 +20,7 @@ export default $config({
       environment: {
         NODE_ENV: "production",
         BETTER_AUTH_URL: "https://clone.zotnfound.com",
+        
       },
       permissions: [
         {

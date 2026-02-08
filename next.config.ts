@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // cacheComponents: true,
+  cacheComponents: true,
 
   experimental: {
     inlineCss: true,
@@ -31,6 +31,7 @@ const nextConfig: NextConfig = {
       "leaflet.markercluster",
       "react-day-picker",
     ],
+    serverSourceMaps: true,
     // turbopackTreeShaking: true,
   },
   reactCompiler: true,
@@ -40,8 +41,7 @@ const nextConfig: NextConfig = {
     },
   },
   compiler: {
-    removeConsole:
-      process.env.NODE_ENV === "production" ? { exclude: ["error"] } : false,
+    removeConsole: false,
   },
   turbopack: {
     resolveAlias: {
@@ -56,7 +56,6 @@ const nextConfig: NextConfig = {
   //   };
   //   return config;
   // },
-  output: "standalone",
   // PostHog rewrites for ingest routes
   async rewrites() {
     return [
@@ -78,4 +77,4 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
 
-module.exports = withBundleAnalyzer(nextConfig);
+export default withBundleAnalyzer(nextConfig);
