@@ -1,9 +1,13 @@
 import ItemDisplayList from "@/components/Item/ItemDisplayList";
 import { LazyMap } from "@/components/Map/LazyMap";
 import { getAllItems } from "@/server/data/item/queries";
+import { Suspense } from "react";
+
+// uncache page
+
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  "use cache"
   const itemsResult = await getAllItems();
 
   if (itemsResult.error || !itemsResult.data) {
@@ -52,7 +56,15 @@ export default async function Home() {
           ease-out
         "
         >
-          <LazyMap initialItems={items} />
+          <Suspense
+            fallback={
+              <div className="w-full h-full flex items-center justify-center">
+                Loading map...
+              </div>
+            }
+          >
+            <LazyMap initialItems={items} />
+          </Suspense>
         </div>
 
         {/* Item List Section */}
@@ -61,8 +73,8 @@ export default async function Home() {
           w-full
           h-[40vh]
           lg:h-full
-          lg:w-[420px]
-          xl:w-[480px]
+          lg:w-105
+          xl:w-105
           animate-in
           slide-in-from-right
           duration-700
@@ -70,7 +82,15 @@ export default async function Home() {
           ease-out
         "
         >
-          <ItemDisplayList initialItems={items} />
+          <Suspense
+            fallback={
+              <div className="w-full h-full flex items-center justify-center">
+                Loading items...
+              </div>
+            }
+          >
+            <ItemDisplayList initialItems={items} />
+          </Suspense>
         </div>
       </main>
     </div>

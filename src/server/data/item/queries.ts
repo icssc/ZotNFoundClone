@@ -3,9 +3,14 @@ import { db } from "@/db";
 import { items, Item } from "@/db/schema";
 import { ActionState } from "@/lib/types";
 import { eq, or, isNull, and, gte } from "drizzle-orm";
+import { connection } from "next/server";
+
+
 
 export async function getAllItems(): Promise<ActionState<Item[]>> {
   try {
+    await connection();
+
     const twoYearsAgo = new Date();
     twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
     const cutoffStr = twoYearsAgo.toISOString().slice(0, 10);

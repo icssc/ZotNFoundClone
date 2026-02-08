@@ -10,6 +10,24 @@ export default $config({
     };
   },
   async run() {
+    $transform(aws.lambda.FunctionUrl, (args, opts, name) => {
+      // Allow the function to be invoked via the URL, (AWS Lambda URL allowed by default)
+      new aws.lambda.Permission(`${name}InvokeUrlPermission`, {
+        action: "lambda:InvokeFunctionUrl",
+        function: args.functionName,
+        principal: "*",
+        functionUrlAuthType: args.authorizationType,
+        statementId: `${name}InvokeUrlAllow`,
+      });
+      // Allow the function to be invoked via the API Gateway (AWS API Gateway allowed)
+      new aws.lambda.Permission(`${name}InvokePermission`, {
+        action: "lambda:InvokeFunction",
+        function: args.functionName,
+        principal: "*",
+        statementId: `${name}InvokeAllow`,
+      });
+    });
+
     const isProd = $app.stage === "production";
     const domain = isProd ? "zotnfound.com" : "clone.zotnfound.com";
     const icsscClientId = isProd ? "zotnfound" : "zotnfound-clone";
@@ -17,17 +35,16 @@ export default $config({
       access: "public",
     });
     const topic = new sst.aws.SnsTopic("SearchKeyword");
-    new sst.aws.Nextjs("ZotNFound", {
+    const site = new sst.aws.Nextjs("ZotNFound", {
       link: [bucket, topic],
       domain,
       environment: {
-        NODE_ENV: isProd ? "production" : "development",
+        NODE_ENV: "production",
         BETTER_AUTH_URL: `https://${domain}`,
         ICSSC_AUTH_DISCOVERY_URL:
           process.env.ICSSC_AUTH_DISCOVERY_URL ??
           "https://auth.icssc.club/.well-known/openid-configuration",
-        ICSSC_AUTH_CLIENT_ID: process.env.ICSSC_AUTH_CLIENT_ID ?? icsscClientId,
-        ICSSC_AUTH_CLIENT_SECRET: process.env.ICSSC_AUTH_CLIENT_SECRET ?? "",
+        ICSSC_AUTH_CLIENT_ID: icsscClientId,
       },
       permissions: [
         {
@@ -36,6 +53,7 @@ export default $config({
         },
       ],
     });
+
     topic.subscribe("SearchKeywordSubscriber", {
       handler: "src/server/keywords.handler",
       environment: {
