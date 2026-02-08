@@ -10,17 +10,24 @@ export default $config({
     };
   },
   async run() {
+    const isProd = $app.stage === "production";
+    const domain = isProd ? "zotnfound.com" : "clone.zotnfound.com";
+    const icsscClientId = isProd ? "zotnfound" : "zotnfound-clone";
     const bucket = new sst.aws.Bucket("ItemImages", {
       access: "public",
     });
     const topic = new sst.aws.SnsTopic("SearchKeyword");
     new sst.aws.Nextjs("ZotNFound", {
       link: [bucket, topic],
-      domain: "clone.zotnfound.com",
+      domain,
       environment: {
-        NODE_ENV: "production",
-        BETTER_AUTH_URL: "https://clone.zotnfound.com",
-        
+        NODE_ENV: isProd ? "production" : "development",
+        BETTER_AUTH_URL: `https://${domain}`,
+        ICSSC_AUTH_DISCOVERY_URL:
+          process.env.ICSSC_AUTH_DISCOVERY_URL ??
+          "https://auth.icssc.club/.well-known/openid-configuration",
+        ICSSC_AUTH_CLIENT_ID: process.env.ICSSC_AUTH_CLIENT_ID ?? icsscClientId,
+        ICSSC_AUTH_CLIENT_SECRET: process.env.ICSSC_AUTH_CLIENT_SECRET ?? "",
       },
       permissions: [
         {

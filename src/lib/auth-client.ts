@@ -1,10 +1,12 @@
 import { createAuthClient } from "better-auth/react";
+import { genericOAuthClient } from "better-auth/client/plugins";
 import { toast } from "sonner";
 import { trackUserSignIn, trackUserSignOut, resetUser } from "./analytics";
 
 export const authClient = createAuthClient({
   // Use relative base URL (same origin) so signOut/signIn work in deployed environments
   baseURL: "",
+  plugins: [genericOAuthClient()],
 });
 
 const { signOut: originalSignOut, signUp } = authClient;
@@ -16,23 +18,24 @@ async function signOut() {
   return originalSignOut();
 }
 
-// Sign in with Google using the master branch style
-async function signInWithGoogle() {
+// Sign in with ICSSC SSO via generic OAuth (OIDC)
+async function signInWithIcssc() {
   try {
-    const data = await authClient.signIn.social({
-      provider: "google",
+    const data = await authClient.signIn.oauth2({
+      providerId: "icssc",
+      scopes: ["openid", "email", "profile"],
     });
     trackUserSignIn();
     return data;
   } catch (error) {
-    console.error("Error signing in with Google:", error);
+    console.error("Error signing in with ICSSC SSO:", error);
     throw error;
   }
 }
 
 async function handleSignIn() {
   try {
-    await signInWithGoogle();
+    await signInWithIcssc();
     // successful redirect
   } catch (error) {
     // Handle redirect error
@@ -40,4 +43,4 @@ async function handleSignIn() {
   }
 }
 
-export { signUp, signOut, handleSignIn, signInWithGoogle };
+export { signUp, signOut, handleSignIn, signInWithIcssc };
