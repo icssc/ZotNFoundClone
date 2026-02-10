@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { isLostObject } from "@/lib/types";
-import { Item as ItemType } from "@/db/schema";
+import type { HomeItem } from "@/types/home";
 import Image from "next/image";
 import { trackItemViewed } from "@/lib/analytics";
 import { getStatusClasses, formatStatusLabel } from "@/lib/enums";
@@ -20,7 +20,7 @@ export default function Item({
   onClick,
   setOpen,
 }: {
-  item: ItemType;
+  item: HomeItem;
   onClick: () => void;
   setOpen: (open: boolean) => void;
 }) {

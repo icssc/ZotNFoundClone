@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const CustomFont = localFont({
   src: "../fonts/proximanova_regular.ttf",
 });
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -29,13 +29,13 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${CustomFont.className} antialiased bg-background`}
       >
-        <Suspense fallback={null}>
-          <SessionProvider>
+        <SessionProvider>
+          <Suspense fallback={null}>
             <PostHogPageView />
-            <Navbar />
-            {children}
-          </SessionProvider>
-        </Suspense>
+          </Suspense>
+          <Navbar />
+          {children}
+        </SessionProvider>
         <Toaster position="bottom-center" theme="dark" />
       </body>
     </html>

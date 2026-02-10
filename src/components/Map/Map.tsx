@@ -1,14 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Item as ItemType } from "@/db/schema";
+import type { HomeItem } from "@/types/home";
 
 const MapContent = dynamic(() => import("./MapContent"), {
   ssr: false,
 });
 
 interface MapProps {
-  initialItems: ItemType[];
+  initialItems: HomeItem[];
 }
 
 export default function Map({ initialItems }: MapProps) {

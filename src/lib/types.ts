@@ -18,11 +18,11 @@ export interface DisplayObjects {
 }
 
 // Type guards
-export function isLostObject(object: Item) {
+export function isLostObject(object: Pick<Item, "isLost">) {
   return object.isLost;
 }
 
-export function isFoundObject(object: Item) {
+export function isFoundObject(object: Pick<Item, "isLost">) {
   return !object.isLost;
 }
 

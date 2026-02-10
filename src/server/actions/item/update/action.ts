@@ -5,7 +5,8 @@ import { eq, and } from "drizzle-orm";
 import { items } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { itemCacheTags } from "@/server/data/item/queries";
 
 const updateItemSchema = z.object({
   id: z.number(),
@@ -38,6 +39,8 @@ export const updateItem = createAction(
       .returning();
 
     revalidatePath("/");
+    revalidateTag(itemCacheTags.home, "seconds");
+    revalidateTag(`${itemCacheTags.detailsPrefix}${id}`, "seconds");
 
     return item;
   }

@@ -21,42 +21,22 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // cacheComponents: true,
+  cacheComponents: true,
 
   experimental: {
     inlineCss: true,
-    browserDebugInfoInTerminal: true,
     optimizePackageImports: [
       "leaflet",
       "leaflet.markercluster",
       "react-day-picker",
     ],
-    serverSourceMaps: true,
-    // turbopackTreeShaking: true,
   },
   reactCompiler: true,
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
-  compiler: {
-    removeConsole: false,
-  },
   turbopack: {
     resolveAlias: {
       leaflet: "leaflet/dist/leaflet.js",
     },
   },
-  // webpack: (config, _options) => {
-  //   config.resolve = config.resolve || {};
-  //   config.resolve.alias = {
-  //     ...(config.resolve.alias || {}),
-  //     leaflet: "leaflet/dist/leaflet.js",
-  //   };
-  //   return config;
-  // },
-  // PostHog rewrites for ingest routes
   async rewrites() {
     return [
       {
@@ -69,7 +49,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // Required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
 };
 

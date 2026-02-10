@@ -1,16 +1,48 @@
 "use client";
 
-import posthog from "posthog-js";
+type PostHogModule = typeof import("posthog-js");
+
+let posthogPromise: Promise<PostHogModule> | null = null;
+
+const getPosthog = () => {
+  if (typeof window === "undefined") return null;
+  if (!posthogPromise) {
+    posthogPromise = import("posthog-js");
+  }
+  return posthogPromise;
+};
+
+const captureEvent = (event: string, properties?: Record<string, unknown>) => {
+  const promise = getPosthog();
+  if (!promise) return;
+  void promise
+    .then((mod) => mod.default.capture(event, properties))
+    .catch(() => undefined);
+};
+
+const identify = (userId: string, properties?: Record<string, unknown>) => {
+  const promise = getPosthog();
+  if (!promise) return;
+  void promise
+    .then((mod) => mod.default.identify(userId, properties))
+    .catch(() => undefined);
+};
+
+const reset = () => {
+  const promise = getPosthog();
+  if (!promise) return;
+  void promise.then((mod) => mod.default.reset()).catch(() => undefined);
+};
 
 // User Events
 export const trackUserSignIn = () => {
-  posthog.capture("user_sign_in", {
+  captureEvent("user_sign_in", {
     timestamp: new Date().toISOString(),
   });
 };
 
 export const trackUserSignOut = () => {
-  posthog.capture("user_sign_out", {
+  captureEvent("user_sign_out", {
     timestamp: new Date().toISOString(),
   });
 };
@@ -21,7 +53,7 @@ export const trackItemViewed = (itemData: {
   itemType: string;
   isLost: boolean;
 }) => {
-  posthog.capture("item_viewed", {
+  captureEvent("item_viewed", {
     item_id: itemData.itemId,
     item_type: itemData.itemType,
     is_lost: itemData.isLost,
@@ -34,7 +66,7 @@ export const trackItemDeleted = (itemData: {
   itemType: string;
   isLost: boolean;
 }) => {
-  posthog.capture("item_deleted", {
+  captureEvent("item_deleted", {
     item_id: itemData.itemId,
     item_type: itemData.itemType,
     is_lost: itemData.isLost,
@@ -47,7 +79,7 @@ export const trackItemContactAttempt = (itemData: {
   itemType: string;
   isLost: boolean;
 }) => {
-  posthog.capture("item_contact_attempt", {
+  captureEvent("item_contact_attempt", {
     item_id: itemData.itemId,
     item_type: itemData.itemType,
     is_lost: itemData.isLost,
@@ -60,7 +92,7 @@ export const trackItemContactSuccess = (itemData: {
   itemType: string;
   isLost: boolean;
 }) => {
-  posthog.capture("item_contact_success", {
+  captureEvent("item_contact_success", {
     item_id: itemData.itemId,
     item_type: itemData.itemType,
     is_lost: itemData.isLost,
@@ -73,7 +105,7 @@ export const trackItemShareLink = (itemData: {
   itemType: string;
   isLost: boolean;
 }) => {
-  posthog.capture("item_share_link_copied", {
+  captureEvent("item_share_link_copied", {
     item_id: itemData.itemId,
     item_type: itemData.itemType,
     is_lost: itemData.isLost,
@@ -87,7 +119,7 @@ export const trackItemEdited = (itemData: {
   isLost: boolean;
   hasNewImage: boolean;
 }) => {
-  posthog.capture("item_edited", {
+  captureEvent("item_edited", {
     item_id: itemData.itemId,
     item_type: itemData.itemType,
     is_lost: itemData.isLost,
@@ -101,7 +133,7 @@ export const trackItemResolved = (itemData: {
   itemType: string;
   isLost: boolean;
 }) => {
-  posthog.capture("item_resolved", {
+  captureEvent("item_resolved", {
     item_id: itemData.itemId,
     item_type: itemData.itemType,
     is_lost: itemData.isLost,
@@ -114,7 +146,7 @@ export const trackItemHelped = (itemData: {
   itemType: string;
   isLost: boolean;
 }) => {
-  posthog.capture("item_helped", {
+  captureEvent("item_helped", {
     item_id: itemData.itemId,
     item_type: itemData.itemType,
     is_lost: itemData.isLost,
@@ -124,7 +156,7 @@ export const trackItemHelped = (itemData: {
 
 // Search Events
 export const trackSearch = (searchTerm: string) => {
-  posthog.capture("search_performed", {
+  captureEvent("search_performed", {
     search_term: searchTerm,
     timestamp: new Date().toISOString(),
   });
@@ -132,13 +164,13 @@ export const trackSearch = (searchTerm: string) => {
 
 // Dialog/Modal Events
 export const trackAddItemDialogOpened = () => {
-  posthog.capture("add_item_dialog_opened", {
+  captureEvent("add_item_dialog_opened", {
     timestamp: new Date().toISOString(),
   });
 };
 
 export const trackAddItemStepCompleted = (step: number, stepName: string) => {
-  posthog.capture("add_item_step_completed", {
+  captureEvent("add_item_step_completed", {
     step,
     step_name: stepName,
     timestamp: new Date().toISOString(),
@@ -146,14 +178,14 @@ export const trackAddItemStepCompleted = (step: number, stepName: string) => {
 };
 
 export const trackAddItemStepBack = (fromStep: number) => {
-  posthog.capture("add_item_step_back", {
+  captureEvent("add_item_step_back", {
     from_step: fromStep,
     timestamp: new Date().toISOString(),
   });
 };
 
 export const trackSignInDialogOpened = (source: string = "add_item_button") => {
-  posthog.capture("sign_in_dialog_opened", {
+  captureEvent("sign_in_dialog_opened", {
     source,
     timestamp: new Date().toISOString(),
   });
@@ -163,7 +195,7 @@ export const trackEditItemDialogOpened = (itemData: {
   itemId: string;
   itemType: string;
 }) => {
-  posthog.capture("edit_item_dialog_opened", {
+  captureEvent("edit_item_dialog_opened", {
     item_id: itemData.itemId,
     item_type: itemData.itemType,
     timestamp: new Date().toISOString(),
@@ -171,7 +203,7 @@ export const trackEditItemDialogOpened = (itemData: {
 };
 
 export const trackEditItemStepCompleted = (step: number, itemId: string) => {
-  posthog.capture("edit_item_step_completed", {
+  captureEvent("edit_item_step_completed", {
     step,
     item_id: itemId,
     timestamp: new Date().toISOString(),
@@ -179,7 +211,7 @@ export const trackEditItemStepCompleted = (step: number, itemId: string) => {
 };
 
 export const trackEditItemStepBack = (fromStep: number, itemId: string) => {
-  posthog.capture("edit_item_step_back", {
+  captureEvent("edit_item_step_back", {
     from_step: fromStep,
     item_id: itemId,
     timestamp: new Date().toISOString(),
@@ -187,20 +219,20 @@ export const trackEditItemStepBack = (fromStep: number, itemId: string) => {
 };
 
 export const trackBookmarksOpened = () => {
-  posthog.capture("bookmarks_opened", {
+  captureEvent("bookmarks_opened", {
     timestamp: new Date().toISOString(),
   });
 };
 
 // Navigation Events
 export const trackNavigationToAbout = () => {
-  posthog.capture("navigation_about_page", {
+  captureEvent("navigation_about_page", {
     timestamp: new Date().toISOString(),
   });
 };
 
 export const trackNavigationToHome = () => {
-  posthog.capture("navigation_home_page", {
+  captureEvent("navigation_home_page", {
     timestamp: new Date().toISOString(),
   });
 };
@@ -210,7 +242,7 @@ export const trackMarkerClicked = (itemData: {
   itemType: string;
   isLost: boolean;
 }) => {
-  posthog.capture("map_marker_clicked", {
+  captureEvent("map_marker_clicked", {
     item_id: itemData.itemId,
     item_type: itemData.itemType,
     is_lost: itemData.isLost,
@@ -220,7 +252,7 @@ export const trackMarkerClicked = (itemData: {
 
 // File Upload Events
 export const trackFileUploadStarted = () => {
-  posthog.capture("file_upload_started", {
+  captureEvent("file_upload_started", {
     timestamp: new Date().toISOString(),
   });
 };
@@ -229,7 +261,7 @@ export const trackFileUploadCompleted = (
   fileSize: number,
   fileType: string
 ) => {
-  posthog.capture("file_upload_completed", {
+  captureEvent("file_upload_completed", {
     file_size: fileSize,
     file_type: fileType,
     timestamp: new Date().toISOString(),
@@ -237,7 +269,7 @@ export const trackFileUploadCompleted = (
 };
 
 export const trackFileUploadFailed = (error: string) => {
-  posthog.capture("file_upload_failed", {
+  captureEvent("file_upload_failed", {
     error,
     timestamp: new Date().toISOString(),
   });
@@ -249,7 +281,7 @@ export const trackError = (errorData: {
   context: string;
   severity?: "low" | "medium" | "high";
 }) => {
-  posthog.capture("error_occurred", {
+  captureEvent("error_occurred", {
     error: errorData.error,
     context: errorData.context,
     severity: errorData.severity || "medium",
@@ -262,7 +294,7 @@ export const trackPageView = (
   pageName: string,
   additionalData?: Record<string, any>
 ) => {
-  posthog.capture("$pageview", {
+  captureEvent("$pageview", {
     page_name: pageName,
     ...additionalData,
     timestamp: new Date().toISOString(),
@@ -274,7 +306,7 @@ export const identifyUser = (
   userId: string,
   userProperties?: Record<string, any>
 ) => {
-  posthog.identify(userId, {
+  identify(userId, {
     ...userProperties,
     last_active: new Date().toISOString(),
   });
@@ -282,5 +314,5 @@ export const identifyUser = (
 
 // Reset user on sign out
 export const resetUser = () => {
-  posthog.reset();
+  reset();
 };

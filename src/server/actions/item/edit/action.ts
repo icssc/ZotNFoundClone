@@ -2,13 +2,14 @@
 
 import { db } from "@/db";
 import { items } from "@/db/schema";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import uploadImageToS3 from "@/server/actions/item/upload/action";
 import { eq } from "drizzle-orm";
 import { createAction, ActionState } from "@/server/actions/wrapper";
 
 import { Item } from "@/db/schema";
+import { itemCacheTags } from "@/server/data/item/queries";
 
 export type EditItemState = ActionState<Pick<Item, "id">>;
 
@@ -93,6 +94,8 @@ const editItemHandler = createAction(editItemSchema, async (data, session) => {
     .returning({ id: items.id });
 
   revalidatePath("/");
+  revalidateTag(itemCacheTags.home, "seconds");
+  revalidateTag(`${itemCacheTags.detailsPrefix}${id}`, "seconds");
   return updatedItem;
 });
 

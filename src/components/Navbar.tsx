@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { InfoIcon, UserIcon, LogOut, Settings } from "lucide-react";
+import { InfoIcon, UserIcon, LogOut, Settings, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BookmarkModal } from "@/components/BookmarkModal";
 import Image from "next/image";
@@ -20,7 +20,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export default function Navbar() {
-  const { user, signOut } = useSharedContext();
+  const { user, signOut, authHint, isAuthResolved } = useSharedContext();
   const router = useRouter();
   const handleSignOut = async () => {
     try {
@@ -125,6 +125,17 @@ export default function Navbar() {
                 )}
                 <span className="font-medium">Sign Out</span>
               </Button>
+            ) : !isAuthResolved && authHint === "signed-in" ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="rounded-full pl-1 pr-4 gap-2 bg-white/5 text-white border border-white/5 cursor-default"
+                disabled
+                aria-busy="true"
+              >
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="font-medium">Account</span>
+              </Button>
             ) : (
               <Button
                 variant="default"
@@ -163,6 +174,16 @@ export default function Navbar() {
               ) : (
                 <LogOut className="h-4 w-4" />
               )}
+            </Button>
+          ) : !isAuthResolved && authHint === "signed-in" ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full w-10 h-10 bg-white/5 text-white border border-white/5 cursor-default"
+              disabled
+              aria-busy="true"
+            >
+              <Loader2 className="h-4 w-4 animate-spin" />
             </Button>
           ) : (
             <Button

@@ -1,9 +1,24 @@
-import posthog from "posthog-js";
+const globalScope = globalThis as typeof globalThis & {
+  window?: Window;
+  requestIdleCallback?: (callback: () => void) => number;
+};
 
-posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-  api_host: "/ingest",
-  ui_host: "https://us.posthog.com",
-  defaults: "2025-05-24",
-  capture_exceptions: true, // This enables capturing exceptions using Error Tracking, set to false if you don't want this
-  debug: false,
-});
+if (typeof globalScope.window !== "undefined") {
+  const init = () => {
+    void import("posthog-js").then((posthog) => {
+      posthog.default.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+        api_host: "/ingest",
+        ui_host: "https://us.posthog.com",
+        defaults: "2025-05-24",
+        capture_exceptions: true,
+        debug: false,
+      });
+    });
+  };
+
+  if (typeof globalScope.requestIdleCallback === "function") {
+    globalScope.requestIdleCallback(init);
+  } else {
+    setTimeout(init, 200);
+  }
+}

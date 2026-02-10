@@ -1,13 +1,20 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Item } from "@/db/schema";
 import { z } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function filterItems(items: Item[], filter: string): Item[] {
+type FilterableItem = {
+  name?: string | null;
+  description?: string | null;
+};
+
+export function filterItems<T extends FilterableItem>(
+  items: T[],
+  filter: string
+): T[] {
   if (!filter) {
     return items;
   }

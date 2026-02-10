@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { items, NewItem } from "@/db/schema";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import uploadImageToS3 from "@/server/actions/item/upload/action";
 import { createAction, ActionState } from "@/server/actions/wrapper";
@@ -11,6 +11,7 @@ import { snsClient } from "@/lib/sms/client";
 import { Item } from "@/db/schema";
 import { Resource } from "sst/resource";
 import { PublishCommand } from "@aws-sdk/client-sns";
+import { itemCacheTags } from "@/server/data/item/queries";
 
 export type CreateItemState = ActionState<Pick<Item, "id">>;
 
@@ -89,6 +90,7 @@ const createItemHandler = createAction(
     }
 
     revalidatePath("/");
+    revalidateTag(itemCacheTags.home, "seconds");
     return newItem;
   }
 );

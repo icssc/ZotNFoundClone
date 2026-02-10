@@ -14,18 +14,27 @@ import "leaflet.markercluster";
 import { centerPosition, mapBounds } from "@/lib/constants";
 import { useSharedContext } from "@/components/ContextProvider";
 import { Button } from "@/components/ui/button";
-import { ItemWizardDialog } from "../Item/ItemWizardDialog";
-import { SignInDialog } from "./SignInDialog";
+import dynamic from "next/dynamic";
 import { PlusIcon } from "lucide-react";
-import { Item as ItemType } from "@/db/schema";
+import type { HomeItem } from "@/types/home";
 import Markers from "./Markers";
 import {
   trackAddItemDialogOpened,
   trackSignInDialogOpened,
 } from "@/lib/analytics";
 
+const ItemWizardDialog = dynamic(
+  () => import("../Item/ItemWizardDialog").then((mod) => mod.ItemWizardDialog),
+  { ssr: false }
+);
+
+const SignInDialog = dynamic(
+  () => import("./SignInDialog").then((mod) => mod.SignInDialog),
+  { ssr: false }
+);
+
 interface MapContentProps {
-  initialItems: ItemType[];
+  initialItems: HomeItem[];
 }
 
 export default function MapContent({ initialItems }: MapContentProps) {
@@ -167,15 +176,19 @@ export default function MapContent({ initialItems }: MapContentProps) {
         <PlusIcon className="h-6 w-6" />
       </Button>
 
-      <ItemWizardDialog
-        mode="create"
-        open={isAddDialogOpen}
-        onOpenChange={setIsAddDialogOpen}
-      />
-      <SignInDialog
-        open={isSignInDialogOpen}
-        onOpenChange={setIsSignInDialogOpen}
-      />
+      {isAddDialogOpen && (
+        <ItemWizardDialog
+          mode="create"
+          open={isAddDialogOpen}
+          onOpenChange={setIsAddDialogOpen}
+        />
+      )}
+      {isSignInDialogOpen && (
+        <SignInDialog
+          open={isSignInDialogOpen}
+          onOpenChange={setIsSignInDialogOpen}
+        />
+      )}
     </div>
   );
 }

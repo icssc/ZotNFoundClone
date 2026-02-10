@@ -1,14 +1,11 @@
 import ItemDisplayList from "@/components/Item/ItemDisplayList";
 import { LazyMap } from "@/components/Map/LazyMap";
-import { getAllItems } from "@/server/data/item/queries";
+import { getHomepageItems } from "@/server/data/item/queries";
 import { Suspense } from "react";
 
-// uncache page
-
-export const dynamic = "force-dynamic";
-
 export default async function Home() {
-  const itemsResult = await getAllItems();
+  "use cache";
+  const itemsResult = await getHomepageItems();
 
   if (itemsResult.error || !itemsResult.data) {
     return (
@@ -19,12 +16,6 @@ export default async function Home() {
   }
 
   const items = itemsResult.data;
-
-  items.sort((a, b) => {
-    const dateA = new Date(a.date!);
-    const dateB = new Date(b.date!);
-    return dateB.getTime() - dateA.getTime();
-  });
 
   return (
     <div className="w-full h-[90vh] flex flex-col items-center px-3 sm:px-4 lg:px-6 py-3">
@@ -56,15 +47,7 @@ export default async function Home() {
           ease-out
         "
         >
-          <Suspense
-            fallback={
-              <div className="w-full h-full flex items-center justify-center">
-                Loading map...
-              </div>
-            }
-          >
-            <LazyMap initialItems={items} />
-          </Suspense>
+          <LazyMap initialItems={items} />
         </div>
 
         {/* Item List Section */}
@@ -84,9 +67,7 @@ export default async function Home() {
         >
           <Suspense
             fallback={
-              <div className="w-full h-full flex items-center justify-center">
-                Loading items...
-              </div>
+              <div className="h-full w-full rounded-lg bg-black/80 border border-white/5" />
             }
           >
             <ItemDisplayList initialItems={items} />

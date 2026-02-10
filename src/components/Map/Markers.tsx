@@ -9,17 +9,17 @@ import {
   type Map as LeafletMap,
   type LayerGroup,
 } from "leaflet";
-import { Item } from "@/db/schema";
+import type { HomeItem } from "@/types/home";
 import { filterItems } from "@/lib/utils";
 import { stringArrayToLatLng } from "@/lib/types";
 import { iconsMap, createClusterCustomIcon } from "@/lib/icons";
 import { trackMarkerClicked } from "@/lib/analytics";
 
 interface ClusterMarkersProps {
-  objects: Item[];
+  objects: HomeItem[];
   filter: string;
   mapRef: RefObject<LeafletMap | null>;
-  onMarkerClick?: (item: Item) => void;
+  onMarkerClick?: (item: HomeItem) => void;
 }
 
 export default function Markers({

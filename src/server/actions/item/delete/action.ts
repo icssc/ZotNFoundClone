@@ -4,7 +4,8 @@ import { db } from "@/db";
 import { eq, and } from "drizzle-orm";
 import { items } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { itemCacheTags } from "@/server/data/item/queries";
 import { z } from "zod";
 
 const deleteItemSchema = z.object({
@@ -39,6 +40,8 @@ export const deleteItem = createAction(
       .returning();
 
     revalidatePath("/");
+    revalidateTag(itemCacheTags.home, "seconds");
+    revalidateTag(`${itemCacheTags.detailsPrefix}${id}`, "seconds");
 
     return item;
   }
