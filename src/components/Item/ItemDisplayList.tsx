@@ -37,7 +37,10 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
 
     return () => {
       window.removeEventListener("popstate", syncSelectedItemFromUrl);
-      window.removeEventListener("item-selection-change", syncSelectedItemFromUrl);
+      window.removeEventListener(
+        "item-selection-change",
+        syncSelectedItemFromUrl
+      );
     };
   }, []);
 
