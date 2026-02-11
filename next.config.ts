@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       {
@@ -37,15 +36,6 @@ const nextConfig: NextConfig = {
       leaflet: "leaflet/dist/leaflet.js",
     },
   },
-  // webpack: (config, _options) => {
-  //   config.resolve = config.resolve || {};
-  //   config.resolve.alias = {
-  //     ...(config.resolve.alias || {}),
-  //     leaflet: "leaflet/dist/leaflet.js",
-  //   };
-  //   return config;
-  // },
-  // PostHog rewrites for ingest routes
   async rewrites() {
     return [
       {
@@ -62,8 +52,4 @@ const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
 };
 
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true",
-});
-
-export default withBundleAnalyzer(nextConfig);
+export default nextConfig;

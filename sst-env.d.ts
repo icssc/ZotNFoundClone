@@ -5,14 +5,6 @@
 
 declare module "sst" {
   export interface Resource {
-    "ItemImages": {
-      "name": string
-      "type": "sst.aws.Bucket"
-    }
-    "SearchKeyword": {
-      "arn": string
-      "type": "sst.aws.SnsTopic"
-    }
     "ZotNFound": {
       "type": "sst.aws.Nextjs"
       "url": string

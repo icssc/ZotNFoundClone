@@ -46,3 +46,6 @@ next-env.d.ts
 # open-next
 .open-next
 pnpm-lock.yaml
+
+.cursor
+.agents
