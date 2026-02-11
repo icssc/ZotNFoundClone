@@ -8,10 +8,10 @@ const allowedBounds = [
 ];
 
 const mapBoundsCoordinates: LatLngExpression[] = [
-  [33.658056, -117.856104], // Expanded northwest corner
-  [33.658056, -117.828671], // Expanded northeast corner
-  [33.632902, -117.828657], // Expanded southeast corner
-  [33.632902, -117.856104], // Added southwest corner for complete rectangle
+  [33.6595, -117.8585],
+  [33.6595, -117.8268],
+  [33.631, -117.8268],
+  [33.631, -117.8585],
 ];
 const centerPosition = [33.64363144392915, -117.84895805659363];
 

@@ -33,9 +33,11 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
 
     syncSelectedItemFromUrl();
     window.addEventListener("popstate", syncSelectedItemFromUrl);
+    window.addEventListener("item-selection-change", syncSelectedItemFromUrl);
 
     return () => {
       window.removeEventListener("popstate", syncSelectedItemFromUrl);
+      window.removeEventListener("item-selection-change", syncSelectedItemFromUrl);
     };
   }, []);
 
@@ -65,6 +67,7 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
     const url = new URL(window.location.href);
     url.searchParams.set("item", item.id.toString());
     window.history.pushState({}, "", url.toString());
+    window.dispatchEvent(new Event("item-selection-change"));
     setSelectedItemId(item.id);
   };
 

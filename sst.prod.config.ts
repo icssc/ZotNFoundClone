@@ -26,7 +26,7 @@ export default $config({
       });
     });
 
-    const domain = "zotnfound.com";
+    const domain = "prod.zotnfound.com";
     const bucket = new sst.aws.Bucket("ItemImages", {
       access: "public",
     });

@@ -28,6 +28,8 @@ interface MapContentProps {
   initialItems: ItemType[];
 }
 
+const MAP_PADDING: [number, number] = [16, 16];
+
 export default function MapContent({ initialItems }: MapContentProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
   const { user, selectedLocation, filter } = useSharedContext();
@@ -71,14 +73,14 @@ export default function MapContent({ initialItems }: MapContentProps) {
       opacity: 0,
       fillOpacity: 0,
     });
-    rect.on("click", () => map.fitBounds(mapBounds));
+    rect.on("click", () => map.fitBounds(mapBounds, { padding: MAP_PADDING }));
     rect.addTo(map);
     boundsRectRef.current = rect;
 
     // Ensure proper sizing after Leaflet is ready
     map.whenReady(() => {
       map.invalidateSize(true);
-      map.fitBounds(mapBounds);
+      map.fitBounds(mapBounds, { padding: MAP_PADDING });
       setIsMapMounted(true);
     });
 
@@ -116,7 +118,7 @@ export default function MapContent({ initialItems }: MapContentProps) {
     if (selectedLocation) {
       map.flyTo(selectedLocation as LatLngExpression, 18);
     } else {
-      map.fitBounds(mapBounds);
+      map.fitBounds(mapBounds, { padding: MAP_PADDING });
     }
   }, [selectedLocation]);
 

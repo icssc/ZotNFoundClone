@@ -247,9 +247,9 @@ function DetailedDialog({ item }: { item: Item }) {
 
   return (
     <>
-      <DialogContent className="w-[95%] bg-black/50 border-white/10 text-white p-0 pb-3 flex flex-col max-h-[calc(100vh-4rem)] overflow-y-auto backdrop-blur-xl shadow-2xl animate-in-fade">
+      <DialogContent className="w-[88vw] max-w-88 sm:max-w-lg bg-black/50 border-white/10 text-white p-0 pb-3 flex flex-col max-h-[calc(100vh-6rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto backdrop-blur-xl shadow-2xl animate-in-fade">
         {/* Image Section with Gradient Overlay */}
-        <div className="relative w-full h-72 sm:h-80 shrink-0">
+        <div className="relative w-full h-64 sm:h-80 shrink-0">
           <Image
             src={
               z.url().safeParse(item.image).success
@@ -263,7 +263,7 @@ function DetailedDialog({ item }: { item: Item }) {
             className="bg-zinc-900"
             loading="eager"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/90 pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-b from-black/30 via-transparent to-black/90 pointer-events-none" />
 
           {/* Title Overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-6 pt-12">
@@ -307,7 +307,7 @@ function DetailedDialog({ item }: { item: Item }) {
                 <p className="font-medium text-white/60 text-xs uppercase tracking-wider">
                   Location
                 </p>
-                <p className="text-sm sm:text-base text-white font-medium break-words">
+                <p className="text-sm sm:text-base text-white font-medium wrap-break-word">
                   {formatLocationDisplay(item.location)}
                 </p>
               </div>

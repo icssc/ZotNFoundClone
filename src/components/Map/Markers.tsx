@@ -62,6 +62,7 @@ export default function Markers({
         const url = new URL(window.location.href);
         url.searchParams.set("item", item.id.toString());
         window.history.pushState({}, "", url.toString());
+        window.dispatchEvent(new Event("item-selection-change"));
         onMarkerClick?.(item);
       });
       addMarkerToGroup(clusterGroup, mkr);
