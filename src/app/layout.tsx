@@ -4,7 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
 import localFont from "next/font/local";
-import { SessionProvider } from "@/components/SessionProvider";
+import { Providers } from "@/components/ContextProvider";
 import { PostHogPageView } from "@/components/PostHogPageView";
 import { Suspense } from "react";
 const geistSans = Geist({
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const CustomFont = localFont({
   src: "../fonts/proximanova_regular.ttf",
 });
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -29,13 +29,13 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${CustomFont.className} antialiased bg-background`}
       >
-        <Suspense fallback={null}>
-          <SessionProvider>
+        <Providers>
+          <Suspense fallback={null}>
             <PostHogPageView />
-            <Navbar />
-            {children}
-          </SessionProvider>
-        </Suspense>
+          </Suspense>
+          <Navbar />
+          {children}
+        </Providers>
         <Toaster position="bottom-center" theme="dark" />
       </body>
     </html>

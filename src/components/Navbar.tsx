@@ -20,7 +20,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export default function Navbar() {
-  const { user, signOut } = useSharedContext();
+  const { user, signOut, isUserHydrated } = useSharedContext();
   const router = useRouter();
   const handleSignOut = async () => {
     try {
@@ -30,6 +30,14 @@ export default function Navbar() {
       console.error("Sign out error:", error);
     }
   };
+
+  const desktopAuthPlaceholder = (
+    <div className="h-9 w-28 rounded-full border border-white/10 bg-white/5 animate-pulse" />
+  );
+
+  const mobileAuthPlaceholder = (
+    <div className="h-10 w-20 rounded-full border border-white/10 bg-white/5 animate-pulse" />
+  );
 
   return (
     <nav className="sticky top-2 z-50 mx-2 md:mx-4 mt-2 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/20 transition-all duration-300">
@@ -103,7 +111,9 @@ export default function Navbar() {
               <span>Settings</span>
             </Link>
 
-            {user ? (
+            {!isUserHydrated ? (
+              desktopAuthPlaceholder
+            ) : user ? (
               <Button
                 variant="ghost"
                 size="sm"
@@ -129,7 +139,7 @@ export default function Navbar() {
               <Button
                 variant="default"
                 size="sm"
-                className="rounded-full px-6 bg-white text-black hover:bg-gray-200 font-medium transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                className="rounded-full px-6 bg-black text-white border border-white/20 hover:bg-white/10 font-medium transition-all shadow-[0_0_15px_rgba(0,0,0,0.35)] hover:shadow-[0_0_20px_rgba(255,255,255,0.15)]"
                 onClick={handleSignIn}
               >
                 <UserIcon className="h-4 w-4 mr-2" />
@@ -145,7 +155,9 @@ export default function Navbar() {
             <SearchBar />
           </div>
 
-          {user ? (
+          {!isUserHydrated ? (
+            mobileAuthPlaceholder
+          ) : user ? (
             <Button
               variant="ghost"
               size="icon"
@@ -168,7 +180,7 @@ export default function Navbar() {
             <Button
               variant="default"
               size="sm"
-              className="rounded-full bg-white text-black hover:bg-gray-200"
+              className="rounded-full bg-black text-white border border-white/20 hover:bg-white/10"
               onClick={handleSignIn}
             >
               Sign In

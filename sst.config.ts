@@ -38,6 +38,7 @@ export default $config({
     const site = new sst.aws.Nextjs("ZotNFound", {
       link: [bucket, topic],
       domain,
+      openNextVersion: "https://pkg.pr.new/@opennextjs/aws@1107",
       environment: {
         NODE_ENV: "production",
         BETTER_AUTH_URL: `https://${domain}`,

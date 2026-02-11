@@ -177,6 +177,21 @@
     .animate-in-slide-up {
       animation: slideUp 0.5s ease-out forwards;
     }
+
+    .animate-in,
+    .animate-in-fade,
+    .animate-in-slide-up {
+      animation-fill-mode: both;
+      backface-visibility: hidden;
+      transform: translateZ(0);
+      will-change: transform, opacity;
+    }
+
+    .home-shell-main,
+    .home-shell-pane {
+      backface-visibility: hidden;
+      transform: translateZ(0);
+    }
   }
 
   @keyframes fadeIn {

@@ -2,8 +2,8 @@
 import {
   createContext,
   useContext,
-  useState,
   ReactNode,
+  useState,
   useEffect,
 } from "react";
 import type { LatLngExpression } from "leaflet";
@@ -16,6 +16,7 @@ type SharedContextType = {
   selectedLocation: LatLngExpression | null;
   filter: string;
   user?: User;
+  isUserHydrated: boolean;
   setSelectedLocation: (location: LatLngExpression | null) => void;
   setFilter: (filter: string) => void;
   signOut: () => Promise<void>;
@@ -23,28 +24,43 @@ type SharedContextType = {
 
 const SharedContext = createContext<SharedContextType | undefined>(undefined);
 
-// ---- Shared Provider Component ----
-function SharedProviders({
-  children,
-  initialUser,
-}: {
-  children: ReactNode;
-  initialUser?: User;
-}) {
+// ---- Main Provider Component ----
+export function Providers({ children }: { children: ReactNode }) {
   const [selectedLocation, setSelectedLocation] =
     useState<LatLngExpression | null>(null);
   const [filter, setFilter] = useState<string>("");
+  const [localUser, setLocalUser] = useState<User | undefined>(undefined);
+  const [isUserHydrated, setIsUserHydrated] = useState<boolean>(false);
 
-  const [localUser, setLocalUser] = useState<User | undefined>(initialUser);
+  // Resolve session on the client after hydration to keep root HTML cacheable.
+  useEffect(() => {
+    let mounted = true;
 
-  // Client-side session hook
-  const { data } = authClient.useSession();
+    const loadSession = async () => {
+      try {
+        const session = await authClient.getSession();
+        if (!mounted) return;
+        const nextUser = session.data?.user ?? undefined;
+        setLocalUser(nextUser);
+      } catch (error) {
+        if (!mounted) return;
+        console.error("Session load error:", error);
+        setLocalUser(undefined);
+      } finally {
+        if (mounted) {
+          setIsUserHydrated(true);
+        }
+      }
+    };
 
-  // Derive the effective user without calling setState inside an effect.
-  // If the client session has been resolved (data is defined), prefer it
-  // (including the signed-out case where data.user may be null).
-  // Otherwise fall back to the local optimistic user state.
-  const user: User | undefined = data?.user ?? localUser;
+    void loadSession();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const user: User | undefined = localUser;
 
   // Identify user in PostHog when they sign in
   useEffect(() => {
@@ -58,17 +74,13 @@ function SharedProviders({
   }, [user?.id, user?.email, user?.name, user?.image]);
 
   const signOut = async () => {
-    const previousLocal = localUser;
-    // Optimistically clear the local user so the UI can respond immediately
-    // when there is no resolved client session yet. If a client session is
-    // present, the session hook (data) will ultimately control the displayed user.
+    const previousUser = localUser;
     setLocalUser(undefined);
     try {
       await clientSignOut();
     } catch (error) {
       console.error("Sign out error:", error);
-      // Restore local optimistic state on error
-      setLocalUser(previousLocal);
+      setLocalUser(previousUser);
       throw error;
     }
   };
@@ -79,6 +91,7 @@ function SharedProviders({
         selectedLocation,
         filter,
         user,
+        isUserHydrated,
         setSelectedLocation,
         setFilter,
         signOut,
@@ -95,17 +108,4 @@ export function useSharedContext() {
     throw new Error("useSharedContext must be used within a SharedProvider");
   }
   return context;
-}
-
-// ---- Main Provider Component ----
-export function Providers({
-  children,
-  initialUser,
-}: {
-  children: ReactNode;
-  initialUser?: User;
-}) {
-  return (
-    <SharedProviders initialUser={initialUser}>{children}</SharedProviders>
-  );
 }

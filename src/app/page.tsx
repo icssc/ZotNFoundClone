@@ -1,13 +1,9 @@
 import ItemDisplayList from "@/components/Item/ItemDisplayList";
 import { LazyMap } from "@/components/Map/LazyMap";
 import { getAllItems } from "@/server/data/item/queries";
-import { Suspense } from "react";
-
-// uncache page
-
-export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  "use cache";
   const itemsResult = await getAllItems();
 
   if (itemsResult.error || !itemsResult.data) {
@@ -27,9 +23,10 @@ export default async function Home() {
   });
 
   return (
-    <div className="w-full h-[90vh] flex flex-col items-center px-3 sm:px-4 lg:px-6 py-3">
+    <div className="home-shell w-full h-[90vh] flex flex-col items-center px-3 sm:px-4 lg:px-6 py-3">
       <main
         className="
+          home-shell-main
           w-full
           h-[90vh]
           flex
@@ -39,12 +36,12 @@ export default async function Home() {
           animate-in
           fade-in
           duration-500
-          transition-all
         "
       >
         {/* Map Section */}
         <div
           className="
+          home-shell-pane
           w-full
           h-[55vh]
           lg:h-full
@@ -52,24 +49,16 @@ export default async function Home() {
           animate-in
           slide-in-from-left
           duration-700
-          transition-all
           ease-out
         "
         >
-          <Suspense
-            fallback={
-              <div className="w-full h-full flex items-center justify-center">
-                Loading map...
-              </div>
-            }
-          >
-            <LazyMap initialItems={items} />
-          </Suspense>
+          <LazyMap initialItems={items} />
         </div>
 
         {/* Item List Section */}
         <div
           className="
+          home-shell-pane
           w-full
           h-[40vh]
           lg:h-full
@@ -78,19 +67,10 @@ export default async function Home() {
           animate-in
           slide-in-from-right
           duration-700
-          transition-all
           ease-out
         "
         >
-          <Suspense
-            fallback={
-              <div className="w-full h-full flex items-center justify-center">
-                Loading items...
-              </div>
-            }
-          >
-            <ItemDisplayList initialItems={items} />
-          </Suspense>
+          <ItemDisplayList initialItems={items} />
         </div>
       </main>
     </div>

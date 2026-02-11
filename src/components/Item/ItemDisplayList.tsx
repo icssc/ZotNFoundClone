@@ -8,8 +8,7 @@ import Item from "@/components/Item/Item";
 import { Item as ItemType } from "@/db/schema";
 import type { LatLngExpression } from "leaflet";
 import { filterItems } from "@/lib/utils";
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SearchX } from "lucide-react";
 
 interface ItemDisplayListProps {
@@ -18,16 +17,32 @@ interface ItemDisplayListProps {
 
 function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const { setSelectedLocation, filter } = useSharedContext();
-  const searchParams = useSearchParams();
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
-  function getSelectedItem() {
-    const itemId = searchParams.get("item");
-    if (!itemId) return null;
-    const item =
-      initialItems.find((item) => item.id === parseInt(itemId)) || null;
-    return item;
-  }
-  const selectedItem = getSelectedItem();
+  useEffect(() => {
+    const syncSelectedItemFromUrl = () => {
+      const params = new URLSearchParams(window.location.search);
+      const rawId = params.get("item");
+      if (!rawId) {
+        setSelectedItemId(null);
+        return;
+      }
+      const parsedId = Number.parseInt(rawId, 10);
+      setSelectedItemId(Number.isNaN(parsedId) ? null : parsedId);
+    };
+
+    syncSelectedItemFromUrl();
+    window.addEventListener("popstate", syncSelectedItemFromUrl);
+
+    return () => {
+      window.removeEventListener("popstate", syncSelectedItemFromUrl);
+    };
+  }, []);
+
+  const selectedItem =
+    selectedItemId === null
+      ? null
+      : (initialItems.find((item) => item.id === selectedItemId) ?? null);
 
   useEffect(() => {
     if (selectedItem) {
@@ -50,6 +65,7 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
     const url = new URL(window.location.href);
     url.searchParams.set("item", item.id.toString());
     window.history.pushState({}, "", url.toString());
+    setSelectedItemId(item.id);
   };
 
   const filteredItems = filterItems(initialItems, filter);
@@ -94,6 +110,7 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
             const url = new URL(window.location.href);
             url.searchParams.delete("item");
             window.history.replaceState({}, "", url.toString());
+            setSelectedItemId(null);
           }
         }}
       >
