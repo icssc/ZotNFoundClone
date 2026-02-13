@@ -29,7 +29,7 @@ export default $config({
     });
 
     const isProd = $app.stage === "production";
-    const domain = isProd ? "zotnfound.com" : "clone.zotnfound.com";
+    const domain = isProd ? "production.zotnfound.com" : "clone.zotnfound.com";
     const icsscClientId = isProd ? "zotnfound" : "zotnfound-clone";
     const bucket = new sst.aws.Bucket("ItemImages", {
       access: "public",

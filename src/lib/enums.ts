@@ -106,7 +106,10 @@ export function toggleHelped(
 
 export function toggleResolved(
   item: Pick<Item, "isLost" | "isHelped" | "isResolved">
-): { isHelped: boolean; isResolved: boolean } {
+): {
+  isHelped: boolean;
+  isResolved: boolean;
+} {
   if (item.isLost) {
     // Resolved not applicable
     return {
