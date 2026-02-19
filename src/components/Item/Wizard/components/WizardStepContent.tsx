@@ -30,7 +30,9 @@ export function WizardStepContent({
     case 2:
       return <Step2ItemType formData={formData} updateField={updateField} />;
     case 3:
-      return <Step3DateSelection formData={formData} updateField={updateField} />;
+      return (
+        <Step3DateSelection formData={formData} updateField={updateField} />
+      );
     case 4:
       return (
         <div className="space-y-3">
