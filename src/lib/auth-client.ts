@@ -1,7 +1,12 @@
 import { createAuthClient } from "better-auth/react";
 import { genericOAuthClient } from "better-auth/client/plugins";
 import { toast } from "sonner";
-import { trackUserSignIn, trackUserSignOut, resetUser } from "./analytics";
+import {
+  trackUserSignIn,
+  trackUserSignOut,
+  resetUser,
+  trackError,
+} from "./analytics";
 
 export const authClient = createAuthClient({
   // Use relative base URL (same origin) so signOut/signIn work in deployed environments
@@ -9,7 +14,7 @@ export const authClient = createAuthClient({
   plugins: [genericOAuthClient()],
 });
 
-const { signOut: originalSignOut, signUp } = authClient;
+const { signOut: originalSignOut } = authClient;
 
 // Wrap signOut with analytics tracking
 async function signOut() {
@@ -28,7 +33,11 @@ async function signInWithIcssc() {
     trackUserSignIn();
     return data;
   } catch (error) {
-    console.error("Error signing in with ICSSC SSO:", error);
+    trackError({
+      error: error instanceof Error ? error.message : "Unknown error",
+      context: "ICSSC SSO sign-in failed",
+      severity: "high",
+    });
     throw error;
   }
 }
@@ -43,4 +52,4 @@ async function handleSignIn() {
   }
 }
 
-export { signUp, signOut, handleSignIn, signInWithIcssc };
+export { signOut, handleSignIn };

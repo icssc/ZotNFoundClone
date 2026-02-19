@@ -24,12 +24,12 @@ async function fetchUserKeywordsOrThrow(email: string) {
   return result.data ?? [];
 }
 
-export const loadKeywords = createAction(noInputSchema, async (_, session) => {
+const loadKeywords = createAction(noInputSchema, async (_, session) => {
   const email = session.user.email;
   return fetchUserKeywordsOrThrow(email);
 });
 
-export const addKeyword = createAction(
+const addKeyword = createAction(
   z.object({ keyword: keywordSchema }),
   async ({ keyword }, session) => {
     const email = session.user.email;
@@ -58,7 +58,7 @@ export const addKeyword = createAction(
   }
 );
 
-export const removeKeyword = createAction(
+const removeKeyword = createAction(
   z.object({ keyword: keywordSchema }),
   async ({ keyword }, session) => {
     const email = session.user.email;
@@ -102,25 +102,27 @@ export async function keywordFormAction(
   });
 
   try {
-    if (intent === "load") {
-      return loadKeywords({});
-    }
+    switch (intent) {
+      case "load":
+        return loadKeywords({});
 
-    if (intent === "add") {
-      if (!keyword) {
-        return normalizeError("Keyword is required to add a subscription.");
-      }
-      return addKeyword({ keyword });
-    }
+      case "add":
+        if (!keyword) {
+          return normalizeError("Keyword is required to add a subscription.");
+        }
+        return addKeyword({ keyword });
 
-    if (intent === "remove") {
-      if (!keyword) {
-        return normalizeError("Keyword is required to remove a subscription.");
-      }
-      return removeKeyword({ keyword });
-    }
+      case "remove":
+        if (!keyword) {
+          return normalizeError(
+            "Keyword is required to remove a subscription."
+          );
+        }
+        return removeKeyword({ keyword });
 
-    return normalizeError("Invalid keyword intent.");
+      default:
+        return normalizeError("Invalid keyword intent.");
+    }
   } catch (error) {
     return {
       success: false,

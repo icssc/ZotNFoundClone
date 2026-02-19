@@ -20,12 +20,6 @@ const othersFound = icon({
   iconAnchor: [25, 40],
 });
 
-export const othersDragBlack = icon({
-  iconUrl: "/logos/others_black.svg",
-  iconSize: [40, 40],
-  iconAnchor: [25, 25],
-});
-
 export const iconsMap = {
   others: {
     true: othersLost,

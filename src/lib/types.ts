@@ -1,29 +1,10 @@
 import { Item } from "@/db/schema";
-import type { LatLngExpression, PointTuple } from "leaflet";
+import type { LatLngExpression } from "leaflet";
 import { phoneIntents } from "@/lib/sms/constants";
-
-export type ItemPostParams = {
-  image: string;
-  isLost: boolean;
-  itemName: string;
-  itemDescription: string;
-  itemDate: string;
-};
-
-// Display object interface
-export interface DisplayObjects {
-  object_id: number;
-  type: string;
-  location: PointTuple;
-}
 
 // Type guards
 export function isLostObject(object: Item) {
   return object.isLost;
-}
-
-export function isFoundObject(object: Item) {
-  return !object.isLost;
 }
 
 export function stringArrayToLatLng(location: string[]): LatLngExpression {
@@ -48,11 +29,6 @@ export function formatLocationDisplay(
   return "Invalid location";
 }
 
-export interface KeywordSubscription {
-  keyword: string;
-  email: string;
-}
-
 export type ActionState<T = void> = {
   success?: boolean;
   error?: string;
@@ -69,12 +45,5 @@ export interface LocationFormData {
   isLost: boolean;
   location: [number, number] | null;
 }
-
-export interface StepProps {
-  formData: LocationFormData;
-  setFormData: React.Dispatch<React.SetStateAction<LocationFormData>>;
-}
-
-export type ConfirmationStepProps = Pick<StepProps, "formData">;
 
 export type PhoneIntent = (typeof phoneIntents)[keyof typeof phoneIntents];

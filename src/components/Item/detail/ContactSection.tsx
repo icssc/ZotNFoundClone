@@ -103,5 +103,3 @@ export function ContactSection({
   // Idle signed-in view returns nothing (actions handled by ActionFooter)
   return null;
 }
-
-export default ContactSection;

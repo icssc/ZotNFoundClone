@@ -81,21 +81,6 @@ export const trackItemShareLink = (itemData: {
   });
 };
 
-export const trackItemEdited = (itemData: {
-  itemId?: string;
-  itemType: string;
-  isLost: boolean;
-  hasNewImage: boolean;
-}) => {
-  posthog.capture("item_edited", {
-    item_id: itemData.itemId,
-    item_type: itemData.itemType,
-    is_lost: itemData.isLost,
-    has_new_image: itemData.hasNewImage,
-    timestamp: new Date().toISOString(),
-  });
-};
-
 export const trackItemResolved = (itemData: {
   itemId: string;
   itemType: string;

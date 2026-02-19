@@ -2,6 +2,7 @@ import { sendItemLostNotification } from "@/lib/email/service";
 import { LostPayloadSchema } from "@/lib/validators/email";
 import { NextResponse } from "next/server";
 import { treeifyError } from "zod";
+import { trackServerError } from "@/lib/analytics-server";
 
 export async function POST(req: Request) {
   try {
@@ -42,7 +43,15 @@ export async function POST(req: Request) {
       },
     });
   } catch (error) {
-    console.error("Error in /api/resend/lost:", error);
+    trackServerError({
+      error: error instanceof Error ? error.message : "Unknown error",
+      context: "POST /api/resend/lost failed",
+      severity: "high",
+      stack: error instanceof Error ? error.stack : undefined,
+      extra: {
+        error_name: error instanceof Error ? error.name : "unknown",
+      },
+    });
     return NextResponse.json(
       { error: "Internal server error", code: "INTERNAL_ERROR" },
       { status: 500 }

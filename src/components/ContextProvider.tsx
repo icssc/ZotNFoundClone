@@ -9,7 +9,7 @@ import {
 import type { LatLngExpression } from "leaflet";
 import type { User } from "better-auth";
 import { authClient, signOut as clientSignOut } from "@/lib/auth-client";
-import { identifyUser } from "@/lib/analytics";
+import { identifyUser, trackError } from "@/lib/analytics";
 
 // ---- Shared Context ----
 type SharedContextType = {
@@ -29,28 +29,33 @@ export function Providers({ children }: { children: ReactNode }) {
   const [selectedLocation, setSelectedLocation] =
     useState<LatLngExpression | null>(null);
   const [filter, setFilter] = useState<string>("");
-  const [localUser, setLocalUser] = useState<User | undefined>(undefined);
-  const [isUserHydrated, setIsUserHydrated] = useState<boolean>(false);
+  const [sessionState, setSessionState] = useState<{
+    user?: User;
+    isHydrated: boolean;
+  }>({ user: undefined, isHydrated: false });
 
   // Resolve session on the client after hydration to keep root HTML cacheable.
   useEffect(() => {
     let mounted = true;
 
     const loadSession = async () => {
+      let session: Awaited<ReturnType<typeof authClient.getSession>> | null =
+        null;
+
       try {
-        const session = await authClient.getSession();
-        if (!mounted) return;
-        const nextUser = session.data?.user ?? undefined;
-        setLocalUser(nextUser);
+        session = await authClient.getSession();
       } catch (error) {
-        if (!mounted) return;
-        console.error("Session load error:", error);
-        setLocalUser(undefined);
-      } finally {
-        if (mounted) {
-          setIsUserHydrated(true);
-        }
+        trackError({
+          error: error instanceof Error ? error.message : "Unknown error",
+          context: "Session load error",
+          severity: "medium",
+        });
       }
+
+      const nextUser = session?.data?.user ?? undefined;
+
+      if (!mounted) return;
+      setSessionState({ user: nextUser, isHydrated: true });
     };
 
     void loadSession();
@@ -60,7 +65,7 @@ export function Providers({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const user: User | undefined = localUser;
+  const user: User | undefined = sessionState.user;
 
   // Identify user in PostHog when they sign in
   useEffect(() => {
@@ -74,13 +79,17 @@ export function Providers({ children }: { children: ReactNode }) {
   }, [user?.id, user?.email, user?.name, user?.image]);
 
   const signOut = async () => {
-    const previousUser = localUser;
-    setLocalUser(undefined);
+    const previousUser = sessionState.user;
+    setSessionState({ user: undefined, isHydrated: true });
     try {
       await clientSignOut();
     } catch (error) {
-      console.error("Sign out error:", error);
-      setLocalUser(previousUser);
+      trackError({
+        error: error instanceof Error ? error.message : "Unknown error",
+        context: "Sign out error",
+        severity: "medium",
+      });
+      setSessionState({ user: previousUser, isHydrated: true });
       throw error;
     }
   };
@@ -91,7 +100,7 @@ export function Providers({ children }: { children: ReactNode }) {
         selectedLocation,
         filter,
         user,
-        isUserHydrated,
+        isUserHydrated: sessionState.isHydrated,
         setSelectedLocation,
         setFilter,
         signOut,

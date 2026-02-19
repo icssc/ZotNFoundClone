@@ -20,12 +20,13 @@ export function Step5Confirmation({ formData }: Step5Props) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* Image Preview */}
-        <div className="relative aspect-square w-full max-w-[200px] sm:max-w-[280px] mx-auto rounded-xl sm:rounded-2xl overflow-hidden bg-black/40 border border-white/10 shadow-2xl">
+        <div className="relative aspect-square w-full max-w-50 sm:max-w-70 mx-auto rounded-xl sm:rounded-2xl overflow-hidden bg-black/40 border border-white/10 shadow-2xl">
           {formData.file ? (
             <Image
               src={URL.createObjectURL(formData.file)}
               alt="Item Image"
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
           ) : (
@@ -33,7 +34,7 @@ export function Step5Confirmation({ formData }: Step5Props) {
               No image uploaded
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent pointer-events-none" />
           <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3">
             <div
               className={`inline-flex items-center px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium backdrop-blur-md border border-white/10 ${

@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { sendItemFoundEmail } from "@/lib/email/service";
 import { sendSMS } from "@/lib/sms/service";
 import { FoundPayloadSchema } from "@/lib/validators/email";
+import { trackServerError } from "@/lib/analytics-server";
 import { NextResponse } from "next/server";
 import { treeifyError } from "zod";
 
@@ -63,7 +64,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ data: { result } });
   } catch (error) {
-    console.error("Error in /api/resend:", error);
+    trackServerError({
+      error: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      context: "POST /api/resend",
+      severity: "high",
+    });
     return NextResponse.json(
       { error: "Internal server error", code: "INTERNAL_ERROR" },
       { status: 500 }

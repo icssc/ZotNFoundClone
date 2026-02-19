@@ -2,6 +2,13 @@ import AboutHeader from "./AboutHeader";
 import StatisticsCards from "./StatisticCards";
 import ExploreCarousel from "./ExploreCarousel";
 import OriginSection from "./OriginSection";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About ZotNFound",
+  description:
+    "Learn how ZotNFound helps UCI students report and recover lost and found items.",
+};
 
 export default function About() {
   return (

@@ -1,17 +1,7 @@
 "use server";
 import { ActionState } from "@/lib/types";
 import { db } from "@/db";
-import { Search } from "@/db/schema";
-
-export async function getAllSearches(): Promise<ActionState<Search[]>> {
-  try {
-    const result = await db.query.searches.findMany();
-    return { data: result };
-  } catch (error) {
-    console.error("Error fetching searches:", error);
-    return { error: `Error fetching searches: ${error}` };
-  }
-}
+import { trackServerError } from "@/lib/analytics-server";
 
 export async function getKeywordsForUser(
   email: string
@@ -27,7 +17,12 @@ export async function getKeywordsForUser(
 
     return { data: userKeywords };
   } catch (error) {
-    console.error("Error fetching user keywords:", error);
+    trackServerError({
+      error: error instanceof Error ? error.message : String(error),
+      context: "Error fetching user keywords",
+      stack: error instanceof Error ? error.stack : undefined,
+      severity: "medium",
+    });
     return { error: `Error fetching user keywords: ${error}` };
   }
 }

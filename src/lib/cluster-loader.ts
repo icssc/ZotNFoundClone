@@ -13,5 +13,3 @@ export function addMarkerToGroup(
 ): void {
   group.addLayer(marker);
 }
-
-export { L };

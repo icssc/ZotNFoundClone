@@ -46,13 +46,6 @@ export default function MapContent({ initialItems }: MapContentProps) {
     if (mapRef.current || !containerRef.current) return;
 
     const el = containerRef.current;
-    const { width, height } = el.getBoundingClientRect();
-    if (width === 0 || height === 0) {
-      const timer = setTimeout(() => {
-        setIsMapMounted(false);
-      }, 10);
-      return () => clearTimeout(timer);
-    }
 
     const map = new createMap(el, {
       center: centerPosition as [number, number],
@@ -93,7 +86,6 @@ export default function MapContent({ initialItems }: MapContentProps) {
         mapRef.current.remove();
         mapRef.current = null;
       }
-      setIsMapMounted(false);
     };
   }, [accessToken]);
 
@@ -128,20 +120,20 @@ export default function MapContent({ initialItems }: MapContentProps) {
     <div className="relative w-full h-full p-1.5">
       {/* Corner accents */}
       <div className="pointer-events-none absolute z-10 -top-px -left-px h-10 w-10">
-        <div className="absolute -top-px -left-px h-8 w-[3px] bg-white" />
-        <div className="absolute -top-px -left-px w-8 h-[3px] bg-white" />
+        <div className="absolute -top-px -left-px h-8 w-0.75 bg-white" />
+        <div className="absolute -top-px -left-px w-8 h-0.75 bg-white" />
       </div>
       <div className="pointer-events-none absolute z-10 -top-px -right-px h-10 w-10">
-        <div className="absolute -top-px -right-px h-8 w-[3px] bg-white" />
-        <div className="absolute -top-px -right-px w-8 h-[3px] bg-white" />
+        <div className="absolute -top-px -right-px h-8 w-0.75 bg-white" />
+        <div className="absolute -top-px -right-px w-8 h-0.75 bg-white" />
       </div>
       <div className="pointer-events-none absolute z-10 -bottom-px -left-px h-10 w-10">
-        <div className="absolute -bottom-px -left-px h-8 w-[3px] bg-white" />
-        <div className="absolute -bottom-px -left-px w-8 h-[3px] bg-white" />
+        <div className="absolute -bottom-px -left-px h-8 w-0.75 bg-white" />
+        <div className="absolute -bottom-px -left-px w-8 h-0.75 bg-white" />
       </div>
       <div className="pointer-events-none absolute z-10 -bottom-px -right-px h-10 w-10">
-        <div className="absolute -bottom-px -right-px h-8 w-[3px] bg-white" />
-        <div className="absolute -bottom-px -right-px w-8 h-[3px] bg-white" />
+        <div className="absolute -bottom-px -right-px h-8 w-0.75 bg-white" />
+        <div className="absolute -bottom-px -right-px w-8 h-0.75 bg-white" />
       </div>
 
       <div

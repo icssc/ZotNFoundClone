@@ -38,10 +38,10 @@ export default function ExploreCarousel() {
         Explore how ZotNFound works
       </h1>
       <div className="flex flex-wrap justify-center gap-8">
-        {carousel.map((item, idx) => (
+        {carousel.map((item) => (
           <div
-            key={idx}
-            className="flex-1 min-w-[300px] max-w-[350px] px-6 py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/10 bg-white/5 border border-white/10 backdrop-blur-sm flex flex-col items-center group"
+            key={item.title}
+            className="flex-1 min-w-75 max-w-87.5 px-6 py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/10 bg-white/5 border border-white/10 backdrop-blur-sm flex flex-col items-center group"
           >
             <div className="relative w-full aspect-video mb-6 overflow-hidden rounded-lg border border-white/5">
               <Image
