@@ -39,7 +39,8 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
 
   const selectedItemId = useSyncExternalStore(
     subscribeToItemParam,
-    getSnapshot
+    getSnapshot,
+    () => null
   );
 
   const selectedItem =
