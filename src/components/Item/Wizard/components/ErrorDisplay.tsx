@@ -27,8 +27,8 @@ export function ErrorDisplay({ actionState }: ErrorDisplayProps) {
           {actionState.issues && (
             <div className="mt-2 text-sm text-red-300/90">
               <ul role="list" className="list-disc pl-5 space-y-1">
-                {actionState.issues.errors.map((issue: any, index: number) => (
-                  <li key={index}>{String(issue)}</li>
+                {actionState.issues.errors.map((issue: any) => (
+                  <li key={String(issue)}>{String(issue)}</li>
                 ))}
               </ul>
             </div>

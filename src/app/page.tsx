@@ -1,6 +1,12 @@
 import ItemDisplayList from "@/components/Item/ItemDisplayList";
 import { LazyMap } from "@/components/Map/LazyMap";
 import { getAllItems } from "@/server/data/item/queries";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "ZotNFound",
+  description: "Browse, report, and reunite lost and found items at UCI.",
+};
 
 export default async function Home() {
   "use cache";

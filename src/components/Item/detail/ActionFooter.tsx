@@ -26,7 +26,7 @@ import type { User } from "better-auth";
  * This component is stateless: all side-effects and mutations are delegated via callback props.
  */
 
-export interface ActionFooterProps {
+interface ActionFooterProps {
   item: Item;
   user: User | null;
   isLost: boolean;
@@ -152,7 +152,7 @@ export function ActionFooter({
           <span>{copied ? "Copied!" : "Share"}</span>
         </Button>
 
-        {!isOwner && isLost && user && (
+        {!isOwner && user && (
           <Button
             className="flex-1 sm:flex-none items-center gap-2  bg-white/5 hover:bg-white/15 text-white border-0 h-10 px-6 rounded-xl transition-all duration-300 hover:scale-105"
             onClick={onContact}
@@ -166,5 +166,3 @@ export function ActionFooter({
     </div>
   );
 }
-
-export default ActionFooter;

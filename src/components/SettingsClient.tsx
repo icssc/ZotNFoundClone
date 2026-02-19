@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import PhoneNumberForm from "@/components/PhoneNumberForm/PhoneNumberForm";
 import { useSharedContext } from "@/components/ContextProvider";
 import { handleSignIn } from "@/lib/auth-client";
+import { trackError } from "@/lib/analytics";
 import type { User } from "better-auth";
 import type { PhoneNumberActionState } from "@/server/actions/phone-number/action";
 
@@ -21,6 +22,7 @@ function ProfileAvatar({ user }: { user?: User }) {
           src={user.image}
           alt={user.name || "Profile"}
           fill
+          sizes="56px"
           className="object-cover"
         />
       </div>
@@ -45,7 +47,11 @@ export default function SettingsClient({
       await signOut();
       router.replace("/");
     } catch (err) {
-      console.error("Error signing out:", err);
+      trackError({
+        error: err instanceof Error ? err.message : "Unknown error",
+        context: "SettingsClient sign out",
+        severity: "medium",
+      });
     }
   };
 

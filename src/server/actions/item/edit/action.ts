@@ -7,6 +7,7 @@ import { z } from "zod";
 import uploadImageToS3 from "@/server/actions/item/upload/action";
 import { eq } from "drizzle-orm";
 import { createAction, ActionState } from "@/server/actions/wrapper";
+import { trackServerError } from "@/lib/analytics-server";
 
 import { Item } from "@/db/schema";
 
@@ -71,7 +72,11 @@ const editItemHandler = createAction(editItemSchema, async (data, session) => {
     if (uploadResult.success) {
       imageUrl = uploadResult.data;
     } else {
-      console.error("Error uploading image:", uploadResult.error);
+      trackServerError({
+        error: String(uploadResult.error ?? "Unknown upload error"),
+        context: "edit_item image upload failed",
+        severity: "medium",
+      });
       throw new Error("Failed to upload image. Please try again.");
     }
   }

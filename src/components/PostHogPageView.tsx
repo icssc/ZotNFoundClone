@@ -1,10 +1,15 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect, type JSX } from "react";
 import { trackPageView } from "@/lib/analytics";
 
-export function PostHogPageView(): null {
+/**
+ * Inner component that performs the page view tracking.
+ * This uses navigation hooks and must be rendered within a Suspense
+ * boundary per next/navigation requirements when using `useSearchParams`.
+ */
+function PostHogPageViewInner(): null {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -34,4 +39,12 @@ export function PostHogPageView(): null {
   }, [pathname, searchParams]);
 
   return null;
+}
+
+export function PostHogPageView(): JSX.Element {
+  return (
+    <Suspense fallback={null}>
+      <PostHogPageViewInner />
+    </Suspense>
+  );
 }

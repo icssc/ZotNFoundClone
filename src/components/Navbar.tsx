@@ -10,7 +10,11 @@ import { SearchBar } from "./SearchBar";
 import { useSharedContext } from "./ContextProvider";
 import { Instrument_Serif } from "next/font/google";
 import { handleSignIn } from "@/lib/auth-client";
-import { trackNavigationToAbout, trackNavigationToHome } from "@/lib/analytics";
+import {
+  trackNavigationToAbout,
+  trackNavigationToHome,
+  trackError,
+} from "@/lib/analytics";
 
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument",
@@ -27,7 +31,11 @@ export default function Navbar() {
       await signOut();
       router.replace("/");
     } catch (error) {
-      console.error("Sign out error:", error);
+      trackError({
+        error: error instanceof Error ? error.message : "Unknown error",
+        context: "Navbar sign out",
+        severity: "medium",
+      });
     }
   };
 
@@ -55,6 +63,7 @@ export default function Navbar() {
                   src="/logo.png"
                   alt="ZotNFound"
                   fill
+                  sizes="40px"
                   className="object-cover"
                   loading="eager"
                 />

@@ -7,6 +7,7 @@ import { z } from "zod";
 import uploadImageToS3 from "@/server/actions/item/upload/action";
 import { createAction, ActionState } from "@/server/actions/wrapper";
 import { snsClient } from "@/lib/sms/client";
+import { trackServerError } from "@/lib/analytics-server";
 
 import { Item } from "@/db/schema";
 import { Resource } from "sst/resource";
@@ -46,7 +47,11 @@ const createItemHandler = createAction(
 
     const uploadResult = await uploadImageToS3(file);
     if (!uploadResult.success) {
-      console.error("Error uploading image:", uploadResult.error);
+      trackServerError({
+        error: uploadResult.error || "Unknown upload error",
+        context: "Create item image upload failed",
+        severity: "high",
+      });
       throw new Error("Failed to upload image. Please try again.");
     }
 

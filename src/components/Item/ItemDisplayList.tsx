@@ -8,55 +8,44 @@ import Item from "@/components/Item/Item";
 import { Item as ItemType } from "@/db/schema";
 import type { LatLngExpression } from "leaflet";
 import { filterItems } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { SearchX } from "lucide-react";
 
 interface ItemDisplayListProps {
   initialItems: ItemType[];
 }
 
+function getSnapshot() {
+  const params = new URLSearchParams(window.location.search);
+  const rawId = params.get("item");
+  if (!rawId) return null;
+  const parsedId = Number.parseInt(rawId, 10);
+  return Number.isNaN(parsedId) ? null : parsedId;
+}
+
+function subscribeToItemParam(onStoreChange: () => void) {
+  // call onStoreChange when URL *might* have changed
+  window.addEventListener("popstate", onStoreChange);
+  window.addEventListener("item-selection-change", onStoreChange);
+
+  return () => {
+    window.removeEventListener("popstate", onStoreChange);
+    window.removeEventListener("item-selection-change", onStoreChange);
+  };
+}
+
 function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   const { setSelectedLocation, filter } = useSharedContext();
-  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
-  useEffect(() => {
-    const syncSelectedItemFromUrl = () => {
-      const params = new URLSearchParams(window.location.search);
-      const rawId = params.get("item");
-      if (!rawId) {
-        setSelectedItemId(null);
-        return;
-      }
-      const parsedId = Number.parseInt(rawId, 10);
-      setSelectedItemId(Number.isNaN(parsedId) ? null : parsedId);
-    };
-
-    syncSelectedItemFromUrl();
-    window.addEventListener("popstate", syncSelectedItemFromUrl);
-    window.addEventListener("item-selection-change", syncSelectedItemFromUrl);
-
-    return () => {
-      window.removeEventListener("popstate", syncSelectedItemFromUrl);
-      window.removeEventListener(
-        "item-selection-change",
-        syncSelectedItemFromUrl
-      );
-    };
-  }, []);
+  const selectedItemId = useSyncExternalStore(
+    subscribeToItemParam,
+    getSnapshot
+  );
 
   const selectedItem =
     selectedItemId === null
       ? null
       : (initialItems.find((item) => item.id === selectedItemId) ?? null);
-
-  useEffect(() => {
-    if (selectedItem) {
-      const location: LatLngExpression = stringArrayToLatLng(
-        selectedItem.location
-      );
-      setSelectedLocation(location);
-    }
-  }, [selectedItem, setSelectedLocation]);
 
   const handleItemClick = (item: ItemType) => {
     if (item.location) {
@@ -66,12 +55,17 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
   };
 
   const handleActionButtonClick = (item: ItemType) => {
+    if (item.location) {
+      const location: LatLngExpression = stringArrayToLatLng(item.location);
+      setSelectedLocation(location);
+    } else {
+      setSelectedLocation(null);
+    }
     // Update URL with item parameter to show the dialog
     const url = new URL(window.location.href);
     url.searchParams.set("item", item.id.toString());
     window.history.pushState({}, "", url.toString());
     window.dispatchEvent(new Event("item-selection-change"));
-    setSelectedItemId(item.id);
   };
 
   const filteredItems = filterItems(initialItems, filter);
@@ -82,7 +76,7 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
         {filteredItems.length > 0 ? (
           filteredItems.map((item: ItemType, index: number) => (
             <div
-              key={item.id ?? index}
+              key={item.id}
               className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-backwards"
               style={{ animationDelay: `${index * 50}ms` }}
             >
@@ -116,7 +110,7 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
             const url = new URL(window.location.href);
             url.searchParams.delete("item");
             window.history.replaceState({}, "", url.toString());
-            setSelectedItemId(null);
+            window.dispatchEvent(new Event("item-selection-change"));
           }
         }}
       >

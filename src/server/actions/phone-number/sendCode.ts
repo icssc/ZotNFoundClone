@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { sendSMS } from "@/lib/sms/service";
-import { trackError } from "@/lib/analytics";
+import { trackServerError } from "@/lib/analytics-server";
 
 export default async function sendVerificationCodeBySMS(
   newNumber: string
@@ -18,10 +18,14 @@ export default async function sendVerificationCodeBySMS(
       newNumber
     );
   } catch (error: any) {
-    console.error("Failed to send verification code.");
-    trackError({
+    trackServerError({
       error: error?.name || "Unknown error",
       context: "Failure sending phone number verification code",
+      stack: error?.stack,
+      severity: "high",
+      extra: {
+        message: error?.message,
+      },
     });
     throw new Error(
       "Failed to send verification code to " +

@@ -6,7 +6,6 @@ import { Toaster } from "sonner";
 import localFont from "next/font/local";
 import { Providers } from "@/components/ContextProvider";
 import { PostHogPageView } from "@/components/PostHogPageView";
-import { Suspense } from "react";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -30,9 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${CustomFont.className} antialiased bg-background`}
       >
         <Providers>
-          <Suspense fallback={null}>
-            <PostHogPageView />
-          </Suspense>
+          <PostHogPageView />
           <Navbar />
           {children}
         </Providers>

@@ -12,12 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useActionState, startTransition, useEffect, useRef } from "react";
-import { Step1BasicInfo } from "./Wizard/Steps/Step1BasicInfo";
-import { Step2ItemType } from "./Wizard/Steps/Step2ItemType";
-import { Step3DateSelection } from "./Wizard/Steps/Step3DateSelection";
-import { Step4FileUpload } from "./Wizard/Steps/Step4FileUpload";
-import { Step5Confirmation } from "./Wizard/Steps/Step5Confirmation";
-import { Step6LocationSelection } from "./Wizard/Steps/Step6LocationSelection";
+import { WizardStepContent } from "./Wizard/components/WizardStepContent";
 import { formatDateYMD } from "@/lib/date";
 import {
   createItem,
@@ -26,10 +21,8 @@ import {
 import { editItem, EditItemState } from "@/server/actions/item/edit/action";
 import { Item } from "@/db/schema";
 import {
-  trackAddItemDialogOpened,
   trackAddItemStepCompleted,
   trackAddItemStepBack,
-  trackEditItemDialogOpened,
   trackEditItemStepCompleted,
   trackEditItemStepBack,
 } from "@/lib/analytics";
@@ -83,20 +76,6 @@ export function ItemWizardDialog({
   );
 
   const prevIsPendingRef = useRef(false);
-
-  // Track dialog open events
-  useEffect(() => {
-    if (open) {
-      if (isEditing && item) {
-        trackEditItemDialogOpened({
-          itemId: String(item.id),
-          itemType: item.type,
-        });
-      } else {
-        trackAddItemDialogOpened();
-      }
-    }
-  }, [open, isEditing, item]);
 
   useEffect(() => {
     if (actionState.success && prevIsPendingRef.current && !isPending) {
@@ -232,53 +211,6 @@ export function ItemWizardDialog({
     reset();
   };
 
-  const renderStepContent = () => {
-    const props = {
-      formData: {
-        name: formState.name,
-        description: formState.description,
-        type: formState.type,
-        date: formState.date,
-        file: formState.file,
-        isLost: formState.isLost,
-        location: formState.location,
-      },
-      updateField,
-    };
-
-    switch (formState.currentStep) {
-      case 1:
-        return <Step1BasicInfo {...props} />;
-      case 2:
-        return <Step2ItemType {...props} />;
-      case 3:
-        return <Step3DateSelection {...props} />;
-      case 4:
-        return (
-          <div className="space-y-3">
-            {isEditing && (
-              <div className="text-sm text-gray-400 bg-blue-500/10 p-3 rounded-md border border-blue-500/20">
-                <p className="font-medium text-blue-400 mb-1">
-                  💡 Keep Existing Image
-                </p>
-                <p>
-                  You can skip this step to keep your current image, or upload a
-                  new one to replace it.
-                </p>
-              </div>
-            )}
-            <Step4FileUpload updateField={updateField} />
-          </div>
-        );
-      case 5:
-        return <Step5Confirmation formData={props.formData} />;
-      case 6:
-        return <Step6LocationSelection {...props} />;
-      default:
-        return null;
-    }
-  };
-
   const title = isEditing ? "Edit Item" : "Add a New Item";
   const description = isEditing
     ? "Update your item information"
@@ -311,7 +243,20 @@ export function ItemWizardDialog({
               "w-full px-2 sm:px-4 animate-in fade-in slide-in-from-right-4 duration-300 ease-out fill-mode-both"
             )}
           >
-            {renderStepContent()}
+            <WizardStepContent
+              currentStep={formState.currentStep}
+              formData={{
+                name: formState.name,
+                description: formState.description,
+                type: formState.type,
+                date: formState.date,
+                file: formState.file,
+                isLost: formState.isLost,
+                location: formState.location,
+              }}
+              updateField={updateField}
+              isEditing={isEditing}
+            />
           </div>
 
           <DialogActions

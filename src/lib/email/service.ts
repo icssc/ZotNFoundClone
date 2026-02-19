@@ -10,7 +10,7 @@ import {
 const apiKey = process.env.RESEND_API_KEY ?? "";
 const resend = new Resend(apiKey);
 
-export interface ItemData {
+interface ItemData {
   id: number;
   name: string;
   type: string;
@@ -18,13 +18,13 @@ export interface ItemData {
   email?: string; // owner's email (provided by contact flow)
 }
 
-export interface ItemFoundEmailParams {
+interface ItemFoundEmailParams {
   item: ItemData;
   finderName: string;
   finderEmail: string;
 }
 
-export interface ItemLostEmailParams {
+interface ItemLostEmailParams {
   item: ItemData;
   subscriberEmails: string[];
 }

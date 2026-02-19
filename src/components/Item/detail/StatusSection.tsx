@@ -14,7 +14,7 @@ import { Item } from "@/db/schema";
  *  - item: full item record
  *  - isLost: precomputed convenience boolean (to avoid recomputing in parent)
  */
-export interface StatusSectionProps {
+interface StatusSectionProps {
   item: Item;
   isLost: boolean;
   className?: string;
@@ -59,5 +59,3 @@ export function StatusSection({ item, isLost, className }: StatusSectionProps) {
     </div>
   );
 }
-
-export default StatusSection;

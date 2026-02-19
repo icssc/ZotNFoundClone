@@ -1,24 +1,24 @@
 import type { Item } from "@/db/schema";
 
-export enum ItemBaseState {
+enum ItemBaseState {
   Lost = "lost",
   Found = "found",
 }
 
-export enum ItemDerivedState {
+enum ItemDerivedState {
   Helped = "helped",
   Resolved = "resolved",
   None = "none",
 }
 
-export enum ItemSemanticStatus {
+enum ItemSemanticStatus {
   Lost = "lost",
   Found = "found",
   LostHelped = "lost_helped",
   FoundResolved = "found_resolved",
 }
 
-export const ITEM_STATUS_META = Object.freeze({
+const ITEM_STATUS_META = Object.freeze({
   [ItemSemanticStatus.Lost]: {
     key: ItemSemanticStatus.Lost,
     base: ItemBaseState.Lost,
@@ -57,9 +57,9 @@ export const ITEM_STATUS_META = Object.freeze({
   },
 });
 
-export type ItemStatusMeta = (typeof ITEM_STATUS_META)[ItemSemanticStatus];
+type ItemStatusMeta = (typeof ITEM_STATUS_META)[ItemSemanticStatus];
 
-export function deriveSemanticStatus(
+function deriveSemanticStatus(
   isLost: boolean,
   isHelped?: boolean | null,
   isResolved?: boolean | null
@@ -72,25 +72,26 @@ export function deriveSemanticStatus(
   return ItemSemanticStatus.Found;
 }
 
-export function getItemSemanticStatus(
+function getItemSemanticStatus(
   item: Pick<Item, "isLost" | "isHelped" | "isResolved">
 ): ItemSemanticStatus {
   return deriveSemanticStatus(item.isLost, item.isHelped, item.isResolved);
 }
 
-export function getItemStatusMeta(status: ItemSemanticStatus): ItemStatusMeta {
+function getItemStatusMeta(status: ItemSemanticStatus): ItemStatusMeta {
   return ITEM_STATUS_META[status];
 }
 
-export function getItemStatusMetaFromItem(
+function getItemStatusMetaFromItem(
   item: Pick<Item, "isLost" | "isHelped" | "isResolved">
 ): ItemStatusMeta {
   return getItemStatusMeta(getItemSemanticStatus(item));
 }
 
-export function toggleHelped(
-  item: Pick<Item, "isLost" | "isHelped" | "isResolved">
-): { isHelped: boolean; isResolved: boolean } {
+function toggleHelped(item: Pick<Item, "isLost" | "isHelped" | "isResolved">): {
+  isHelped: boolean;
+  isResolved: boolean;
+} {
   if (!item.isLost) {
     // Helped not applicable
     return {
@@ -104,7 +105,7 @@ export function toggleHelped(
   };
 }
 
-export function toggleResolved(
+function toggleResolved(
   item: Pick<Item, "isLost" | "isHelped" | "isResolved">
 ): {
   isHelped: boolean;

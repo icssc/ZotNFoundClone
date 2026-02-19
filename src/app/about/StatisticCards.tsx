@@ -28,9 +28,9 @@ const stats = [
 export default function StatisticsCards() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-      {stats.map((stat, i) => (
+      {stats.map((stat) => (
         <div
-          key={i} //using index as a key since this is a static list
+          key={stat.label}
           className={`px-10 py-8 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 ${stat.hue} bg-white/5 border border-white/10 backdrop-blur-sm text-center group`}
         >
           <p
