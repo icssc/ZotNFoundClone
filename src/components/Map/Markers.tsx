@@ -18,20 +18,19 @@ import { trackMarkerClicked } from "@/lib/analytics";
 interface ClusterMarkersProps {
   objects: Item[];
   filter: string;
-  mapRef: RefObject<LeafletMap | null>;
+  map: LeafletMap | null;
   onMarkerClick?: (item: Item) => void;
 }
 
 export default function Markers({
   objects,
   filter,
-  mapRef,
+  map,
   onMarkerClick,
 }: ClusterMarkersProps) {
   const groupRef = useRef<LayerGroup | null>(null);
 
   useEffect(() => {
-    const map = mapRef.current;
     if (!map) return;
 
     if (groupRef.current) {
@@ -77,7 +76,7 @@ export default function Markers({
         groupRef.current = null;
       }
     };
-  }, [objects, filter, mapRef, onMarkerClick]);
+  }, [objects, filter, map, onMarkerClick]);
 
   return null;
 }

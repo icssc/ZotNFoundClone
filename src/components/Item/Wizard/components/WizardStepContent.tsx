@@ -51,11 +51,11 @@ export function WizardStepContent({
         </div>
       );
     case 5:
-      return <Step5Confirmation formData={formData} />;
-    case 6:
       return (
         <Step6LocationSelection formData={formData} updateField={updateField} />
       );
+    case 6:
+      return <Step5Confirmation formData={formData} />;
     default:
       return null;
   }

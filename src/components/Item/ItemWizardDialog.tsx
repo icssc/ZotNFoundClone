@@ -126,9 +126,9 @@ export function ItemWizardDialog({
       case 4:
         return isEditing ? true : !!formState.file;
       case 5:
-        return true;
-      case 6:
         return !!formState.location;
+      case 6:
+        return true;
       default:
         return true;
     }
@@ -149,7 +149,7 @@ export function ItemWizardDialog({
     data.append("type", formState.type);
     data.append("date", formatDateYMD(formState.date));
     data.append("isLost", String(formState.isLost));
-    data.append("location", JSON.stringify(formState.location.map(String)));
+    data.append("location", JSON.stringify(formState.location));
 
     if (isEditing) {
       // In edit mode, file is optional
@@ -181,8 +181,8 @@ export function ItemWizardDialog({
           "Item Type",
           "Date Selection",
           "File Upload",
-          "Confirmation",
           "Location Selection",
+          "Confirmation",
         ];
         trackAddItemStepCompleted(
           formState.currentStep,

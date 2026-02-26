@@ -38,8 +38,8 @@ export default function MapContent({ initialItems }: MapContentProps) {
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  const [mapInstance, setMapInstance] = useState<LeafletMap | null>(null);
   const boundsRectRef = useRef<LeafletRectangle | null>(null);
-  const [isMapMounted, setIsMapMounted] = useState(false);
 
   // Initialize map
   useEffect(() => {
@@ -51,6 +51,7 @@ export default function MapContent({ initialItems }: MapContentProps) {
       center: centerPosition as [number, number],
       zoom: 17,
       minZoom: 15,
+      maxZoom: 19,
       maxBounds: mapBounds,
       zoomControl: false,
       attributionControl: false,
@@ -58,6 +59,7 @@ export default function MapContent({ initialItems }: MapContentProps) {
     });
 
     mapRef.current = map;
+    setMapInstance(map);
 
     tileLayer(accessToken).addTo(map);
 
@@ -74,7 +76,6 @@ export default function MapContent({ initialItems }: MapContentProps) {
     map.whenReady(() => {
       map.invalidateSize(true);
       map.fitBounds(mapBounds, { padding: MAP_PADDING });
-      setIsMapMounted(true);
     });
 
     return () => {
@@ -86,6 +87,7 @@ export default function MapContent({ initialItems }: MapContentProps) {
         mapRef.current.remove();
         mapRef.current = null;
       }
+      setMapInstance(null);
     };
   }, [accessToken]);
 
@@ -100,11 +102,11 @@ export default function MapContent({ initialItems }: MapContentProps) {
 
     resizeObserver.observe(el);
     return () => resizeObserver.disconnect();
-  }, [isMapMounted]);
+  }, [mapInstance]);
 
   // Handle selected location changes
   useEffect(() => {
-    const map = mapRef.current;
+    const map = mapInstance;
     if (!map) return;
 
     if (selectedLocation) {
@@ -112,7 +114,7 @@ export default function MapContent({ initialItems }: MapContentProps) {
     } else {
       map.fitBounds(mapBounds, { padding: MAP_PADDING });
     }
-  }, [selectedLocation]);
+  }, [selectedLocation, mapInstance]);
 
   const items = initialItems;
 
@@ -142,8 +144,8 @@ export default function MapContent({ initialItems }: MapContentProps) {
         className="w-full h-full z-0 shadow-2xl transition-all duration-300 border-black"
       />
 
-      {isMapMounted && items.length > 0 && (
-        <Markers objects={items} filter={filter} mapRef={mapRef} />
+      {mapInstance && items.length > 0 && (
+        <Markers objects={items} filter={filter} map={mapInstance} />
       )}
 
       <Button

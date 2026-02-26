@@ -13,14 +13,14 @@ export function ErrorDisplay({ actionState }: ErrorDisplayProps) {
   if (!actionState.error && !actionState.issues) return null;
 
   return (
-    <div className="rounded-xl bg-red-500/10 p-4 border border-red-500/20 backdrop-blur-sm animate-in fade-in slide-in-from-top-2">
+    <div className="rounded-xl bg-red-500/10 p-4 border border-red-500/20 backdrop-blur-sm animate-in fade-in slide-in-from-top-2 max-h-40 overflow-auto">
       <div className="flex">
         <div className="shrink-0">
           <AlertCircle className="h-5 w-5 text-red-400" aria-hidden="true" />
         </div>
         <div className="ml-3">
           {actionState.error && (
-            <h3 className="text-sm font-medium text-red-400">
+            <h3 className="text-sm font-medium text-red-400 break-words">
               {actionState.error}
             </h3>
           )}
@@ -28,7 +28,9 @@ export function ErrorDisplay({ actionState }: ErrorDisplayProps) {
             <div className="mt-2 text-sm text-red-300/90">
               <ul role="list" className="list-disc pl-5 space-y-1">
                 {actionState.issues.errors.map((issue: any) => (
-                  <li key={String(issue)}>{String(issue)}</li>
+                  <li key={String(issue)} className="break-words">
+                    {String(issue)}
+                  </li>
                 ))}
               </ul>
             </div>

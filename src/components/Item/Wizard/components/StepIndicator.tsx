@@ -13,16 +13,16 @@ export function StepIndicator({ currentStep, mode }: StepIndicatorProps) {
           { number: 2, label: "Second", sublabel: "Select Type" },
           { number: 3, label: "Third", sublabel: "Choose Date" },
           { number: 4, label: "Fourth", sublabel: "File Upload" },
-          { number: 5, label: "Fifth", sublabel: "Check Info" },
-          { number: 6, label: "Sixth", sublabel: "Set Location" },
+          { number: 5, label: "Fifth", sublabel: "Set Location" },
+          { number: 6, label: "Sixth", sublabel: "Check Info" },
         ]
       : [
           { number: 1, label: "First", sublabel: "Edit Info" },
           { number: 2, label: "Second", sublabel: "Item Type" },
           { number: 3, label: "Third", sublabel: "Date" },
           { number: 4, label: "Fourth", sublabel: "Image" },
-          { number: 5, label: "Fifth", sublabel: "Review" },
-          { number: 6, label: "Sixth", sublabel: "Location" },
+          { number: 5, label: "Fifth", sublabel: "Location" },
+          { number: 6, label: "Sixth", sublabel: "Review" },
         ];
 
   return (
