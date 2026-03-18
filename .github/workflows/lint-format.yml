@@ -27,8 +27,5 @@ jobs:
       - name: Run OXLint (lint)
         run: bun run lint
 
-      - name: Run OXLint (lint:check)
-        run: bun run lint:check
-
       - name: Check code formatting with Prettier
         run: bun x prettier --check .
