@@ -52,7 +52,7 @@ export async function POST(req: Request) {
         const message = `Someone found your item! View it at: https://zotnfound.com/?item=${body.item.id}. Contact them at ${body.finderEmail}.`;
         await sendSMS(message, itemOwner.phoneNumber);
       }
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         {
           error: "Item owner notified by email, but failed via SMS",

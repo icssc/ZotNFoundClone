@@ -10,7 +10,7 @@ These are the requirements to run and develop ZotNFound:
 - **PostgreSQL**
 - **TailwindCSS**
 - **Prettier**
-- **ESLint**
+- **OXLint**
 
 ### API Keys & Environment Variables
 

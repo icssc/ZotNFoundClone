@@ -17,8 +17,11 @@ async function getPendingVerificationInfoByEmail(email: string) {
 
 export const resendVerificationCode = createAction(
   z.object({}),
-  async ({}, session) => {
-    const email = session.user.email;
+  async (_payload, session) => {
+    const email = session?.user?.email;
+    if (!email) {
+      throw new Error("Not authenticated");
+    }
     const pendingVerification = await getPendingVerificationInfoByEmail(email);
     if (!pendingVerification) {
       throw new Error("No phone number to verify. Please add a phone number.");

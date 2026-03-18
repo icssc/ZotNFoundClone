@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies with Bun
         run: bun install
 
-      - name: Run ESLint
+      - name: Run OXLint (lint)
         run: bun run lint
 
       - name: Check code formatting with Prettier

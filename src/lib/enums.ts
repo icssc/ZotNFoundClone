@@ -59,7 +59,7 @@ const ITEM_STATUS_META = Object.freeze({
 
 type ItemStatusMeta = (typeof ITEM_STATUS_META)[ItemSemanticStatus];
 
-function deriveSemanticStatus(
+export function deriveSemanticStatus(
   isLost: boolean,
   isHelped?: boolean | null,
   isResolved?: boolean | null
@@ -72,57 +72,23 @@ function deriveSemanticStatus(
   return ItemSemanticStatus.Found;
 }
 
-function getItemSemanticStatus(
+export function getItemSemanticStatus(
   item: Pick<Item, "isLost" | "isHelped" | "isResolved">
 ): ItemSemanticStatus {
   return deriveSemanticStatus(item.isLost, item.isHelped, item.isResolved);
 }
 
-function getItemStatusMeta(status: ItemSemanticStatus): ItemStatusMeta {
+export function getItemStatusMeta(status: ItemSemanticStatus): ItemStatusMeta {
   return ITEM_STATUS_META[status];
 }
 
-function getItemStatusMetaFromItem(
+export function getItemStatusMetaFromItem(
   item: Pick<Item, "isLost" | "isHelped" | "isResolved">
 ): ItemStatusMeta {
   return getItemStatusMeta(getItemSemanticStatus(item));
 }
 
-function toggleHelped(item: Pick<Item, "isLost" | "isHelped" | "isResolved">): {
-  isHelped: boolean;
-  isResolved: boolean;
-} {
-  if (!item.isLost) {
-    // Helped not applicable
-    return {
-      isHelped: item.isHelped ?? false,
-      isResolved: item.isResolved ?? false,
-    };
-  }
-  return {
-    isHelped: !item.isHelped,
-    isResolved: item.isResolved ?? false,
-  };
-}
-
-function toggleResolved(
-  item: Pick<Item, "isLost" | "isHelped" | "isResolved">
-): {
-  isHelped: boolean;
-  isResolved: boolean;
-} {
-  if (item.isLost) {
-    // Resolved not applicable
-    return {
-      isHelped: item.isHelped ?? false,
-      isResolved: item.isResolved ?? false,
-    };
-  }
-  return {
-    isHelped: item.isHelped ?? false,
-    isResolved: !item.isResolved,
-  };
-}
+// Removed unused toggleHelped and toggleResolved helper functions to satisfy linting rules.
 
 export function formatStatusLabel(
   item: Pick<Item, "isLost" | "isHelped" | "isResolved">
