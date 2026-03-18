@@ -1,6 +1,8 @@
 import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
+const schemaName = process.env.NODE_ENV === "production" ? "public" : "dev";
+
 export default defineConfig({
   schema: ["./src/db/schema.ts", "./src/db/auth-schema.ts"],
   out: "./drizzle",
@@ -15,5 +17,5 @@ export default defineConfig({
   },
   verbose: true, // Provides more output during command execution
   strict: true, // Enables strict mode for more thorough checks
-  schemaFilter: ["dev"],
+  schemaFilter: [schemaName],
 });

@@ -4,12 +4,10 @@ import {
   varchar,
   boolean,
   pgSchema,
+  pgTable,
 } from "drizzle-orm/pg-core";
 
-// TODO: Make sure this changes for the production database
-export const dev = pgSchema("dev");
-
-export const user = dev.table("user", {
+export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
@@ -27,7 +25,7 @@ export const user = dev.table("user", {
   verifiedAt: timestamp("verified_at", { withTimezone: true, mode: "string" }),
 });
 
-export const session = dev.table("session", {
+export const session = pgTable("session", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
@@ -40,7 +38,7 @@ export const session = dev.table("session", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-export const account = dev.table("account", {
+export const account = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
@@ -58,7 +56,7 @@ export const account = dev.table("account", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
-export const verification = dev.table("verification", {
+export const verification = pgTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
