@@ -43,16 +43,9 @@ export default function Item({
   };
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
+    <button
+      type="button"
       onClick={handleClick}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          handleClick();
-        }
-      }}
       className="group relative flex flex-col overflow-hidden border border-white/5 bg-black/40 hover:bg-white/5 rounded-xl transition-all duration-300 hover:shadow-2xl hover:shadow-black/50 hover:scale-[1.02] cursor-pointer backdrop-blur-md"
     >
       {/* Image Section */}
@@ -113,6 +106,6 @@ export default function Item({
           </Button>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

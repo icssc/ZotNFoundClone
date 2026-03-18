@@ -35,7 +35,7 @@ export default $config({
       access: "public",
     });
     const topic = new sst.aws.SnsTopic("SearchKeyword");
-    const site = new sst.aws.Nextjs("ZotNFound", {
+    const _site = new sst.aws.Nextjs("ZotNFound", {
       link: [bucket, topic],
       domain,
       openNextVersion: "https://pkg.pr.new/@opennextjs/aws@1107",

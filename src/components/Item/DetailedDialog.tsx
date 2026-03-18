@@ -185,7 +185,7 @@ function DetailedDialog({ item }: { item: Item }) {
     try {
       trackItemDeleted(deletePayload);
       result = await deleteItem({ id: item.id });
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete item. Please try again.");
     }
 
@@ -233,7 +233,7 @@ function DetailedDialog({ item }: { item: Item }) {
     };
     try {
       result = await updateItem(updatePayloadResolved);
-    } catch (error) {
+    } catch {
       toast.error("Failed to update item. Please try again.");
     }
 
@@ -273,7 +273,7 @@ function DetailedDialog({ item }: { item: Item }) {
     };
     try {
       result = await updateItem(updatePayloadHelped);
-    } catch (error) {
+    } catch {
       toast.error("Failed to update item. Please try again.");
     }
 

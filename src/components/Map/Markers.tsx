@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { RefObject } from "react";
 import { createClusterGroup, addMarkerToGroup } from "@/lib/cluster-loader";
 import {
   marker,

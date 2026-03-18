@@ -3,7 +3,6 @@ import {
   timestamp,
   varchar,
   boolean,
-  pgSchema,
   pgTable,
 } from "drizzle-orm/pg-core";
 

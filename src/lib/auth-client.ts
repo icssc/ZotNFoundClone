@@ -46,8 +46,13 @@ async function handleSignIn() {
   try {
     await signInWithIcssc();
     // successful redirect
-  } catch (error) {
-    // Handle redirect error
+  } catch {
+    // Handle redirect error: log a tracked error and show user-facing toast
+    trackError({
+      error: "Sign-in redirect failed",
+      context: "handleSignIn",
+      severity: "medium",
+    });
     toast.error("Unable to sign in. Please try again.");
   }
 }
