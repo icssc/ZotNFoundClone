@@ -19,7 +19,9 @@ const required = [
 
 const stageRequired = isProd ? ["AWS_PROD_PASSWORD"] : ["AWS_STAGING_PASSWORD"];
 
-const missing = [...required, ...stageRequired].filter((name) => !process.env[name]);
+const missing = [...required, ...stageRequired].filter(
+  (name) => !process.env[name]
+);
 
 if (missing.length > 0) {
   console.error(

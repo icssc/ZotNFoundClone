@@ -79,10 +79,7 @@ const createItemHandler = createAction(
       email: userEmail,
     };
 
-    const [newItem] = await db
-      .insert(items)
-      .values(itemData)
-      .returning();
+    const [newItem] = await db.insert(items).values(itemData).returning();
 
     if (!storageData.isLost) {
       const topicArn = process.env.SEARCH_KEYWORD_TOPIC_ARN;
