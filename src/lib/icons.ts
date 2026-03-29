@@ -1,5 +1,5 @@
 import "leaflet.markercluster";
-import { icon, point, divIcon } from "leaflet";
+import { divIcon, icon, point } from "leaflet";
 import type { MarkerCluster } from "leaflet";
 
 const resolvedIcon = icon({
@@ -33,50 +33,13 @@ export const iconsMap = {
 
 export const createClusterCustomIcon = (cluster: MarkerCluster) => {
   const count = cluster.getChildCount();
-  let size;
+  const size = count < 5 ? "small" : count < 20 ? "medium" : "large";
 
-  if (count < 5) size = "small";
-  else if (count < 20) size = "medium";
-  else size = "large";
-
-  // Define color schemes for different count ranges
-  const options = {
-    light: {
-      small: {
-        background: "rgba(255, 255, 255, 0.8)", // white with opacity
-        border: "#4299E1", // blue.400
-        color: "#4299E1",
-      },
-      medium: {
-        background: "rgba(255, 255, 255, 0.8)",
-        border: "#48BB78", // green.400
-        color: "#48BB78",
-      },
-      large: {
-        background: "rgba(255, 255, 255, 0.8)",
-        border: "#F56565", // red.400
-        color: "#F56565",
-      },
-    },
-    dark: {
-      small: {
-        background: "rgba(45, 55, 72, 0.8)", // gray.800 with opacity
-        border: "#90CDF4", // blue.200
-        color: "#90CDF4",
-      },
-      medium: {
-        background: "rgba(45, 55, 72, 0.8)",
-        border: "#9AE6B4", // green.200
-        color: "#9AE6B4",
-      },
-      large: {
-        background: "rgba(45, 55, 72, 0.8)",
-        border: "#FEB2B2", // red.200
-        color: "#FEB2B2",
-      },
-    },
+  const colors = {
+    background: "rgba(45, 55, 72, 0.8)",
+    border: "#9AE6B4",
+    color: "#9AE6B4",
   };
-  const colors = options.dark.medium;
 
   const sizeMap = {
     small: 40,
@@ -84,13 +47,15 @@ export const createClusterCustomIcon = (cluster: MarkerCluster) => {
     large: 60,
   };
 
+  const clusterSize = sizeMap[size];
+
   return divIcon({
     html: `<div style="
       background-color: ${colors.background} !important;
       border: 2px solid ${colors.border};
       color: ${colors.color};
-      width: ${sizeMap.medium}px;
-      height: ${sizeMap.medium}px;
+      width: ${clusterSize}px;
+      height: ${clusterSize}px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -99,7 +64,7 @@ export const createClusterCustomIcon = (cluster: MarkerCluster) => {
       font-size: ${size === "small" ? "14px" : "16px"};
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     ">${count}</div>`,
-    className: `custom-cluster-icon dark-mode`,
-    iconSize: point(sizeMap.medium, sizeMap.medium, true),
+    className: "custom-cluster-icon dark-mode",
+    iconSize: point(clusterSize, clusterSize, true),
   });
 };

@@ -7,6 +7,7 @@ import { db } from "@/db";
 import { user } from "@/db/auth-schema";
 import { phoneVerifications } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
+import { createPhoneStatus } from "@/server/actions/phone-number/shared";
 
 export const removePhoneNumber = createAction(
   z.enum(["verified", "unverified"]),
@@ -23,6 +24,6 @@ export const removePhoneNumber = createAction(
         .where(eq(phoneVerifications.email, email));
     }
     revalidatePath("/settings");
-    return { phoneNumber: "", isVerified: false, verificationPending: false };
+    return createPhoneStatus("", false, false);
   }
 );

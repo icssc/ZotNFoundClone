@@ -2,37 +2,32 @@
 
 import { type PhoneIntent } from "@/lib/types";
 import { phoneIntents } from "@/lib/sms/constants";
-import { type ActionState } from "@/server/actions/wrapper";
 import { addPhoneNumberToVerify } from "@/server/actions/phone-number/create/action";
+import { removePhoneNumber } from "@/server/actions/phone-number/delete/action";
 import {
   resendVerificationCode,
   verifyCode,
 } from "@/server/actions/phone-number/verify/action";
-import { removePhoneNumber } from "@/server/actions/phone-number/delete/action";
+import type {
+  PhoneNumberActionState,
+  PhoneStatus,
+} from "@/server/actions/phone-number/shared";
 
-type PhoneStatus = {
-  phoneNumber: string;
-  isVerified: boolean;
-  verificationPending: boolean;
-};
-
-export type PhoneNumberActionState = ActionState<PhoneStatus> & {
-  data?: PhoneStatus;
-  prevState?: PhoneStatus;
-};
+export type { PhoneNumberActionState, PhoneStatus };
 
 export async function phoneNumberFormAction(
   prevState: PhoneNumberActionState,
   formData: FormData
 ): Promise<PhoneNumberActionState> {
   const intent = formData.get("intent") as PhoneIntent;
-  const num = formData.get("phoneNumber") || "";
-  const verificationCode = formData.get("verificationCode") || "";
+  const phoneNumber = String(formData.get("phoneNumber") ?? "");
+  const verificationCode = String(formData.get("verificationCode") ?? "");
   let result;
+
   try {
     switch (intent) {
       case phoneIntents.ADD:
-        result = await addPhoneNumberToVerify({ newNumber: num });
+        result = await addPhoneNumberToVerify({ newNumber: phoneNumber });
         break;
       case phoneIntents.REMOVE:
         result = await removePhoneNumber("verified");
@@ -47,16 +42,17 @@ export async function phoneNumberFormAction(
         result = await removePhoneNumber("unverified");
         break;
       default:
-        const _otherIntent: never = intent;
-        throw new Error(`Unhandled intent: ${intent}`);
+        throw new Error(`Unhandled intent: ${intent satisfies never}`);
     }
-    if (result && result.success) {
+
+    if (result?.success) {
       return result;
     }
+
     return {
       success: false,
       error: result?.error || "Invalid intent.",
-      prevState: prevState.success ? prevState?.data : prevState?.prevState,
+      prevState: prevState.success ? prevState.data : prevState.prevState,
     };
   } catch (error) {
     return {
@@ -65,7 +61,7 @@ export async function phoneNumberFormAction(
         error instanceof Error
           ? error.message
           : "Unexpected error when handling phone number action",
-      prevState: prevState?.data,
+      prevState: prevState.data,
     };
   }
 }

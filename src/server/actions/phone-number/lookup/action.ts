@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { user } from "@/db/auth-schema";
 import { phoneVerifications } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
+import { createPhoneStatus } from "@/server/actions/phone-number/shared";
 
 async function getPhoneNumber(verified: boolean, email: string) {
   let existing;
@@ -30,17 +31,9 @@ export const findPhoneNumber = createAction(
     const email = session.user.email;
     const verifiedNum = await getPhoneNumber(true, email);
     if (verifiedNum) {
-      return {
-        phoneNumber: verifiedNum,
-        isVerified: true,
-        verificationPending: false,
-      };
+      return createPhoneStatus(verifiedNum, true, false);
     }
     const pendingNum = await getPhoneNumber(false, email);
-    return {
-      phoneNumber: pendingNum,
-      isVerified: false,
-      verificationPending: Boolean(pendingNum),
-    };
+    return createPhoneStatus(pendingNum, false, Boolean(pendingNum));
   }
 );

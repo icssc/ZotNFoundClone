@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { phoneVerifications } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
 import sendVerificationCodeBySMS from "@/server/actions/phone-number/sendCode";
+import { createPhoneStatus } from "@/server/actions/phone-number/shared";
 
 const phoneSchema = z.string().regex(/^\+1\d{10}$/);
 
@@ -23,10 +24,6 @@ export const addPhoneNumberToVerify = createAction(
       verificationCode,
     });
     revalidatePath("/settings");
-    return {
-      phoneNumber: newNumber,
-      isVerified: false,
-      verificationPending: true,
-    };
+    return createPhoneStatus(newNumber, false, true);
   }
 );
