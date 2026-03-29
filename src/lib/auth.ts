@@ -9,6 +9,16 @@ const icsscDiscoveryUrl =
   "https://auth.icssc.club/.well-known/openid-configuration";
 const icsscClientId = process.env.ICSSC_AUTH_CLIENT_ID ?? "";
 const icsscClientSecret = process.env.ICSSC_AUTH_CLIENT_SECRET ?? "";
+const trustedOrigins = Array.from(
+  new Set(
+    [
+      "http://localhost:3000",
+      "https://clone.zotnfound.com",
+      "https://zotnfound.com",
+      process.env.BETTER_AUTH_URL,
+    ].filter((origin): origin is string => Boolean(origin))
+  )
+);
 
 const getFallbackName = (email?: string | null) => {
   if (!email) {
@@ -20,12 +30,8 @@ const getFallbackName = (email?: string | null) => {
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
-  trustedOrigins: [
-    "http://localhost:3000",
-    "https://clone.zotnfound.com",
-    "https://zotnfound.com",
-    "https://www.zotnfound.com",
-  ],
+  secret: process.env.BETTER_AUTH_SECRET,
+  trustedOrigins,
   session: {
     cookieCache: {
       enabled: true,
@@ -49,7 +55,6 @@ export const auth = betterAuth({
         {
           providerId: "icssc",
           clientId: icsscClientId,
-          clientSecret: icsscClientSecret,
           discoveryUrl: icsscDiscoveryUrl,
           redirectURI: process.env.BETTER_AUTH_URL
             ? `${process.env.BETTER_AUTH_URL}/api/auth/callback`
@@ -82,6 +87,7 @@ export const auth = betterAuth({
               emailVerified,
             };
           },
+          ...(icsscClientSecret ? { clientSecret: icsscClientSecret } : {}),
         },
       ],
     }),

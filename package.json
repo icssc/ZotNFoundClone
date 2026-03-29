@@ -3,17 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "packageManager": "bun@1.2.21",
   "scripts": {
     "build": "next build",
     "dev": "next dev --turbopack",
-    "format": "npx prettier --write .",
-    "lint": "oxlint",
+    "format": "bunx prettier --write .",
+    "lint": "bunx oxlint",
     "start": "next start",
     "type-check": "tsc --noEmit",
-    "format:check": "prettier --check .",
+    "format:check": "bunx prettier --check .",
     "drizzle:generate": "bunx drizzle-kit generate",
     "drizzle:migrate": "bunx drizzle-kit migrate",
-    "drizzle:studio": "bunx drizzle-kit studio"
+    "drizzle:studio": "bunx drizzle-kit studio",
+    "check:env:dev": "bun scripts/validate-stage-env.ts dev",
+    "check:env:prod": "bun scripts/validate-stage-env.ts production",
+    "deploy:dev": "bun run check:env:dev && bunx sst deploy --stage dev",
+    "deploy:prod": "bun run check:env:prod && bunx sst deploy --stage production"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1012.0",

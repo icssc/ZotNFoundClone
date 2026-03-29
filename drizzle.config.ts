@@ -1,7 +1,9 @@
 import "dotenv/config";
 import { defineConfig } from "drizzle-kit";
 
-const schemaName = process.env.NODE_ENV === "production" ? "public" : "dev";
+const schemaName =
+  process.env.DB_SCHEMA ??
+  (process.env.NODE_ENV === "production" ? "public" : "dev");
 
 export default defineConfig({
   schema: ["./src/db/schema.ts", "./src/db/auth-schema.ts"],

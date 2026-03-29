@@ -3,8 +3,9 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 import * as schema from "./schema";
 
-// Determine schema based on environment
-const schemaName = process.env.NODE_ENV === "production" ? "public" : "dev";
+const schemaName =
+  process.env.DB_SCHEMA ??
+  (process.env.NODE_ENV === "production" ? "public" : "dev");
 
 const pool = new Pool({
   user: process.env.AWS_USER,
