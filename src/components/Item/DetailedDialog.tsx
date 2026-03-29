@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import { useSharedContext } from "../ContextProvider";
 import { deleteItem } from "@/server/actions/item/delete/action";
 import { updateItem } from "@/server/actions/item/update/action";
-import { useRouter } from "next/navigation";
 import { handleSignIn } from "@/lib/auth-client";
 import {
   trackItemContactAttempt,
@@ -62,7 +61,15 @@ function uiReducer(state: UiState, action: UiAction): UiState {
   }
 }
 
-function DetailedDialog({ item }: { item: Item }) {
+function DetailedDialog({
+  item,
+  onItemUpdated,
+  onItemDeleted,
+}: {
+  item: Item;
+  onItemUpdated?: (item: Item) => void;
+  onItemDeleted?: (itemId: number) => void;
+}) {
   const islostObject = isLostObject(item);
   const { user } = useSharedContext();
   const [uiState, dispatchUi] = useReducer(uiReducer, initialUiState);
@@ -70,8 +77,6 @@ function DetailedDialog({ item }: { item: Item }) {
   const setUiState = (payload: Partial<UiState>) => {
     dispatchUi({ type: "PATCH", payload });
   };
-  const router = useRouter();
-
   const isOwner = user?.email === item.email;
   const itemId = String(item.id);
   const itemType = item.type || "unknown";
@@ -193,11 +198,11 @@ function DetailedDialog({ item }: { item: Item }) {
       if (!result.success) {
         toast.error(result.error || "Failed to delete item");
       } else {
+        onItemDeleted?.(item.id);
         toast.success("Item deleted successfully");
         const url = new URL(window.location.href);
         url.searchParams.delete("item");
         window.history.replaceState({}, "", url.toString());
-        router.refresh();
       }
     }
 
@@ -241,13 +246,13 @@ function DetailedDialog({ item }: { item: Item }) {
       if (!result.success) {
         toast.error(result.error || "Failed to update item");
       } else {
+        onItemUpdated?.(result.data);
         if (nextResolved) {
           trackItemResolved(resolvedPayload);
           toast.success("Item marked as resolved!");
         } else {
           toast.success("Item marked as unresolved.");
         }
-        router.refresh();
       }
     }
 
@@ -281,13 +286,13 @@ function DetailedDialog({ item }: { item: Item }) {
       if (!result.success) {
         toast.error(result.error || "Failed to update item");
       } else {
+        onItemUpdated?.(result.data);
         if (nextHelped) {
           trackItemHelped(helpedPayload);
           toast.success("Item marked as helped!");
         } else {
           toast.success("Item marked as unhelped.");
         }
-        router.refresh();
       }
     }
 
@@ -359,6 +364,7 @@ function DetailedDialog({ item }: { item: Item }) {
           item={item}
           open={uiState.showEditDialog}
           onOpenChange={(open) => setUiState({ showEditDialog: open })}
+          onCompleted={onItemUpdated}
         />
       )}
     </>

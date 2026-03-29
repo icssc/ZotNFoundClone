@@ -1,19 +1,21 @@
 "use server";
 
 import { db } from "@/db";
-import { items, NewItem } from "@/db/schema";
-import { revalidatePath } from "next/cache";
+import { items, Item, NewItem } from "@/db/schema";
 import { z } from "zod";
 import uploadImageToS3 from "@/server/actions/item/upload/action";
 import { createAction, ActionState } from "@/server/actions/wrapper";
 import { snsClient } from "@/lib/sms/client";
 import { trackServerError } from "@/lib/analytics-server";
 
-import { Item } from "@/db/schema";
-import { Resource } from "sst/resource";
 import { PublishCommand } from "@aws-sdk/client-sns";
+import { revalidateItems } from "@/server/data/item/cache";
 
-export type CreateItemState = ActionState<Pick<Item, "id">>;
+export type CreateItemState = ActionState<Item>;
+
+const locationSchema = z
+  .tuple([z.coerce.number().finite(), z.coerce.number().finite()])
+  .transform(([lat, lng]) => [String(lat), String(lng)] as [string, string]);
 
 const createItemSchema = z.object({
   name: z.string().min(1, "Item name is required").max(100, "Name is too long"),
@@ -29,9 +31,7 @@ const createItemSchema = z.object({
   ),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
   isLost: z.boolean(),
-  location: z
-    .array(z.string())
-    .length(2, "Location must have exactly 2 coordinates"),
+  location: locationSchema,
   file: z.instanceof(File, { message: "Image is required" }),
 });
 
@@ -82,18 +82,24 @@ const createItemHandler = createAction(
     const [newItem] = await db
       .insert(items)
       .values(itemData)
-      .returning({ id: items.id });
+      .returning();
 
     if (!storageData.isLost) {
+      const topicArn = process.env.SEARCH_KEYWORD_TOPIC_ARN;
+
+      if (!topicArn) {
+        throw new Error("Search keyword topic is not configured.");
+      }
+
       await snsClient.send(
         new PublishCommand({
-          TopicArn: Resource.SearchKeyword.arn,
+          TopicArn: topicArn,
           Message: JSON.stringify({ name, description, itemId: newItem.id }),
         })
       );
     }
 
-    revalidatePath("/");
+    revalidateItems();
     return newItem;
   }
 );

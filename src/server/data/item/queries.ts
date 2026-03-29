@@ -2,10 +2,13 @@ import "server-only";
 import { db } from "@/db";
 import { items, Item } from "@/db/schema";
 import { ActionState } from "@/lib/types";
+import { cacheTag } from "next/cache";
 import { eq, or, isNull, and, gte } from "drizzle-orm";
+import { ITEMS_CACHE_TAG } from "./cache";
 
 export async function getAllItems(): Promise<ActionState<Item[]>> {
   "use cache";
+  cacheTag(ITEMS_CACHE_TAG);
   try {
     const twoYearsAgo = new Date();
     twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);

@@ -2,7 +2,6 @@
 
 import { db } from "@/db";
 import { items } from "@/db/schema";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import uploadImageToS3 from "@/server/actions/item/upload/action";
 import { eq } from "drizzle-orm";
@@ -10,8 +9,13 @@ import { createAction, ActionState } from "@/server/actions/wrapper";
 import { trackServerError } from "@/lib/analytics-server";
 
 import { Item } from "@/db/schema";
+import { revalidateItems } from "@/server/data/item/cache";
 
-export type EditItemState = ActionState<Pick<Item, "id">>;
+export type EditItemState = ActionState<Item>;
+
+const locationSchema = z
+  .tuple([z.coerce.number().finite(), z.coerce.number().finite()])
+  .transform(([lat, lng]) => [String(lat), String(lng)] as [string, string]);
 
 const editItemSchema = z.object({
   id: z.number(),
@@ -28,9 +32,7 @@ const editItemSchema = z.object({
   ),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format"),
   isLost: z.boolean(),
-  location: z
-    .array(z.string())
-    .length(2, "Location must have exactly 2 coordinates"),
+  location: locationSchema,
   file: z.instanceof(File).optional(),
   keepExistingImage: z.boolean().optional(),
 });
@@ -95,9 +97,9 @@ const editItemHandler = createAction(editItemSchema, async (data, session) => {
       location,
     })
     .where(eq(items.id, id))
-    .returning({ id: items.id });
+    .returning();
 
-  revalidatePath("/");
+  revalidateItems();
   return updatedItem;
 });
 

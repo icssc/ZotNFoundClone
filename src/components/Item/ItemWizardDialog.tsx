@@ -40,8 +40,7 @@ interface ItemWizardDialogProps {
   onOpenChange: (open: boolean) => void;
   mode: WizardMode;
   item?: Item; // required if mode === "edit"
-  onCompleted?: () => void; // optional callback after successful submit
-  autoReloadOnEditSuccess?: boolean; // default true
+  onCompleted?: (item: Item) => void; // optional callback after successful submit
 }
 
 type ActionState = CreateItemState | EditItemState;
@@ -54,7 +53,6 @@ export function ItemWizardDialog({
   mode,
   item,
   onCompleted,
-  autoReloadOnEditSuccess = true,
 }: ItemWizardDialogProps) {
   // Guard: if in edit mode without item, render nothing
   const isEditing = mode === "edit";
@@ -87,12 +85,7 @@ export function ItemWizardDialog({
       reset();
 
       if (onCompleted) {
-        onCompleted();
-      }
-
-      if (isEditing && autoReloadOnEditSuccess) {
-        // Refresh to reflect edits
-        window.location.reload();
+        onCompleted(actionState.data);
       }
     } else if (
       !actionState.success &&
@@ -108,7 +101,6 @@ export function ItemWizardDialog({
     isPending,
     onOpenChange,
     isEditing,
-    autoReloadOnEditSuccess,
     mode,
     item,
     onCompleted,
@@ -138,6 +130,7 @@ export function ItemWizardDialog({
     if (!formState.location) return;
     if (!isEditing && !formState.file) return;
 
+    const normalizedLocation = formState.location.map(String);
     const data = new FormData();
 
     if (isEditing && item) {
@@ -149,7 +142,7 @@ export function ItemWizardDialog({
     data.append("type", formState.type);
     data.append("date", formatDateYMD(formState.date));
     data.append("isLost", String(formState.isLost));
-    data.append("location", JSON.stringify(formState.location));
+    data.append("location", JSON.stringify(normalizedLocation));
 
     if (isEditing) {
       // In edit mode, file is optional

@@ -6,6 +6,7 @@ import { Item as ItemType } from "@/db/schema";
 
 interface LazyMapProps {
   initialItems: ItemType[];
+  onItemCreated?: (item: ItemType) => void;
 }
 
 const MapComponent = dynamic(() => import("@/components/Map/Map"), {
@@ -15,10 +16,10 @@ const MapComponent = dynamic(() => import("@/components/Map/Map"), {
   ),
 });
 
-export const LazyMap = ({ initialItems }: LazyMapProps) => {
+export const LazyMap = ({ initialItems, onItemCreated }: LazyMapProps) => {
   return (
     <div className="w-full h-full transition-all duration-300 ease-out">
-      <MapComponent initialItems={initialItems} />
+      <MapComponent initialItems={initialItems} onItemCreated={onItemCreated} />
     </div>
   );
 };

@@ -46,7 +46,7 @@ export default function Item({
     <button
       type="button"
       onClick={handleClick}
-      className="group relative flex flex-col overflow-hidden border border-white/5 bg-black/40 hover:bg-white/5 rounded-xl transition-all duration-300 hover:shadow-2xl hover:shadow-black/50 hover:scale-[1.02] cursor-pointer backdrop-blur-md"
+      className="group relative flex w-full flex-col overflow-hidden rounded-xl border border-white/5 bg-black/40 text-left hover:bg-white/5 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-black/50 cursor-pointer backdrop-blur-md"
     >
       {/* Image Section */}
       <div className="relative h-52 w-full overflow-hidden">
@@ -91,11 +91,11 @@ export default function Item({
       </div>
 
       {/* Description & Action */}
-      <div className="p-4">
-        <p className="text-sm truncate text-gray-400 max-h-10 leading-relaxed">
+      <div className="w-full p-4">
+        <p className="truncate-2-lines text-sm text-gray-400 leading-relaxed">
           {item.description}
         </p>
-        <div className="flex flex-row justify-end">
+        <div className="mt-4 flex flex-row justify-end">
           <Button
             onClick={() => {
               setOpen(true);

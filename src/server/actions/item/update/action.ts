@@ -5,7 +5,7 @@ import { eq, and } from "drizzle-orm";
 import { items } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
+import { revalidateItems } from "@/server/data/item/cache";
 
 const updateItemSchema = z.object({
   id: z.number(),
@@ -37,7 +37,7 @@ export const updateItem = createAction(
       .where(eq(items.id, id))
       .returning();
 
-    revalidatePath("/");
+    revalidateItems();
 
     return item;
   }

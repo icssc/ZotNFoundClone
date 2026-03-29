@@ -9,13 +9,14 @@ const MapContent = dynamic(() => import("./MapContent"), {
 
 interface MapProps {
   initialItems: ItemType[];
+  onItemCreated?: (item: ItemType) => void;
 }
 
-export default function Map({ initialItems }: MapProps) {
+export default function Map({ initialItems, onItemCreated }: MapProps) {
   return (
     <div className="relative w-full h-full bg-black animate-in fade-in duration-300 transition-all">
       <div className="absolute inset-0 border border-white pointer-events-none" />
-      <MapContent initialItems={initialItems} />
+      <MapContent initialItems={initialItems} onItemCreated={onItemCreated} />
     </div>
   );
 }

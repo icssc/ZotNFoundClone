@@ -13,6 +13,8 @@ import { SearchX } from "lucide-react";
 
 interface ItemDisplayListProps {
   initialItems: ItemType[];
+  onItemUpdated?: (item: ItemType) => void;
+  onItemDeleted?: (itemId: number) => void;
 }
 
 function getSnapshot() {
@@ -34,7 +36,11 @@ function subscribeToItemParam(onStoreChange: () => void) {
   };
 }
 
-function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
+function ItemDisplayList({
+  initialItems,
+  onItemUpdated,
+  onItemDeleted,
+}: ItemDisplayListProps) {
   const { setSelectedLocation, filter } = useSharedContext();
 
   const selectedItemId = useSyncExternalStore(
@@ -115,7 +121,13 @@ function ItemDisplayList({ initialItems }: ItemDisplayListProps) {
           }
         }}
       >
-        {selectedItem && <DetailedDialog item={selectedItem} />}
+        {selectedItem && (
+          <DetailedDialog
+            item={selectedItem}
+            onItemUpdated={onItemUpdated}
+            onItemDeleted={onItemDeleted}
+          />
+        )}
       </Dialog>
     </>
   );

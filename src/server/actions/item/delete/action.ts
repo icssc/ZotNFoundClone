@@ -4,8 +4,8 @@ import { db } from "@/db";
 import { eq, and } from "drizzle-orm";
 import { items } from "@/db/schema";
 import { createAction } from "@/server/actions/wrapper";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { revalidateItems } from "@/server/data/item/cache";
 
 const deleteItemSchema = z.object({
   id: z.number(),
@@ -38,7 +38,7 @@ export const deleteItem = createAction(
       .where(and(eq(items.id, id), eq(items.email, userEmail)))
       .returning();
 
-    revalidatePath("/");
+    revalidateItems();
 
     return item;
   }

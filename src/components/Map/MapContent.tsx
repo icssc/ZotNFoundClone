@@ -26,11 +26,15 @@ import {
 
 interface MapContentProps {
   initialItems: ItemType[];
+  onItemCreated?: (item: ItemType) => void;
 }
 
 const MAP_PADDING: [number, number] = [16, 16];
 
-export default function MapContent({ initialItems }: MapContentProps) {
+export default function MapContent({
+  initialItems,
+  onItemCreated,
+}: MapContentProps) {
   const accessToken = process.env.NEXT_PUBLIC_MAPBOX_DARK_URL!;
   const { user, selectedLocation, filter } = useSharedContext();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -167,6 +171,7 @@ export default function MapContent({ initialItems }: MapContentProps) {
         mode="create"
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
+        onCompleted={onItemCreated}
       />
       <SignInDialog
         open={isSignInDialogOpen}
