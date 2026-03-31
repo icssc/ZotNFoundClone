@@ -4,7 +4,9 @@ const stage = process.argv[2];
 const envTarget = process.argv[3] ?? process.env.DEPLOY_ENV_TARGET ?? stage;
 
 if (!stage) {
-  console.error("Usage: bun scripts/validate-stage-env.ts <stage> [env-target]");
+  console.error(
+    "Usage: node scripts/validate-stage-env.ts <stage> [env-target]"
+  );
   process.exit(1);
 }
 
@@ -48,9 +50,10 @@ console.log(
       nodeEnv: "production",
       dbSchema,
       dbUser,
-      betterAuthUrl: stage === "production"
-        ? "https://zotnfound.com"
-        : "https://clone.zotnfound.com",
+      betterAuthUrl:
+        stage === "production"
+          ? "https://zotnfound.com"
+          : "https://clone.zotnfound.com",
     },
     null,
     2
