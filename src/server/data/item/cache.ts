@@ -1,9 +1,6 @@
 import "server-only";
-import { refresh, updateTag } from "next/cache";
-
-export const ITEMS_CACHE_TAG = "items";
+import { refresh } from "next/cache";
 
 export function revalidateItems() {
-  updateTag(ITEMS_CACHE_TAG);
   refresh();
 }

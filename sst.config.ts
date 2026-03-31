@@ -46,28 +46,30 @@ export default $config({
       });
     });
 
-    const isProd = $app.stage === "production";
-    const domain = isProd ? "zotnfound.com" : "clone.zotnfound.com";
-    const dbSchema = isProd ? "public" : "dev";
-    const dbUser = isProd
+    const isProdStage = $app.stage === "production";
+    const envTarget = process.env.DEPLOY_ENV_TARGET ?? $app.stage;
+    const isProdTarget = envTarget === "production";
+    const domain = isProdStage ? "zotnfound.com" : "clone.zotnfound.com";
+    const dbSchema = isProdTarget ? "public" : "dev";
+    const dbUser = isProdTarget
       ? (getFirstEnv("AWS_PROD_USER") ?? "zotnfound_prod_user")
       : (getFirstEnv("AWS_STAGING_USER", "AWS_USER") ??
         "zotnfound_staging_user");
-    const dbPassword = isProd
+    const dbPassword = isProdTarget
       ? getFirstEnv("AWS_PROD_PASSWORD")
       : getFirstEnv("AWS_STAGING_PASSWORD", "AWS_PASSWORD");
 
     if (!dbPassword) {
       throw new Error(
-        `Missing required database password for ${$app.stage}. ` +
-          `Set ${isProd ? "AWS_PROD_PASSWORD" : "AWS_STAGING_PASSWORD"} in your environment.`
+        `Missing required database password for ${envTarget}. ` +
+          `Set ${isProdTarget ? "AWS_PROD_PASSWORD" : "AWS_STAGING_PASSWORD"} in your environment.`
       );
     }
 
-    const icsscClientId = isProd
+    const icsscClientId = isProdStage
       ? (getFirstEnv("ICSSC_AUTH_PROD_CLIENT_ID") ?? "zotnfound")
       : (getFirstEnv("ICSSC_AUTH_STAGING_CLIENT_ID") ?? "zotnfound-clone");
-    const icsscClientSecret = isProd
+    const icsscClientSecret = isProdStage
       ? getFirstEnv("ICSSC_AUTH_PROD_CLIENT_SECRET", "ICSSC_AUTH_CLIENT_SECRET")
       : getFirstEnv(
           "ICSSC_AUTH_STAGING_CLIENT_SECRET",
@@ -95,6 +97,7 @@ export default $config({
         ...sharedDbEnvironment,
         NODE_ENV: "production",
         APP_STAGE: $app.stage,
+        APP_ENV_TARGET: envTarget,
         BETTER_AUTH_URL: `https://${domain}`,
         BETTER_AUTH_SECRET: requireEnv("BETTER_AUTH_SECRET"),
         ICSSC_AUTH_DISCOVERY_URL:
