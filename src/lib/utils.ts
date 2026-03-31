@@ -29,13 +29,15 @@ export function formatDate(dateString: string) {
   let date;
   if (yearMonthDateSchema.safeParse(dateString).success) {
     const [year, month, day] = dateString.split("-").map(Number);
-    date = new Date(year, month - 1, day);
+    date = new Date(Date.UTC(year, month - 1, day));
   } else {
     date = new Date(dateString);
   }
-  return date.toLocaleDateString(undefined, {
+
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC",
     year: "numeric",
     month: "short",
     day: "numeric",
-  });
+  }).format(date);
 }

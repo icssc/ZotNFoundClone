@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { Suspense } from "react";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
@@ -29,13 +28,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${CustomFont.className} antialiased bg-background`}
       >
-        <Suspense fallback={null}>
-          <Providers>
-            <PostHogPageView />
-            <Navbar />
-            {children}
-          </Providers>
-        </Suspense>
+        <Providers>
+          <PostHogPageView />
+          <Navbar />
+          {children}
+        </Providers>
         <Toaster position="bottom-center" theme="dark" />
       </body>
     </html>

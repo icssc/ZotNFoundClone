@@ -1,7 +1,6 @@
 import HomeClient from "@/components/HomeClient";
 import { getAllItems } from "@/server/data/item/queries";
 import { Metadata } from "next";
-import { connection } from "next/server";
 
 export const metadata: Metadata = {
   title: "ZotNFound",
@@ -9,8 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  await connection();
-
   const itemsResult = await getAllItems();
 
   if (itemsResult.error || !itemsResult.data) {

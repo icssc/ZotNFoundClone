@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { items, Item } from "@/db/schema";
 import { ActionState } from "@/lib/types";
 import { cacheTag } from "next/cache";
-import { eq, or, isNull, and, gte } from "drizzle-orm";
+import { eq, or, isNull, and, gte, desc } from "drizzle-orm";
 import { ITEMS_CACHE_TAG } from "./cache";
 
 export async function getAllItems(): Promise<ActionState<Item[]>> {
@@ -22,7 +22,8 @@ export async function getAllItems(): Promise<ActionState<Item[]>> {
           or(eq(items.is_deleted, false), isNull(items.is_deleted)),
           gte(items.itemDate, cutoffStr)
         )
-      );
+      )
+      .orderBy(desc(items.date), desc(items.id));
     return { data: result };
   } catch (err) {
     return { error: `Error fetching item: ${err}` };

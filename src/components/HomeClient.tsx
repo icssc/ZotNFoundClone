@@ -9,19 +9,24 @@ interface HomeClientProps {
   initialItems: Item[];
 }
 
+function compareItems(a: Item, b: Item) {
+  const dateCompare = (b.date ?? "").localeCompare(a.date ?? "");
+  if (dateCompare !== 0) {
+    return dateCompare;
+  }
+
+  return b.id - a.id;
+}
+
 function sortItems(items: Item[]) {
-  return [...items].sort((a, b) => {
-    const dateA = new Date(a.date ?? 0);
-    const dateB = new Date(b.date ?? 0);
-    return dateB.getTime() - dateA.getTime();
-  });
+  return [...items].sort(compareItems);
 }
 
 export default function HomeClient({ initialItems }: HomeClientProps) {
-  const [items, setItems] = useState(() => sortItems(initialItems));
+  const [items, setItems] = useState(initialItems);
 
   useEffect(() => {
-    setItems(sortItems(initialItems));
+    setItems(initialItems);
   }, [initialItems]);
 
   const upsertItem = (nextItem: Item) => {
@@ -35,13 +40,6 @@ export default function HomeClient({ initialItems }: HomeClientProps) {
   const removeItem = (itemId: number) => {
     setItems((current) => current.filter((item) => item.id !== itemId));
   };
-
-  const itemsVersion = items
-    .map(
-      (item) =>
-        `${item.id}:${item.date}:${item.itemDate}:${item.isResolved}:${item.isHelped}:${item.is_deleted}:${item.image}`
-    )
-    .join("|");
 
   return (
     <div className="home-shell w-full h-[90vh] flex flex-col items-center px-3 sm:px-4 lg:px-6 py-3">
@@ -72,11 +70,7 @@ export default function HomeClient({ initialItems }: HomeClientProps) {
           ease-out
         "
         >
-          <LazyMap
-            key={`map:${itemsVersion}`}
-            initialItems={items}
-            onItemCreated={upsertItem}
-          />
+          <LazyMap initialItems={items} onItemCreated={upsertItem} />
         </div>
 
         <div
@@ -94,7 +88,6 @@ export default function HomeClient({ initialItems }: HomeClientProps) {
         "
         >
           <ItemDisplayList
-            key={`list:${itemsVersion}`}
             initialItems={items}
             onItemUpdated={upsertItem}
             onItemDeleted={removeItem}

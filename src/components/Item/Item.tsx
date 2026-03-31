@@ -43,69 +43,67 @@ export default function Item({
   };
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className="group relative flex w-full flex-col overflow-hidden rounded-xl border border-white/5 bg-black/40 text-left hover:bg-white/5 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-black/50 cursor-pointer backdrop-blur-md"
-    >
-      {/* Image Section */}
-      <div className="relative h-52 w-full overflow-hidden">
-        <Image
-          src={
-            item.image && isValidUrl(item.image)
-              ? item.image
-              : "/placeholder.jpg"
-          }
-          alt={item.name || "Item Image"}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          style={{ objectFit: "cover" }}
-          loading="lazy"
-          preload={false}
-          fetchPriority="low"
-          priority={false}
-          quality="75"
-          className="transition-transform duration-700 group-hover:scale-110"
-        />
-        <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent" />
-        <div
-          className={`absolute -bottom-2 -left-2 w-28 h-28 rounded-tr-full opacity-70 mix-blend-screen pointer-events-none ${statusTintClass}`}
-        />
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <div className="flex flex-row justify-between items-end gap-2">
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-white truncate text-lg">
-                {item.name}
-              </p>
-              <p className={`text-sm truncate ${statusTextColor}`}>
-                {statusLabel}
-              </p>
-            </div>
-            <div className="shrink-0">
-              <p className="text-sm text-gray-300 truncate whitespace-nowrap">
-                {formatDate(item.itemDate)}
-              </p>
+    <article className="group relative flex w-full flex-col overflow-hidden rounded-xl border border-white/5 bg-black/40 text-left hover:bg-white/5 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-black/50 cursor-pointer backdrop-blur-md">
+      <button type="button" onClick={handleClick} className="w-full text-left">
+        <div className="relative h-52 w-full overflow-hidden">
+          <Image
+            src={
+              item.image && isValidUrl(item.image)
+                ? item.image
+                : "/placeholder.jpg"
+            }
+            alt={item.name || "Item Image"}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{ objectFit: "cover" }}
+            loading="lazy"
+            preload={false}
+            fetchPriority="low"
+            priority={false}
+            quality="75"
+            className="transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-black via-black/50 to-transparent" />
+          <div
+            className={`absolute -bottom-2 -left-2 w-28 h-28 rounded-tr-full opacity-70 mix-blend-screen pointer-events-none ${statusTintClass}`}
+          />
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <div className="flex flex-row justify-between items-end gap-2">
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-white truncate text-lg">
+                  {item.name}
+                </p>
+                <p className={`text-sm truncate ${statusTextColor}`}>
+                  {statusLabel}
+                </p>
+              </div>
+              <div className="shrink-0">
+                <p className="text-sm text-gray-300 truncate whitespace-nowrap">
+                  {formatDate(item.itemDate)}
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Description & Action */}
-      <div className="w-full p-4">
-        <p className="truncate-2-lines text-sm text-gray-400 leading-relaxed">
-          {item.description}
-        </p>
-        <div className="mt-4 flex flex-row justify-end">
+        <div className="w-full p-4">
+          <p className="truncate-2-lines text-sm text-gray-400 leading-relaxed">
+            {item.description}
+          </p>
+        </div>
+      </button>
+
+      <div className="w-full px-4 pb-4">
+        <div className="flex flex-row justify-end">
           <Button
-            onClick={() => {
-              setOpen(true);
-            }}
+            type="button"
+            onClick={() => setOpen(true)}
             className="transition-all duration-200 bg-white/5 hover:bg-white/10 text-white"
           >
             {islostObject ? "I Found This" : "This Is Mine"}
           </Button>
         </div>
       </div>
-    </button>
+    </article>
   );
 }
