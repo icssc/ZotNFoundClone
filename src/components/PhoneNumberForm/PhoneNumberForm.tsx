@@ -3,9 +3,7 @@ import { useActionState } from "react";
 import VerifiedView from "./VerifiedView";
 import UnverifiedView from "./UnverifiedView";
 import { formatPhoneNumber } from "@/lib/utils";
-import {
-  phoneNumberFormAction,
-} from "@/server/actions/phone-number/action";
+import { phoneNumberFormAction } from "@/server/actions/phone-number/action";
 import type { PhoneNumberActionState } from "@/server/actions/phone-number/shared";
 
 export default function PhoneNumberForm({
