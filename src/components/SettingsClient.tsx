@@ -8,7 +8,7 @@ import { useSharedContext } from "@/components/ContextProvider";
 import { handleSignIn } from "@/lib/auth-client";
 import { trackError } from "@/lib/analytics";
 import type { User } from "better-auth";
-import type { PhoneNumberActionState } from "@/server/actions/phone-number/action";
+import type { PhoneNumberActionState } from "@/server/actions/phone-number/shared";
 
 type SettingsClientProps = {
   initialSettings: PhoneNumberActionState;

@@ -8,12 +8,7 @@ import {
   resendVerificationCode,
   verifyCode,
 } from "@/server/actions/phone-number/verify/action";
-import type {
-  PhoneNumberActionState,
-  PhoneStatus,
-} from "@/server/actions/phone-number/shared";
-
-export type { PhoneNumberActionState, PhoneStatus };
+import type { PhoneNumberActionState } from "@/server/actions/phone-number/shared";
 
 export async function phoneNumberFormAction(
   prevState: PhoneNumberActionState,

@@ -1,6 +1,6 @@
 import SettingsClient from "@/components/SettingsClient";
 import { findPhoneNumber } from "@/server/actions/phone-number/lookup/action";
-import type { PhoneNumberActionState } from "@/server/actions/phone-number/action";
+import type { PhoneNumberActionState } from "@/server/actions/phone-number/shared";
 import { Suspense } from "react";
 
 async function SettingsContent() {

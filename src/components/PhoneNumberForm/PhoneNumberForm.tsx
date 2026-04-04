@@ -5,8 +5,8 @@ import UnverifiedView from "./UnverifiedView";
 import { formatPhoneNumber } from "@/lib/utils";
 import {
   phoneNumberFormAction,
-  type PhoneNumberActionState,
 } from "@/server/actions/phone-number/action";
+import type { PhoneNumberActionState } from "@/server/actions/phone-number/shared";
 
 export default function PhoneNumberForm({
   initialSettings,
