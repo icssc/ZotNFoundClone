@@ -39,22 +39,9 @@ function ProfileAvatar({ user }: { user?: User }) {
 export default function SettingsClient({
   initialSettings,
 }: SettingsClientProps) {
-  const { user, signOut } = useSharedContext();
+  const { user } = useSharedContext();
   const router = useRouter();
-
-  const onSignOut = async () => {
-    try {
-      await signOut();
-      router.replace("/");
-    } catch (err) {
-      trackError({
-        error: err instanceof Error ? err.message : "Unknown error",
-        context: "SettingsClient sign out",
-        severity: "medium",
-      });
-    }
-  };
-
+  
   return (
     <div className="w-full space-y-6">
       <header className="flex flex-col gap-2 p-2 md:p-3">
@@ -67,15 +54,6 @@ export default function SettingsClient({
               Account & Alerts
             </h1>
           </div>
-          {user ? (
-            <Button
-              variant="ghost"
-              onClick={onSignOut}
-              className="rounded-full border border-white/10 bg-white/5 text-white hover:bg-white/10"
-            >
-              Sign Out
-            </Button>
-          ) : null}
         </div>
       </header>
 
