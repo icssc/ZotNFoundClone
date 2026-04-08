@@ -46,10 +46,9 @@ export default $config({
       });
     });
 
-    const isProdStage = $app.stage === "production";
-    const envTarget = process.env.DEPLOY_ENV_TARGET ?? $app.stage;
+    const envTarget = $app.stage;
     const isProdTarget = envTarget === "production";
-    const domain = isProdStage ? "zotnfound.com" : "clone.zotnfound.com";
+    const domain = isProdTarget ? "zotnfound.com" : "clone.zotnfound.com";
     const dbSchema = isProdTarget ? "public" : "dev";
     const dbUser = isProdTarget
       ? (getFirstEnv("AWS_PROD_USER") ?? "zotnfound_prod_user")
@@ -66,10 +65,10 @@ export default $config({
       );
     }
 
-    const icsscClientId = isProdStage
+    const icsscClientId = isProdTarget
       ? (getFirstEnv("ICSSC_AUTH_PROD_CLIENT_ID") ?? "zotnfound")
       : (getFirstEnv("ICSSC_AUTH_STAGING_CLIENT_ID") ?? "zotnfound-clone");
-    const icsscClientSecret = isProdStage
+    const icsscClientSecret = isProdTarget
       ? getFirstEnv("ICSSC_AUTH_PROD_CLIENT_SECRET", "ICSSC_AUTH_CLIENT_SECRET")
       : getFirstEnv(
           "ICSSC_AUTH_STAGING_CLIENT_SECRET",
@@ -104,7 +103,7 @@ export default $config({
           process.env.ICSSC_AUTH_DISCOVERY_URL ??
           "https://auth.icssc.club/.well-known/openid-configuration",
         ICSSC_AUTH_CLIENT_ID: icsscClientId,
-        ICSSC_AUTH_CLIENT_SECRET: icsscClientSecret,
+        ICSSC_AUTH_CLIENT_SECRET: icsscClientSecret ?? "",
         NEXT_PUBLIC_APP_EMAIL:
           process.env.NEXT_PUBLIC_APP_EMAIL ?? "zotnfound-admin@zotnfound.com",
         NEXT_PUBLIC_MAPBOX_DARK_URL: requireEnv("NEXT_PUBLIC_MAPBOX_DARK_URL"),

@@ -1,12 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import PhoneNumberForm from "@/components/PhoneNumberForm/PhoneNumberForm";
 import { useSharedContext } from "@/components/ContextProvider";
 import { handleSignIn } from "@/lib/auth-client";
-import { trackError } from "@/lib/analytics";
 import type { User } from "better-auth";
 import type { PhoneNumberActionState } from "@/server/actions/phone-number/shared";
 
@@ -40,8 +38,7 @@ export default function SettingsClient({
   initialSettings,
 }: SettingsClientProps) {
   const { user } = useSharedContext();
-  const router = useRouter();
-  
+
   return (
     <div className="w-full space-y-6">
       <header className="flex flex-col gap-2 p-2 md:p-3">
