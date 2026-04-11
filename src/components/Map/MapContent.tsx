@@ -55,7 +55,7 @@ export default function MapContent({
       center: centerPosition as [number, number],
       zoom: 17,
       minZoom: 15,
-      maxZoom: 19,
+      maxZoom: 18,
       maxBounds: mapBounds,
       zoomControl: false,
       attributionControl: false,
@@ -114,7 +114,9 @@ export default function MapContent({
     if (!map) return;
 
     if (selectedLocation) {
-      map.flyTo(selectedLocation as LatLngExpression, 18);
+      map.flyTo(selectedLocation as LatLngExpression, 18, {
+        animate: true,
+      });
     } else {
       map.fitBounds(mapBounds, { padding: MAP_PADDING });
     }

@@ -6,9 +6,9 @@
   "packageManager": "npm@10.9.0",
   "scripts": {
     "build": "next build",
-    "dev": "node scripts/run-dev.ts local",
-    "dev:staging": "node scripts/run-dev.ts staging",
-    "dev:prod": "node scripts/run-dev.ts prod",
+    "dev": "next dev --turbopack",
+    "deploy:dev": "npx sst deploy --stage dev",
+    "deploy:prod": "npx sst deploy --stage production",
     "format": "npx prettier --write .",
     "lint": "npx oxlint",
     "start": "next start",
@@ -16,12 +16,7 @@
     "format:check": "npx prettier --check .",
     "drizzle:generate": "npx drizzle-kit generate",
     "drizzle:migrate": "npx drizzle-kit migrate",
-    "drizzle:studio": "npx drizzle-kit studio",
-    "check:env:dev": "node scripts/validate-stage-env.ts dev",
-    "check:env:dev:prod-target": "node scripts/validate-stage-env.ts dev production",
-    "check:env:prod": "node scripts/validate-stage-env.ts production",
-    "deploy:dev": "DEPLOY_ENV_TARGET=production npm run check:env:dev:prod-target && npx sst deploy --stage dev",
-    "deploy:prod": "npm run check:env:prod && npx sst deploy --stage production"
+    "drizzle:studio": "npx drizzle-kit studio"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1012.0",

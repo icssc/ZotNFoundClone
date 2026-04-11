@@ -12,8 +12,34 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "ZotNFound",
-  description: "Helping UCI students locate and recover lost belongings",
+  metadataBase: new URL("https://zotnfound.com"),
+  title: "ZotNFound | UCI Lost and Found Map for Students",
+  description:
+    "Report lost items, browse found belongings, and reconnect students with their things using ZotNFound's live UCI lost and found map.",
+  openGraph: {
+    title: "ZotNFound | UCI Lost and Found Map for Students",
+    description:
+      "Report lost items, browse found belongings, and reconnect students with their things using ZotNFound's live UCI lost and found map.",
+    url: "https://zotnfound.com",
+    siteName: "ZotNFound",
+    images: [
+      {
+        url: "https://zotnfound.com/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "ZotNFound live UCI lost and found map preview",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ZotNFound | UCI Lost and Found Map for Students",
+    description:
+      "Report lost items, browse found belongings, and reconnect students with their things using ZotNFound's live UCI lost and found map.",
+    images: ["https://zotnfound.com/opengraph-image.png"],
+  },
 };
 const CustomFont = localFont({
   src: "../fonts/proximanova_regular.ttf",

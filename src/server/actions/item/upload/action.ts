@@ -5,7 +5,7 @@ import {
   PutObjectCommandInput,
 } from "@aws-sdk/client-s3";
 import { randomUUID } from "crypto";
-import { Resource } from "sst/resource";
+import { Resource } from "sst";
 import { createAction } from "@/server/actions/wrapper";
 import { z } from "zod";
 

@@ -162,8 +162,9 @@
   /* Optimize rendering for animations */
   @media (prefers-reduced-motion: no-preference) {
     .animate-smooth {
-      transition: all 0.3s ease-out;
-      will-change: transform, opacity;
+      transition:
+        transform 0.3s ease-out,
+        opacity 0.3s ease-out;
     }
 
     .animate-smooth:hover {
@@ -183,14 +184,11 @@
     .animate-in-slide-up {
       animation-fill-mode: both;
       backface-visibility: hidden;
-      transform: translateZ(0);
-      will-change: transform, opacity;
     }
 
     .home-shell-main,
     .home-shell-pane {
       backface-visibility: hidden;
-      transform: translateZ(0);
     }
   }
 

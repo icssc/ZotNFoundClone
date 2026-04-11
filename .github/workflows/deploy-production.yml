@@ -1,0 +1,69 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    environment: production
+
+    permissions:
+      contents: read
+
+    env:
+      AWS_HOST: ${{ secrets.AWS_HOST }}
+      AWS_PORT: ${{ secrets.AWS_PORT }}
+      AWS_DB_NAME: ${{ secrets.AWS_DB_NAME }}
+      AWS_PROD_PASSWORD: ${{ secrets.AWS_PROD_PASSWORD }}
+      AWS_PROD_USER: ${{ secrets.AWS_PROD_USER }}
+      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+      ICSSC_AUTH_DISCOVERY_URL: ${{ secrets.ICSSC_AUTH_DISCOVERY_URL }}
+      ICSSC_AUTH_PROD_CLIENT_ID: ${{ secrets.ICSSC_AUTH_PROD_CLIENT_ID }}
+      ICSSC_AUTH_PROD_CLIENT_SECRET: ${{ secrets.ICSSC_AUTH_PROD_CLIENT_SECRET }}
+      NEXT_PUBLIC_APP_EMAIL: ${{ secrets.NEXT_PUBLIC_APP_EMAIL }}
+      NEXT_PUBLIC_MAPBOX_DARK_URL: ${{ secrets.NEXT_PUBLIC_MAPBOX_DARK_URL }}
+      NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN: ${{ secrets.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN }}
+      NEXT_PUBLIC_MAPBOX_STYLE_URL: ${{ secrets.NEXT_PUBLIC_MAPBOX_STYLE_URL }}
+      NEXT_PUBLIC_POSTHOG_KEY: ${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
+      NEXT_PUBLIC_POSTHOG_HOST: ${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
+      POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+      POSTHOG_HOST: ${{ secrets.POSTHOG_HOST }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run type check
+        run: npm run type-check
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy production
+        run: npm run deploy:prod
